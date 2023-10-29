@@ -1,5 +1,6 @@
 from pico2d import *
 import game_world
+from background import Background
 
 
 # Game object class here
@@ -22,6 +23,7 @@ def create_world():
     global running
     global background
 
+    background = Background()
     game_world.add_object(background, 0)
     running = True
 
@@ -37,7 +39,7 @@ def render_world():
     update_canvas()
 
 
-open_canvas()
+open_canvas(1280, 1024)
 create_world()
 # game loop
 while running:
