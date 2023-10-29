@@ -20,13 +20,17 @@ def handle_events():
 
 def create_world():
     global running
+    global background
 
+    game_world.add_object(background, 0)
     running = True
 
+# 게임 월드 객체들을 모두 다 업데이트
 def update_world():
     game_world.update()
 
 
+# 게임 월드의 객체들을 몽땅 그리기
 def render_world():
     clear_canvas()
     game_world.render()
