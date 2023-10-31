@@ -1,7 +1,9 @@
 from pico2d import *
+
+import sands
 import game_world
 from background import Background
-
+from player1 import Sands
 
 # Game object class here
 
@@ -25,6 +27,10 @@ def create_world():
 
     background = Background()
     game_world.add_object(background, 0)
+
+    player1 = Sands()
+    game_world.add_object(player1, 1)
+
     running = True
 
 # 게임 월드 객체들을 모두 다 업데이트
@@ -46,6 +52,6 @@ while running:
     handle_events()
     update_world()
     render_world()
-    delay(0.01)
+    delay(0.1)
 # finalization code
 close_canvas()
