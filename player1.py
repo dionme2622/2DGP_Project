@@ -5,9 +5,10 @@ class Idle:
 
     @staticmethod
     def enter(character, e):
-        character.action = 3
-        character.dir_x = 0
-        character.frame = 0
+        if character == Sands:
+            character.action = 3
+            character.dir_x = 0
+            character.frame = 0
         pass
 
     @staticmethod
@@ -20,7 +21,13 @@ class Idle:
 
     @staticmethod
     def draw(character):
-        character.image.clip_composite_draw(character.frame * 250, 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
+        if character.__class__ == Sands:        # 해당 클래스가 샌즈이면 샌즈를 불러옴
+            character.image.clip_composite_draw(character.frame * 250, 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
+        elif character.__class__ == Pinkbean:
+            pass
+        elif character.__class__ == Gray:
+            pass
+
         # move += 10
         # Character.clip_draw(frame * 250, 420, 250, 330, x - 150 - move, y - 200, 100, 150)  # 이동 모션
 class StateMachine:
@@ -30,7 +37,6 @@ class StateMachine:
         self.transitions = {
 
         }
-
     def start(self):
         self.cur_state.enter(self.character, ('NONE', 0))
 
@@ -54,6 +60,48 @@ class StateMachine:
 class Sands:
     def __init__(self):
         self.x, self.y = 400, 500
+        self.frame = 0
+        self.action = 3  # 오른쪽 IDLE
+        self.dir_x = 0
+        self.dir_y = 0
+        self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
+        self.image = load_image('sands.png')
+        self.state_machine = StateMachine(self)
+        self.state_machine.start()
+
+    def update(self):
+        self.state_machine.update()
+
+    def handle_event(self, event):
+        self.state_machine.handle_event(('INPUT', event))
+
+    def draw(self):
+        self.state_machine.draw()
+
+class Pinkbean:
+    def __init__(self):
+        self.x, self.y = 800, 500
+        self.frame = 0
+        self.action = 3  # 오른쪽 IDLE
+        self.dir_x = 0
+        self.dir_y = 0
+        self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
+        self.image = load_image('sands.png')
+        self.state_machine = StateMachine(self)
+        self.state_machine.start()
+
+    def update(self):
+        self.state_machine.update()
+
+    def handle_event(self, event):
+        self.state_machine.handle_event(('INPUT', event))
+
+    def draw(self):
+        self.state_machine.draw()
+
+class Gray:
+    def __init__(self):
+        self.x, self.y = 800, 500
         self.frame = 0
         self.action = 3  # 오른쪽 IDLE
         self.dir_x = 0
