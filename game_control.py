@@ -3,8 +3,8 @@ from pico2d import *
 import sands
 import game_world
 from background import Background
-from player1 import Sands
-
+from player1 import Sands, Pinkbean, Gray
+from player2 import Sands, Pinkbean, Gray
 # Game object class here
 
 
@@ -30,6 +30,8 @@ def create_world():
 
     player1 = Sands()
     game_world.add_object(player1, 1)
+    player2 = Sands()
+    game_world.add_object(player2, 1)
 
     running = True
 
