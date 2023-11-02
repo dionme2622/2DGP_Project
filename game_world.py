@@ -27,3 +27,8 @@ def remove_object(o):
             layer.remove(o)
             return
     raise ValueError('왜 존재하지도 않는 걸 지우라구????')
+
+
+def clear():
+    for layer in objects:
+        layer.clear()
