@@ -21,7 +21,7 @@ def handle_events():
 
 
 
-def create_world():
+def init():
     global running
     global background
 
@@ -34,26 +34,26 @@ def create_world():
     game_world.add_object(player2, 1)
 
     running = True
+def finish():
+    game_world.clear()
+    pass
 
-# 게임 월드 객체들을 모두 다 업데이트
-def update_world():
+
+def update():
     game_world.update()
 
 
-# 게임 월드의 객체들을 몽땅 그리기
-def render_world():
+def draw():
     clear_canvas()
     game_world.render()
     update_canvas()
 
 
-open_canvas(1280, 1024)
-create_world()
-# game loop
-while running:
-    handle_events()
-    update_world()
-    render_world()
-    delay(0.1)
-# finalization code
-close_canvas()
+def pause():
+    pass
+
+
+def resume():
+    pass
+# 게임 월드 객체들을 모두 다 업데이트
+
