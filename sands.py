@@ -1,5 +1,5 @@
 from pico2d import load_image
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN
 
 import game_framework
 
@@ -17,6 +17,26 @@ def left_down(e):
 
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+
+def up_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_UP
+
+
+def up_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_UP
+
+
+def down_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_DOWN
+
+
+def down_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_DOWN
+
+
+def lets_idle(e):
+    return e[0] == 'LETS_IDLE'
+
 
 PIXEL_PER_METER = (20.0 / 0.6)      # 10 pixel 당 30cm   100 pixel에 3m
 RUN_SPEED_KMPH = 40.0       # 시속
@@ -53,12 +73,60 @@ class Run:
 
     @staticmethod
     def enter(character, e):
-        if right_down(e) or left_up(e): # 오른쪽으로 RUN
-            character.dir_x, character.action, character.face_dir = 1, 1, 1
-        elif left_down(e) or right_up(e): # 왼쪽으로 RUN
-            character.dir_x, character.action, character.face_dir = -1, 1, -1
-        pass
+        if right_down(e):
+            character.dir_right = 1
+            character.dirX, character.action = 1, 1
+        elif left_down(e):
+            character.dir_left = 1
+            character.dirX, character.action = -1, 1
+        elif up_down(e):
+            character.dir_up = 1
+            character.dirY, character.action = 1, 1
+        elif down_down(e):
+            character.dir_down = 1
+            character.dirY, character.action = -1, 1
 
+        elif right_up(e):
+            character.dir_right = 0
+            character.dirX = 0
+
+            if character.dir_left == 1:
+                character.dirX, character.action = -1, 1
+            elif character.dir_up == 1:
+                character.dirX, character.dirY, character.action = 0, 1, 1
+            elif character.dir_down == 1:
+                character.dirX, character.dirY, character.action = 0, -1, 1
+        elif left_up(e):
+            character.dir_left = 0
+            character.dirX = 0
+            if character.dir_right == 1:
+                character.dirX, character.action = 1, 1
+            elif character.dir_up == 1:
+                character.dirX, character.dirY, character.action = 0, 1, 1
+            elif character.dir_down == 1:
+                character.dirX, character.dirY, character.action = 0, -1, 1
+        elif up_up(e):
+            character.dir_up = 0
+            character.dirY = 0
+            if character.dir_down == 1:
+                character.dirY, character.action = -1, 1
+            elif character.dir_right == 1:
+                character.dirX, character.dirY, character.action = 1, 0, 1
+            elif character.dir_left == 1:
+                character.dirX, character.dirY, character.action = -1, 0, 1
+                
+        elif down_up(e):
+            character.dir_down = 0
+            character.dirY = 0
+            if character.dir_up == 1:
+                character.dirY, character.action = 1, 1
+            elif character.dir_right == 1:
+                character.dirX, character.dirY, character.action = 1, 0, 1
+            elif character.dir_left == 1:
+                character.dirX, character.dirY, character.action = -1, 0, 1
+
+        if character.dir_left == 0 and character.dir_right == 0 and character.dir_up == 0 and character.dir_down == 0:
+            character.state_machine.handle_event(('LETS_IDLE', 0))
     @staticmethod
     def exit(character, e):
         pass
@@ -66,17 +134,21 @@ class Run:
     @staticmethod
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        character.x += character.dir_x * RUN_SPEED_PPS * game_framework.frame_time
+        character.x += character.dirX * RUN_SPEED_PPS * game_framework.frame_time
+        character.y += character.dirY * RUN_SPEED_PPS * game_framework.frame_time
     @staticmethod
     def draw(character):
         character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
+
 class StateMachine:
     def __init__(self, character):
         self.character = character
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run},
-            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle}
+            Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
+                   down_down: Run, down_up: Run},
+            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
+                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle}
         }
     def start(self):
         self.cur_state.enter(self.character, ('NONE', 0))
@@ -101,13 +173,14 @@ class StateMachine:
 
 class Sands:
 
-    def __init__(self):
+    def __init__(self, character):
         self.x, self.y = 400, 400
         self.frame = 0
-        self.dir_x = 0
-        self.dir_y = 0
+        self.dirX = 0
+        self.dirY = 0
         self.action = 1
         self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
+        self.dir_left, self.dir_right, self.dir_up, self.dir_down, self.dir_shift = 0, 0, 0, 0, 0
         self.image = load_image('sands.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
