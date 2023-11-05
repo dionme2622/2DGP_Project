@@ -19,7 +19,7 @@ def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
 PIXEL_PER_METER = (20.0 / 0.6)      # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 20.0       # 시속
+RUN_SPEED_KMPH = 40.0       # 시속
 RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
@@ -35,6 +35,7 @@ class Idle:
     def enter(character, e):
         character.dir_x = 0
         character.frame = 0
+        character.action = 1
         pass
 
     @staticmethod
@@ -47,13 +48,15 @@ class Idle:
 
     @staticmethod
     def draw(character):
-        character.image.clip_composite_draw(int(character.frame) * 250, 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
+        character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
 class Run:
 
     @staticmethod
     def enter(character, e):
-        character.dir_x = 0
-        character.frame = 0
+        if right_down(e) or left_up(e): # 오른쪽으로 RUN
+            character.dir_x, character.action, character.face_dir = 1, 1, 1
+        elif left_down(e) or right_up(e): # 왼쪽으로 RUN
+            character.dir_x, character.action, character.face_dir = -1, 1, -1
         pass
 
     @staticmethod
@@ -63,16 +66,17 @@ class Run:
     @staticmethod
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-
+        character.x += character.dir_x * RUN_SPEED_PPS * game_framework.frame_time
     @staticmethod
     def draw(character):
-        character.image.clip_composite_draw(int(character.frame) * 250, 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
+        character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h', character.x, character.y, 100, 150)
 class StateMachine:
     def __init__(self, character):
         self.character = character
         self.cur_state = Idle
         self.transitions = {
-
+            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run},
+            Run: {right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle}
         }
     def start(self):
         self.cur_state.enter(self.character, ('NONE', 0))
@@ -102,6 +106,7 @@ class Sands:
         self.frame = 0
         self.dir_x = 0
         self.dir_y = 0
+        self.action = 1
         self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
         self.image = load_image('sands.png')
         self.state_machine = StateMachine(self)
