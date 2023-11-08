@@ -4,6 +4,8 @@ from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDLK_a, SDLK_1,
 import game_framework
 import game_world
 import play_mode
+from player1 import Player1
+from player2 import Player2
 from sands import Sands
 
 
@@ -19,6 +21,7 @@ def finish():
 
 def handle_events():
     global player1
+    global player2
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -28,8 +31,10 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
             game_framework.change_mode(play_mode)
         elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
-            player1 = Sands("player1")
+            player1 = Player1(Sands())
+            player2 = Player2(Sands())
             game_world.add_object(player1, 1)
+            game_world.add_object(player2, 1)
     pass
 
 
