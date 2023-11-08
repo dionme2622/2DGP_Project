@@ -1,7 +1,10 @@
 from pico2d import load_image
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g
+from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q
+
+import game_world
+from ball import Ball
 
 
 def r_down(e):
@@ -40,7 +43,8 @@ def lets_idle(e):
     return e[0] == 'LETS_IDLE'
 
 
-
+def q_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
 
 
 class Idle:
@@ -54,6 +58,8 @@ class Idle:
 
     @staticmethod
     def exit(ch, e):
+        if q_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -64,7 +70,9 @@ class Idle:
     def draw(ch):
         ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
                                             ch.x, ch.y, 100, 150)
+        if ch.getball == True:
 
+            print("Player1이 공을 가지고 있음")
 
 class Run:
 
@@ -127,7 +135,8 @@ class Run:
 
     @staticmethod
     def exit(ch, e):
-        pass
+        if q_down(e):
+            ch.shoot_ball()
 
     @staticmethod
     def do(ch):
@@ -143,11 +152,12 @@ class Run:
             ch.y = 80
         ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
 
+
+
     @staticmethod
     def draw(ch):
         ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
                                             ch.x, ch.y, 100, 150)
-
 
 class StateMachine:
     def __init__(self, ch):
@@ -155,9 +165,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run},
+                   f_down: Run, f_up: Run, q_down: Run},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle}
+                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Idle}
         }
 
     def start(self):
@@ -196,6 +206,15 @@ class Player1:
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
         self.getball = True
+
+
+
+    def shoot_ball(self):
+        if self.getball == True:
+            print("공 발사")
+            self.getball = False
+
+
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):

@@ -1,7 +1,7 @@
 from pico2d import load_image
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_SPACE
 
 
 def right_down(e):
@@ -40,7 +40,8 @@ def lets_idle(e):
     return e[0] == 'LETS_IDLE'
 
 
-
+def space_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
 
 class Idle:
@@ -54,7 +55,8 @@ class Idle:
 
     @staticmethod
     def exit(ch, e):
-        pass
+        if space_down(e):
+            ch.shoot_ball()
 
     @staticmethod
     def do(ch):
@@ -127,7 +129,8 @@ class Run:
 
     @staticmethod
     def exit(ch, e):
-        pass
+        if space_down(e):
+            ch.shoot_ball()
 
     @staticmethod
     def do(ch):
@@ -150,9 +153,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
-                   down_down: Run, down_up: Run},
+                   down_down: Run, down_up: Run, space_down: Run},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
-                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle}
+                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, space_down: Idle}
         }
 
     def start(self):
@@ -191,6 +194,11 @@ class Player2:
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
         self.getball = False
+
+    def shoot_ball(self):
+        if self.getball == True:
+            print("공 발사")
+            self.getball = False
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):
@@ -198,46 +206,3 @@ class Player2:
 
     def draw(self):
         self.state_machine.draw()
-
-
-# class Pinkbean:
-#     def __init__(self):
-#         self.x, self.y = 800, 500
-#         self.frame = 0
-#         self.action = 3  # 오른쪽 IDLE
-#         self.dir_x = 0
-#         self.dir_y = 0
-#         self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
-#         self.image = load_image('sands.png')
-#         self.state_machine = StateMachine(self)
-#         self.state_machine.start()
-#
-#     def update(self):
-#         self.state_machine.update()
-#
-#     def handle_event(self, event):
-#         self.state_machine.handle_event(('INPUT', event))
-#
-#     def draw(self):
-#         self.state_machine.draw()
-#
-# class Gray:
-#     def __init__(self):
-#         self.x, self.y = 800, 500
-#         self.frame = 0
-#         self.action = 3  # 오른쪽 IDLE
-#         self.dir_x = 0
-#         self.dir_y = 0
-#         self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
-#         self.image = load_image('sands.png')
-#         self.state_machine = StateMachine(self)
-#         self.state_machine.start()
-#
-#     def update(self):
-#         self.state_machine.update()
-#
-#     def handle_event(self, event):
-#         self.state_machine.handle_event(('INPUT', event))
-#
-#     def draw(self):
-#         self.state_machine.draw()
