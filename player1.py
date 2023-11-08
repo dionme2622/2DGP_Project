@@ -70,7 +70,7 @@ class Idle:
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(int(character.frame) * 250, character.action * 420, 250, 330,
+        character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h',
                                             character.x, character.y, 100, 150)
 
 
@@ -140,16 +140,21 @@ class Run:
     @staticmethod
     def do(character):
         character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        if character.x <= 620 + 40: character.x = 620 + 40
-        elif character.x >= 1280 - 30: character.x = 1280 - 30
+        if character.x >= 620:
+            character.x = 620
+        elif character.x <= 50:
+            character.x = 50
         character.x += character.dirX * RUN_SPEED_PPS * game_framework.frame_time
-        if character.y >= 800: character.y = 800
-        elif character.y <= 80: character.y = 80
+        if character.y >= 800:
+            character.y = 800
+        elif character.y <= 80:
+            character.y = 80
         character.y += character.dirY * RUN_SPEED_PPS * game_framework.frame_time
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(int(character.frame) * 250, character.action * 420, 250, 330, character.x, character.y, 100, 150)
+        character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h',
+                                            character.x, character.y, 100, 150)
 
 
 class StateMachine:
