@@ -40,126 +40,118 @@ def lets_idle(e):
     return e[0] == 'LETS_IDLE'
 
 
-PIXEL_PER_METER = (20.0 / 0.6)  # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 40.0  # 시속
-RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
-RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
-RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
-# Bird Action Speed
-TIME_PER_ACTION = 0.5
-ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 4
+
 
 
 class Idle:
 
     @staticmethod
-    def enter(character, e):
-        character.dir_x = 0
-        character.frame = 0
-        character.action = 1
+    def enter(ch, e):
+        ch.dir_x = 0
+        ch.frame = 0
+        ch.action = 1
         pass
 
     @staticmethod
-    def exit(character, e):
+    def exit(ch, e):
         pass
 
     @staticmethod
-    def do(character):
+    def do(ch):
         pass
 
     @staticmethod
-    def draw(character):
-        character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h',
-                                            character.x, character.y, 100, 150)
+    def draw(ch):
+        ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
+                                            ch.x, ch.y, 100, 150)
 
 
 class Run:
 
     @staticmethod
-    def enter(character, e):
+    def enter(ch, e):
         if g_down(e):
-            character.dir_right = 1
-            character.dirX, character.action = 1, 1
+            ch.dir_right = 1
+            ch.dirX, ch.action = 1, 1
         elif d_down(e):
-            character.dir_left = 1
-            character.dirX, character.action = -1, 1
+            ch.dir_left = 1
+            ch.dirX, ch.action = -1, 1
         elif r_down(e):
-            character.dir_up = 1
-            character.dirY, character.action = 1, 1
+            ch.dir_up = 1
+            ch.dirY, ch.action = 1, 1
         elif f_down(e):
-            character.dir_down = 1
-            character.dirY, character.action = -1, 1
+            ch.dir_down = 1
+            ch.dirY, ch.action = -1, 1
 
         elif g_up(e):
-            character.dir_right = 0
-            character.dirX = 0
+            ch.dir_right = 0
+            ch.dirX = 0
 
-            if character.dir_left == 1:
-                character.dirX, character.action = -1, 1
-            elif character.dir_up == 1:
-                character.dirX, character.dirY, character.action = 0, 1, 1
-            elif character.dir_down == 1:
-                character.dirX, character.dirY, character.action = 0, -1, 1
+            if ch.dir_left == 1:
+                ch.dirX, ch.action = -1, 1
+            elif ch.dir_up == 1:
+                ch.dirX, ch.dirY, ch.action = 0, 1, 1
+            elif ch.dir_down == 1:
+                ch.dirX, ch.dirY, ch.action = 0, -1, 1
         elif d_up(e):
-            character.dir_left = 0
-            character.dirX = 0
-            if character.dir_right == 1:
-                character.dirX, character.action = 1, 1
-            elif character.dir_up == 1:
-                character.dirX, character.dirY, character.action = 0, 1, 1
-            elif character.dir_down == 1:
-                character.dirX, character.dirY, character.action = 0, -1, 1
+            ch.dir_left = 0
+            ch.dirX = 0
+            if ch.dir_right == 1:
+                ch.dirX, ch.action = 1, 1
+            elif ch.dir_up == 1:
+                ch.dirX, ch.dirY, ch.action = 0, 1, 1
+            elif ch.dir_down == 1:
+                ch.dirX, ch.dirY, ch.action = 0, -1, 1
         elif r_up(e):
-            character.dir_up = 0
-            character.dirY = 0
-            if character.dir_down == 1:
-                character.dirY, character.action = -1, 1
-            elif character.dir_right == 1:
-                character.dirX, character.dirY, character.action = 1, 0, 1
-            elif character.dir_left == 1:
-                character.dirX, character.dirY, character.action = -1, 0, 1
+            ch.dir_up = 0
+            ch.dirY = 0
+            if ch.dir_down == 1:
+                ch.dirY, ch.action = -1, 1
+            elif ch.dir_right == 1:
+                ch.dirX, ch.dirY, ch.action = 1, 0, 1
+            elif ch.dir_left == 1:
+                ch.dirX, ch.dirY, ch.action = -1, 0, 1
 
         elif f_up(e):
-            character.dir_down = 0
-            character.dirY = 0
-            if character.dir_up == 1:
-                character.dirY, character.action = 1, 1
-            elif character.dir_right == 1:
-                character.dirX, character.dirY, character.action = 1, 0, 1
-            elif character.dir_left == 1:
-                character.dirX, character.dirY, character.action = -1, 0, 1
+            ch.dir_down = 0
+            ch.dirY = 0
+            if ch.dir_up == 1:
+                ch.dirY, ch.action = 1, 1
+            elif ch.dir_right == 1:
+                ch.dirX, ch.dirY, ch.action = 1, 0, 1
+            elif ch.dir_left == 1:
+                ch.dirX, ch.dirY, ch.action = -1, 0, 1
 
-        if character.dir_left == 0 and character.dir_right == 0 and character.dir_up == 0 and character.dir_down == 0:
-            character.state_machine.handle_event(('LETS_IDLE', 0))
+        if ch.dir_left == 0 and ch.dir_right == 0 and ch.dir_up == 0 and ch.dir_down == 0:
+            ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
-    def exit(character, e):
+    def exit(ch, e):
         pass
 
     @staticmethod
-    def do(character):
-        character.frame = (character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        if character.x >= 620:
-            character.x = 620
-        elif character.x <= 50:
-            character.x = 50
-        character.x += character.dirX * RUN_SPEED_PPS * game_framework.frame_time
-        if character.y >= 800:
-            character.y = 800
-        elif character.y <= 80:
-            character.y = 80
-        character.y += character.dirY * RUN_SPEED_PPS * game_framework.frame_time
+    def do(ch):
+        ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+        if ch.x >= 620:
+            ch.x = 620
+        elif ch.x <= 50:
+            ch.x = 50
+        ch.x += ch.dirX * ch.RUN_SPEED_PPS * game_framework.frame_time
+        if ch.y >= 800:
+            ch.y = 800
+        elif ch.y <= 80:
+            ch.y = 80
+        ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
 
     @staticmethod
-    def draw(character):
-        character.image.clip_composite_draw(int(character.frame) * 250, character.action * 420, 250, 330, 0, 'h',
-                                            character.x, character.y, 100, 150)
+    def draw(ch):
+        ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
+                                            ch.x, ch.y, 100, 150)
 
 
 class StateMachine:
-    def __init__(self, character):
-        self.character = character
+    def __init__(self, ch):
+        self.ch = ch
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
@@ -169,23 +161,23 @@ class StateMachine:
         }
 
     def start(self):
-        self.cur_state.enter(self.character, ('NONE', 0))
+        self.cur_state.enter(self.ch, ('NONE', 0))
 
     def update(self):
-        self.cur_state.do(self.character)
+        self.cur_state.do(self.ch)
 
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(e):
-                self.cur_state.exit(self.character, e)
+                self.cur_state.exit(self.ch, e)
                 self.cur_state = next_state
-                self.cur_state.enter(self.character, e)
+                self.cur_state.enter(self.ch, e)
                 return True
 
         return False
 
     def draw(self):
-        self.cur_state.draw(self.character)
+        self.cur_state.draw(self.ch)
 
 class Player1:
     def __init__(self, ch):
@@ -200,7 +192,9 @@ class Player1:
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-
+        self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
+        self.ACTION_PER_TIME = ch.ACTION_PER_TIME
+        self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):
