@@ -23,7 +23,7 @@ class Ball:
 
 
         if play_mode.player1.getball == True:
-            self.velocity = 10
+            self.velocity = play_mode.player1.attack_speed
             self.x = play_mode.player1.x + 50
             self.y = play_mode.player1.y
         else:
@@ -31,7 +31,7 @@ class Ball:
             self.x += self.velocity * 100 * game_framework.frame_time
 
         if play_mode.player2.getball == True:
-            self.velocity = -10
+            self.velocity = -play_mode.player2.attack_speed
 
             self.x = play_mode.player2.x - 50
             self.y = play_mode.player2.y
