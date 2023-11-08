@@ -53,7 +53,7 @@ class Idle:
     def enter(ch, e):
         ch.dir_x = 0
         ch.frame = 0
-        ch.action = 1
+        ch.action = 4
         pass
 
     @staticmethod
@@ -68,67 +68,71 @@ class Idle:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
-                                            ch.x, ch.y, 100, 150)
-        if ch.getball == True:
-
-            print("Player1이 공을 가지고 있음")
+        if ch.job == 'sands':
+            ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
+                                                ch.x, ch.y, 100, 150)
+        elif ch.job == 'gray':
+            ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
+                                         ch.x, ch.y, 100, 150)
 
 class Run:
 
     @staticmethod
     def enter(ch, e):
+        if ch.job == 'gray':
+            ch.action = 3
+
         if g_down(e):
             ch.dir_right = 1
-            ch.dirX, ch.action = 1, 1
+            ch.dirX = 1
         elif d_down(e):
             ch.dir_left = 1
-            ch.dirX, ch.action = -1, 1
+            ch.dirX = -1
         elif r_down(e):
             ch.dir_up = 1
-            ch.dirY, ch.action = 1, 1
+            ch.dirY = 1
         elif f_down(e):
             ch.dir_down = 1
-            ch.dirY, ch.action = -1, 1
+            ch.dirY = -1
 
         elif g_up(e):
             ch.dir_right = 0
             ch.dirX = 0
 
             if ch.dir_left == 1:
-                ch.dirX, ch.action = -1, 1
+                ch.dirX = -1
             elif ch.dir_up == 1:
-                ch.dirX, ch.dirY, ch.action = 0, 1, 1
+                ch.dirX, ch.dirY = 0, 1
             elif ch.dir_down == 1:
-                ch.dirX, ch.dirY, ch.action = 0, -1, 1
+                ch.dirX, ch.dirY = 0, -1
         elif d_up(e):
             ch.dir_left = 0
             ch.dirX = 0
             if ch.dir_right == 1:
-                ch.dirX, ch.action = 1, 1
+                ch.dirX = 1
             elif ch.dir_up == 1:
-                ch.dirX, ch.dirY, ch.action = 0, 1, 1
+                ch.dirX, ch.dirY = 0, 1
             elif ch.dir_down == 1:
-                ch.dirX, ch.dirY, ch.action = 0, -1, 1
+                ch.dirX, ch.dirY = 0, -1
         elif r_up(e):
             ch.dir_up = 0
             ch.dirY = 0
             if ch.dir_down == 1:
-                ch.dirY, ch.action = -1, 1
+                ch.dirY = -1
             elif ch.dir_right == 1:
-                ch.dirX, ch.dirY, ch.action = 1, 0, 1
+                ch.dirX, ch.dirY = 1, 0
             elif ch.dir_left == 1:
-                ch.dirX, ch.dirY, ch.action = -1, 0, 1
+                ch.dirX, ch.dirY = -1, 0
 
         elif f_up(e):
             ch.dir_down = 0
             ch.dirY = 0
             if ch.dir_up == 1:
-                ch.dirY, ch.action = 1, 1
+                ch.dirY = 1
             elif ch.dir_right == 1:
-                ch.dirX, ch.dirY, ch.action = 1, 0, 1
+                ch.dirX, ch.dirY = 1, 0
             elif ch.dir_left == 1:
-                ch.dirX, ch.dirY, ch.action = -1, 0, 1
+                ch.dirX, ch.dirY = -1, 0
 
         if ch.dir_left == 0 and ch.dir_right == 0 and ch.dir_up == 0 and ch.dir_down == 0:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
@@ -140,7 +144,10 @@ class Run:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
         if ch.x >= 620:
             ch.x = 620
         elif ch.x <= 50:
@@ -156,8 +163,12 @@ class Run:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
+        if ch.job == "sands":
+            ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
                                             ch.x, ch.y, 100, 150)
+        elif ch.job == "gray":
+            ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
+                                         ch.x, ch.y, 100, 150)
 
 class StateMachine:
     def __init__(self, ch):
@@ -206,7 +217,7 @@ class Player1:
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
         self.getball = True
-
+        self.job = ch.job
 
 
     def shoot_ball(self):
