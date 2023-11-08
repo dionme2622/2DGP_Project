@@ -195,6 +195,7 @@ class Player1:
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
+        self.getball = True
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):
