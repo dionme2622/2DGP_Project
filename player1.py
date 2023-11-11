@@ -59,7 +59,6 @@ class Idle:
             ch.action = 1
         elif ch.job == 'gray':
             ch.action = 4
-        pass
 
     @staticmethod
     def exit(ch, e):
@@ -179,15 +178,45 @@ class Run:
             ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
+class Attack:
+
+    @staticmethod
+    def enter(ch, e):
+        ch.dir_x = 0
+        ch.frame = 0
+        if ch.job == 'sands':
+            ch.action = 2
+        elif ch.job == 'gray':
+            ch.action = 1
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        pass
+
+    @staticmethod
+    def draw(ch):
+        if ch.job == 'sands':
+            ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
+                                                ch.x, ch.y, 100, 150)
+        elif ch.job == 'gray':
+            ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
+                                         ch.x, ch.y, 100, 150)
+
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run, q_down: Run},
+                   f_down: Run, f_up: Run, q_down: Attack},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Idle}
+                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack},
+            Attack : {# 0.5초가 지나면 IDLE상태로 돌아옴}
+            }
         }
 
     def start(self):
