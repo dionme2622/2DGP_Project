@@ -195,7 +195,10 @@ class Attack:
 
     @staticmethod
     def do(ch):
-        pass
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 2
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 6
 
     @staticmethod
     def draw(ch):
