@@ -198,15 +198,15 @@ class Attack:
         if ch.job == "sands":
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 2
         elif ch.job == "gray":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 6
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
 
     @staticmethod
     def draw(ch):
         if ch.job == 'sands':
-            ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
+            ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
                                                 ch.x, ch.y, 100, 150)
         elif ch.job == 'gray':
-            ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
+            ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
 class StateMachine:
