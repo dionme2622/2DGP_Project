@@ -1,7 +1,7 @@
 from pico2d import load_image
 
 PIXEL_PER_METER = (20.0 / 0.6)  # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 40.0  # 시속
+RUN_SPEED_KMPH = 30.0  # 시속
 RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
@@ -14,7 +14,7 @@ class Sands:
 
     def __init__(self):
         self.x, self.y = 400, 400
-        self.hp, self.mp, self.speed, self.attack_speed = 3, 0, 3, 3
+        self.hp, self.mp, self.speed, self.attack_speed = 3, 0, 3, 6
         self.frame = 0
         self.dirX = 0
         self.dirY = 0
@@ -25,6 +25,7 @@ class Sands:
         self.FRAMES_PER_ACTION = FRAMES_PER_ACTION
         self.RUN_SPEED_PPS = RUN_SPEED_PPS
         self.ACTION_PER_TIME = ACTION_PER_TIME
+        self.job = "sands"
     def update(self):
         pass
 
