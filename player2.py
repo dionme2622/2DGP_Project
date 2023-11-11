@@ -50,7 +50,10 @@ class Idle:
     def enter(ch, e):
         ch.dir_x = 0
         ch.frame = 0
-        ch.action = 1
+        if ch.job == 'sands':
+            ch.action = 1
+        elif ch.job == 'gray':
+            ch.action = 4
         pass
 
     @staticmethod
@@ -64,9 +67,11 @@ class Idle:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
+        if ch.job == 'sands':
+            ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
                                             ch.x, ch.y, 100, 150)
-
+        elif ch.job == 'gray':
+            ch.image.clip_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, ch.x, ch.y, 100, 150)
 
 class Run:
 
@@ -143,8 +148,11 @@ class Run:
         ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
-                                            ch.x, ch.y, 100, 150)
+        if ch.job == 'sands':
+            ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
+                               ch.x, ch.y, 100, 150)
+        elif ch.job == 'gray':
+            ch.image.clip_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, ch.x, ch.y, 100, 150)
 
 
 class StateMachine:
@@ -187,6 +195,7 @@ class Player2:
         self.dirY = ch.dirY
         self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
         self.image = ch.image
+        self.job = ch.job
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.state_machine = StateMachine(self)
         self.state_machine.start()
