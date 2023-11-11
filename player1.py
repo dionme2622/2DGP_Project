@@ -5,6 +5,8 @@ from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q
 
 import game_world
 from ball import Ball
+from gray import Gray
+from sands import Sands
 
 
 def r_down(e):
@@ -53,13 +55,18 @@ class Idle:
     def enter(ch, e):
         ch.dir_x = 0
         ch.frame = 0
-        ch.action = 4
+        if ch.job == 'sands':
+            ch.action = 1
+        elif ch.job == 'gray':
+            ch.action = 4
         pass
 
     @staticmethod
     def exit(ch, e):
         if q_down(e):
             ch.shoot_ball()
+
+
         pass
 
     @staticmethod
@@ -79,7 +86,9 @@ class Run:
 
     @staticmethod
     def enter(ch, e):
-        if ch.job == 'gray':
+        if ch.job == 'sands':
+            ch.action = 1
+        elif ch.job == 'gray':
             ch.action = 3
 
         if g_down(e):
@@ -211,13 +220,14 @@ class Player1:
         self.face_dir = -1  # 왼쪽 방향 얼굴을 향하고 있음
         self.image = ch.image
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
+        self.job = ch.job
         self.state_machine = StateMachine(self)
         self.state_machine.start()
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
         self.getball = True
-        self.job = ch.job
+
 
 
     def shoot_ball(self):
