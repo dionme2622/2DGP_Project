@@ -298,4 +298,6 @@ class Player1:
             if self.hp == 0 :
                 print("player1 사망")
             # player1 스킬 게이지 1칸 증가
+            if self.mp < 3:
+                self.mp += 1
             print("player1 hitted!")
