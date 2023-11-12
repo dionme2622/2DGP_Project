@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q
@@ -48,6 +48,8 @@ def lets_idle(e):
 def q_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
 
+def time_out(e):
+    return e[0] == 'TIME_OUT'
 
 class Idle:
 
@@ -59,7 +61,7 @@ class Idle:
             ch.action = 1
         elif ch.job == 'gray':
             ch.action = 4
-
+        print("enter Idle")
     @staticmethod
     def exit(ch, e):
         if q_down(e):
@@ -196,9 +198,16 @@ class Attack:
     @staticmethod
     def do(ch):
         if ch.job == "sands":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 2
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
         elif ch.job == "gray":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 4:
+                print("end")
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+
+
 
     @staticmethod
     def draw(ch):
@@ -218,8 +227,8 @@ class StateMachine:
                    f_down: Run, f_up: Run, q_down: Attack},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
                   r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack},
-            Attack : {# 0.5초가 지나면 IDLE상태로 돌아옴}
-            }
+            Attack: {lets_idle: Idle}
+
         }
 
     def start(self):
@@ -267,6 +276,8 @@ class Player1:
             print("공 발사")
             self.getball = False
 
+    def get_bb(self):
+        return self.x - 30, self.y - 60, self.x + 50, self.y + 50
 
     def update(self):
         self.state_machine.update()
@@ -275,3 +286,4 @@ class Player1:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
