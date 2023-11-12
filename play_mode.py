@@ -40,10 +40,12 @@ def init():
     background = Background()
     game_world.add_object(background, 0)
 
-    player1 = Player1(Gray())
+    player1 = Player1(Sands())
     game_world.add_object(player1, 1)
+    game_world.add_collision_pair('player1:ball', player1, None)
     player2 = Player2(Sands())
     game_world.add_object(player2, 1)
+    game_world.add_collision_pair('player2:ball', player2, None)
 
     ball = Ball(player1.x + 100, player1.y, 5)
     game_world.add_object(ball, 1)
