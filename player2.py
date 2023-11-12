@@ -54,7 +54,6 @@ class Idle:
             ch.action = 1
         elif ch.job == 'gray':
             ch.action = 4
-        pass
 
     @staticmethod
     def exit(ch, e):
@@ -77,6 +76,11 @@ class Run:
 
     @staticmethod
     def enter(ch, e):
+        if ch.job == 'sands':
+            ch.action = 1
+        elif ch.job == 'gray':
+            ch.action = 3
+
         if right_down(e):
             ch.dir_right = 1
             ch.dirX, ch.action = 1, 1
@@ -139,7 +143,11 @@ class Run:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+
         if ch.x <= 620 + 40: ch.x = 620 + 40
         elif ch.x >= 1280 - 30: ch.x = 1280 - 30
         ch.x += ch.dirX * ch.RUN_SPEED_PPS * game_framework.frame_time
@@ -154,6 +162,40 @@ class Run:
         elif ch.job == 'gray':
             ch.image.clip_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, ch.x, ch.y, 100, 150)
 
+class Attack:
+
+    @staticmethod
+    def enter(ch, e):
+        ch.dir_x = 0
+        ch.frame = 0
+        if ch.job == 'sands':
+            ch.action = 2
+        elif ch.job == 'gray':
+            ch.action = 1
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 4:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+
+    @staticmethod
+    def draw(ch):
+        if ch.job == 'sands':
+            ch.image.clip_draw(int(ch.frame) * 250, 720, 250, 360,
+                                                ch.x, ch.y, 100, 150)
+        elif ch.job == 'gray':
+            ch.image.clip_draw(int(ch.frame) * 85, ch.action * 130, 85, 120,
+                                         ch.x, ch.y, 100, 150)
 
 class StateMachine:
     def __init__(self, ch):
@@ -161,9 +203,10 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
-                   down_down: Run, down_up: Run, space_down: Run},
+                   down_down: Run, down_up: Run, space_down: Attack},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
-                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, space_down: Idle}
+                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, space_down: Attack},
+            Attack: {lets_idle: Idle}
         }
 
     def start(self):
