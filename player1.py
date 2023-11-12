@@ -289,4 +289,5 @@ class Player1:
         draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'player1:ball':
+            print("player1 hitted!")
