@@ -61,7 +61,6 @@ class Idle:
             ch.action = 1
         elif ch.job == 'gray':
             ch.action = 4
-        print("enter Idle")
     @staticmethod
     def exit(ch, e):
         if q_down(e):
@@ -204,7 +203,6 @@ class Attack:
         elif ch.job == "gray":
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
             if ch.frame >= 4:
-                print("end")
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
 
 
@@ -300,4 +298,4 @@ class Player1:
             # player1 스킬 게이지 1칸 증가
             if self.mp < 3:
                 self.mp += 1
-            print("player1 hitted!")
+            print(f"player1 hitted!, hp: {self.hp}, mp: {self.mp}")

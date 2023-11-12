@@ -206,7 +206,7 @@ class Player2:
 
     def shoot_ball(self):
         if self.getball == True:
-            print("공 발사")
+            print("player2 공 발사")
             self.getball = False
 
     def get_bb(self):
@@ -224,9 +224,9 @@ class Player2:
 
     def handle_collision(self, group, other):
         if group == 'player2:ball':
-            self.getball = True
             # 피격 animation 출력
             # 공이 player2 에게 넘어감
+            self.getball = True
             # player2 쳬력 1칸 감소
             self.hp -= 1
             if self.hp == 0:
@@ -234,4 +234,4 @@ class Player2:
             # player2 스킬 게이지 1칸 증가
             if self.mp < 3:
                 self.mp += 1
-            print("player2 hitted!")
+            print(f"player2 hitted!, hp: {self.hp}, mp: {self.mp}")
