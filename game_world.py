@@ -3,6 +3,7 @@
 # 게임 월드 표현
 objects = [[] for _ in range(4)]         # 게임 월드는 리스트로 표현
 
+collision_pairs = {}
 # 게임 월드에 객체 담기
 def add_object(o, depth = 0):
     objects[depth].append(o)      # 지정된 깊이의 레이어에 객체 추가
@@ -36,6 +37,15 @@ def render():
     for layer in objects:
         for o in layer:
             o.draw()
+
+def add_collision_pair(group, a, b):
+    if group not in collision_pairs:
+        print(f'Add new Group {group}')
+        collision_pairs[group] = [ [], [] ]
+    if a:
+        collision_pairs[group][0].append(a)
+    if b:
+        collision_pairs[group][1].append(b)
 
 # 객체 삭제
 def remove_object(o):
