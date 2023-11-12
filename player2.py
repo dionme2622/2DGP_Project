@@ -221,5 +221,17 @@ class Player2:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
+
     def handle_collision(self, group, other):
-        pass
+        if group == 'player2:ball':
+            self.getball = True
+            # 피격 animation 출력
+            # 공이 player2 에게 넘어감
+            # player2 쳬력 1칸 감소
+            self.hp -= 1
+            if self.hp == 0:
+                print("player2 사망")
+            # player2 스킬 게이지 1칸 증가
+            if self.mp < 3:
+                self.mp += 1
+            print("player2 hitted!")
