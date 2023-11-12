@@ -290,4 +290,9 @@ class Player1:
 
     def handle_collision(self, group, other):
         if group == 'player1:ball':
+            self.getball = True
+            # 피격 animation 출력
+            # 공이 player1 에게 넘어감
+            # player1 쳬력 1칸 감소
+            # player1 스킬 게이지 1칸 증가
             print("player1 hitted!")
