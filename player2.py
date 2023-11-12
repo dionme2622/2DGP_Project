@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_SPACE
@@ -208,6 +208,11 @@ class Player2:
         if self.getball == True:
             print("공 발사")
             self.getball = False
+
+    def get_bb(self):
+        return self.x - 30, self.y - 60, self.x + 50, self.y + 50
+
+
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):
@@ -215,3 +220,6 @@ class Player2:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
+    def handle_collision(self, group, other):
+        pass

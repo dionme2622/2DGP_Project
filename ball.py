@@ -21,13 +21,11 @@ class Ball:
 
     def update(self):
 
-
         if play_mode.player1.getball == True:
             self.velocity = play_mode.player1.attack_speed
-            self.x = play_mode.player1.x + 50
+            self.x = play_mode.player1.x + 60
             self.y = play_mode.player1.y
         else:
-
             self.x += self.velocity * 100 * game_framework.frame_time
 
         if play_mode.player2.getball == True:
@@ -43,3 +41,7 @@ class Ball:
 
         if self.x < -120 :
             play_mode.player1.getball = True
+
+    def handle_collision(self, group, other):
+        pass
+
