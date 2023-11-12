@@ -76,6 +76,7 @@ class Run:
 
     @staticmethod
     def enter(ch, e):
+        ch.frame = 0
         if ch.job == 'sands':
             ch.action = 1
         elif ch.job == 'gray':
@@ -83,55 +84,55 @@ class Run:
 
         if right_down(e):
             ch.dir_right = 1
-            ch.dirX, ch.action = 1, 1
+            ch.dirX = 1
         elif left_down(e):
             ch.dir_left = 1
-            ch.dirX, ch.action = -1, 1
+            ch.dirX = -1
         elif up_down(e):
             ch.dir_up = 1
-            ch.dirY, ch.action = 1, 1
+            ch.dirY = 1
         elif down_down(e):
             ch.dir_down = 1
-            ch.dirY, ch.action = -1, 1
+            ch.dirY = -1
 
         elif right_up(e):
             ch.dir_right = 0
             ch.dirX = 0
 
             if ch.dir_left == 1:
-                ch.dirX, ch.action = -1, 1
+                ch.dirX = -1
             elif ch.dir_up == 1:
-                ch.dirX, ch.dirY, ch.action = 0, 1, 1
+                ch.dirX, ch.dirY = 0, 1
             elif ch.dir_down == 1:
-                ch.dirX, ch.dirY, ch.action = 0, -1, 1
+                ch.dirX, ch.dirY = 0, -1
         elif left_up(e):
             ch.dir_left = 0
             ch.dirX = 0
             if ch.dir_right == 1:
-                ch.dirX, ch.action = 1, 1
+                ch.dirX = 1
             elif ch.dir_up == 1:
-                ch.dirX, ch.dirY, ch.action = 0, 1, 1
+                ch.dirX, ch.dirY = 0, 1
             elif ch.dir_down == 1:
-                ch.dirX, ch.dirY, ch.action = 0, -1, 1
+                ch.dirX, ch.dirY = 0, -1
         elif up_up(e):
             ch.dir_up = 0
             ch.dirY = 0
             if ch.dir_down == 1:
-                ch.dirY, ch.action = -1, 1
+                ch.dirY = -1
             elif ch.dir_right == 1:
-                ch.dirX, ch.dirY, ch.action = 1, 0, 1
+                ch.dirX, ch.dirY = 1, 0
             elif ch.dir_left == 1:
-                ch.dirX, ch.dirY, ch.action = -1, 0, 1
+                ch.dirX, ch.dirY = -1, 0
 
         elif down_up(e):
             ch.dir_down = 0
             ch.dirY = 0
             if ch.dir_up == 1:
-                ch.dirY, ch.action = 1, 1
+                ch.dirY = 1
             elif ch.dir_right == 1:
-                ch.dirX, ch.dirY, ch.action = 1, 0, 1
+                ch.dirX, ch.dirY = 1, 0
             elif ch.dir_left == 1:
-                ch.dirX, ch.dirY, ch.action = -1, 0, 1
+                ch.dirX, ch.dirY = -1, 0
 
         if ch.dir_left == 0 and ch.dir_right == 0 and ch.dir_up == 0 and ch.dir_down == 0:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
@@ -159,7 +160,7 @@ class Run:
         if ch.job == 'sands':
             ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
                                ch.x, ch.y, 100, 150)
-        elif ch.job == 'gray':
+        elif ch.job == "gray":
             ch.image.clip_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, ch.x, ch.y, 100, 150)
 
 class Attack:
@@ -236,7 +237,6 @@ class Player2:
         self.action = ch.action  # 오른쪽 IDLE
         self.dirX = ch.dirX
         self.dirY = ch.dirY
-        self.face_dir = 1  # 오른쪽 방향 얼굴을 향하고 있음
         self.image = ch.image
         self.job = ch.job
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
@@ -253,8 +253,12 @@ class Player2:
             self.getball = False
 
     def get_bb(self):
-        return self.x - 30, self.y - 60, self.x + 50, self.y + 50
-
+        if self.job == 'sands':
+            return self.x - 30, self.y - 60, self.x + 50, self.y + 50
+        elif self.job == 'gray':
+            return self.x - 50, self.y - 60, self.x + 30, self.y + 50
+        else:
+            return
 
     def update(self):
         self.state_machine.update()
