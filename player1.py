@@ -2,13 +2,10 @@ from pico2d import load_image, draw_rectangle, get_time, load_font
 
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w
+from tkinter import *
 
-import game_world
-from ball import Ball
-from gray import Gray
-from sands import Sands
-
-WIDTH, HEIGHT = 1280, 1024
+root = Tk()
+WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 def r_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_r
 
@@ -178,15 +175,15 @@ class Run:
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
         elif ch.job == "gray":
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
-        if ch.x >= 620:
-            ch.x = 620
-        elif ch.x <= 50:
-            ch.x = 50
+        if ch.x >= WIDTH // 2 - 20:
+            ch.x = WIDTH // 2 - 20
+        elif ch.x <= 200 + 30:
+            ch.x = 200 + 30
         ch.x += ch.dirX * ch.RUN_SPEED_PPS * game_framework.frame_time
-        if ch.y >= 800:
-            ch.y = 800
-        elif ch.y <= 80:
-            ch.y = 80
+        if ch.y >= 800 - 20:
+            ch.y = 800 - 20
+        elif ch.y <= 100 - 20:
+            ch.y = 100 - 20
         ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
 
     @staticmethod
@@ -357,7 +354,7 @@ class StateMachine:
 
 class Player1:
     def __init__(self, ch):
-        self.x, self.y = 50, 500
+        self.x, self.y = 250, 500
         self.hp, self.mp, self.speed, self.attack_speed = ch.hp, ch.mp, ch.speed, ch.attack_speed
         self.frame = ch.frame
         self.action = ch.action  # 오른쪽 IDLE
@@ -405,14 +402,14 @@ class Player1:
 
     def handle_collision(self, group, other):
         if group == 'player1:ball':
-            # 피격 animation 출력
             # 공이 player1 에게 넘어감
             self.getball = True
-            self.state_machine.cur_state = Damage
-            # player1 쳬력 1칸 감소
-            # 만약 Defense 상태라면 무적
+            # 만약 Defense 상태가 아니라면
             if self.state_machine.cur_state != Defense:
+                # player1 쳬력 1칸 감소
                 self.hp -= 1
+                # 피격 animation 출력
+                self.state_machine.cur_state = Damage
             if self.hp == 0:
                 print("player1 사망")
             # player1 스킬 게이지 1칸 증가
