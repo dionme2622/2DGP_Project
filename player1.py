@@ -1,4 +1,4 @@
-from pico2d import load_image, draw_rectangle, get_time
+from pico2d import load_image, draw_rectangle, get_time, load_font
 
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w
@@ -8,7 +8,7 @@ from ball import Ball
 from gray import Gray
 from sands import Sands
 
-
+WIDTH, HEIGHT = 1280, 1024
 def r_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_r
 
@@ -333,7 +333,8 @@ class Player1:
         self.image = ch.image
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.job = ch.job
-        self.wait_time = 0.0
+        self.wait_time = -5.0
+        self.font = load_font('ENCR10B.TTF', 30)
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
@@ -361,6 +362,10 @@ class Player1:
 
     def draw(self):
         self.state_machine.draw()
+        if float(self.wait_time) - float(get_time()) > -5.0:
+            self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
+        else:
+            self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
         draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
