@@ -1,7 +1,7 @@
 from pico2d import load_image, draw_rectangle
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q
+from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w
 
 import game_world
 from ball import Ball
@@ -48,6 +48,11 @@ def lets_idle(e):
 def q_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
 
+
+def w_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
+
+
 def time_out(e):
     return e[0] == 'TIME_OUT'
 
@@ -86,6 +91,7 @@ class Run:
 
     @staticmethod
     def enter(ch, e):
+        ch.frame = 0
         if ch.job == 'sands':
             ch.action = 1
         elif ch.job == 'gray':
@@ -216,6 +222,44 @@ class Attack:
             ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
+class Defense:
+
+    @staticmethod
+    def enter(ch, e):
+        ch.dir_x = 0
+        ch.frame = 0
+        if ch.job == 'sands':
+            ch.action = 2
+        elif ch.job == 'gray':
+            ch.action = 1
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 4:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+
+
+
+    @staticmethod
+    def draw(ch):
+        if ch.job == 'sands':
+            ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
+                                                ch.x, ch.y, 100, 150)
+        elif ch.job == 'gray':
+            ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
+                                         ch.x, ch.y, 100, 150)
+
+
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
@@ -256,7 +300,6 @@ class Player1:
         self.action = ch.action  # 오른쪽 IDLE
         self.dirX = ch.dirX
         self.dirY = ch.dirY
-        self.face_dir = -1  # 왼쪽 방향 얼굴을 향하고 있음
         self.image = ch.image
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.job = ch.job
@@ -275,8 +318,12 @@ class Player1:
             self.getball = False
 
     def get_bb(self):
-        return self.x - 30, self.y - 60, self.x + 50, self.y + 50
-
+        if self.job == 'sands':
+            return self.x - 40, self.y - 60, self.x + 40, self.y + 50
+        elif self.job == 'gray':
+            return self.x - 30, self.y - 60, self.x + 50, self.y + 50
+        else:
+            return
     def update(self):
         self.state_machine.update()
     def handle_event(self, event):
