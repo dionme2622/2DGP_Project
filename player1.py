@@ -1,4 +1,4 @@
-from pico2d import load_image, draw_rectangle
+from pico2d import load_image, draw_rectangle, get_time
 
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w
@@ -45,6 +45,10 @@ def lets_idle(e):
     return e[0] == 'LETS_IDLE'
 
 
+def lets_defense(e):
+    return e[0] == 'LETS_DEFENSE'
+
+
 def q_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
 
@@ -56,6 +60,7 @@ def w_down(e):
 def time_out(e):
     return e[0] == 'TIME_OUT'
 
+
 class Idle:
 
     @staticmethod
@@ -66,11 +71,14 @@ class Idle:
             ch.action = 1
         elif ch.job == 'gray':
             ch.action = 4
+        if w_down(e):
+            if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+                print("h")
     @staticmethod
     def exit(ch, e):
         if q_down(e):
             ch.shoot_ball()
-
 
         pass
 
@@ -82,10 +90,11 @@ class Idle:
     def draw(ch):
         if ch.job == 'sands':
             ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
-                                                ch.x, ch.y, 100, 150)
+                                         ch.x, ch.y, 100, 150)
         elif ch.job == 'gray':
             ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
+
 
 class Run:
 
@@ -156,6 +165,10 @@ class Run:
     def exit(ch, e):
         if q_down(e):
             ch.shoot_ball()
+        # if ch.job == "gray":
+        #     if w_down(e):
+        #         print("w down")
+        #         ch.state_machine.handle_event(('LETS_DEFENSE', 0))
 
     @staticmethod
     def do(ch):
@@ -174,16 +187,15 @@ class Run:
             ch.y = 80
         ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
 
-
-
     @staticmethod
     def draw(ch):
         if ch.job == "sands":
             ch.image.clip_composite_draw(int(ch.frame) * 250, ch.action * 420, 250, 330, 0, 'h',
-                                            ch.x, ch.y, 100, 150)
+                                         ch.x, ch.y, 100, 150)
         elif ch.job == "gray":
             ch.image.clip_composite_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
+
 
 class Attack:
 
@@ -211,19 +223,17 @@ class Attack:
             if ch.frame >= 4:
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
 
-
-
     @staticmethod
     def draw(ch):
         if ch.job == 'sands':
             ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
-                                                ch.x, ch.y, 100, 150)
+                                         ch.x, ch.y, 100, 150)
         elif ch.job == 'gray':
             ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
-class Defense:
 
+class Defense:
     @staticmethod
     def enter(ch, e):
         ch.dir_x = 0
@@ -236,7 +246,7 @@ class Defense:
 
     @staticmethod
     def exit(ch, e):
-        pass
+        ch.wait_time = get_time()
 
     @staticmethod
     def do(ch):
@@ -249,16 +259,15 @@ class Defense:
             if ch.frame >= 4:
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
 
-
-
     @staticmethod
     def draw(ch):
         if ch.job == 'sands':
             ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
-                                                ch.x, ch.y, 100, 150)
+                                         ch.x, ch.y, 100, 150)
         elif ch.job == 'gray':
             ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
+
 
 class Skill:
 
@@ -274,8 +283,6 @@ class Skill:
     def do(ch):
         pass
 
-
-
     @staticmethod
     def draw(ch):
         pass
@@ -287,9 +294,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run, q_down: Attack, w_down: Defense},
+                   f_down: Run, f_up: Run, q_down: Attack, w_down: Idle, lets_defense: Defense},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack, w_down: Defense},
+                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack, lets_defense: Defense},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle}
 
@@ -314,6 +321,7 @@ class StateMachine:
     def draw(self):
         self.cur_state.draw(self.ch)
 
+
 class Player1:
     def __init__(self, ch):
         self.x, self.y = 50, 500
@@ -325,15 +333,13 @@ class Player1:
         self.image = ch.image
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.job = ch.job
-        self.state_machine = StateMachine(self)
-        self.state_machine.start()
+        self.wait_time = 0.0
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
         self.getball = True
-
-
-
+        self.state_machine = StateMachine(self)
+        self.state_machine.start()
     def shoot_ball(self):
         if self.getball == True:
             print("공 발사")
@@ -346,8 +352,10 @@ class Player1:
             return self.x - 30, self.y - 60, self.x + 50, self.y + 50
         else:
             return
+
     def update(self):
         self.state_machine.update()
+
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
@@ -364,7 +372,7 @@ class Player1:
             # 만약 Defense 상태라면 무적
             if self.state_machine.cur_state != Defense:
                 self.hp -= 1
-            if self.hp == 0 :
+            if self.hp == 0:
                 print("player1 사망")
             # player1 스킬 게이지 1칸 증가
             if self.mp < 3:
