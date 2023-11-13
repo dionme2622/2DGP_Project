@@ -232,6 +232,7 @@ class Defense:
             ch.action = 2
         elif ch.job == 'gray':
             ch.action = 1
+        print("player1 defense!")
 
     @staticmethod
     def exit(ch, e):
@@ -266,10 +267,11 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run, q_down: Attack},
+                   f_down: Run, f_up: Run, q_down: Attack, w_down: Defense},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack},
-            Attack: {lets_idle: Idle}
+                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack, w_down: Defense},
+            Attack: {lets_idle: Idle},
+            Defense: {lets_idle: Idle}
 
         }
 
@@ -339,7 +341,9 @@ class Player1:
             # 공이 player1 에게 넘어감
             self.getball = True
             # player1 쳬력 1칸 감소
-            self.hp -= 1
+            # 만약 Defense 상태라면 무적
+            if self.state_machine.cur_state != Defense:
+                self.hp -= 1
             if self.hp == 0 :
                 print("player1 사망")
             # player1 스킬 게이지 1칸 증가
