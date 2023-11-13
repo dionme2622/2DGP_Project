@@ -270,6 +270,24 @@ class Defense:
             ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
+class Damage:
+
+    @staticmethod
+    def enter(ch, e):
+        print("Damaged")
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        pass
+
+    @staticmethod
+    def draw(ch):
+        pass
+
 
 class Skill:
 
@@ -300,7 +318,8 @@ class StateMachine:
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
                   r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, lets_defense: Defense},
             Attack: {lets_idle: Idle},
-            Defense: {lets_idle: Idle}
+            Defense: {lets_idle: Idle},
+            Damage: {lets_idle: Idle}
 
         }
 
@@ -377,6 +396,7 @@ class Player1:
             # 피격 animation 출력
             # 공이 player1 에게 넘어감
             self.getball = True
+            self.state_machine.cur_state = Damage
             # player1 쳬력 1칸 감소
             # 만약 Defense 상태라면 무적
             if self.state_machine.cur_state != Defense:
