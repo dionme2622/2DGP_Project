@@ -177,8 +177,8 @@ class Run:
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
         if ch.x >= WIDTH // 2 - 20:
             ch.x = WIDTH // 2 - 20
-        elif ch.x <= 200 + 30:
-            ch.x = 200 + 30
+        elif ch.x <= 0 + 230:
+            ch.x = 0 + 230
         ch.x += ch.dirX * ch.RUN_SPEED_PPS * game_framework.frame_time
         if ch.y >= 800 - 20:
             ch.y = 800 - 20

@@ -3,7 +3,10 @@ from pico2d import load_image, draw_rectangle, get_time, load_font
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA
 
-WIDTH, HEIGHT = 1280, 1024
+from tkinter import *
+
+root = Tk()
+WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
@@ -157,11 +160,13 @@ class Run:
         elif ch.job == "gray":
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
 
-        if ch.x <= 620 + 40: ch.x = 620 + 40
-        elif ch.x >= 1280 - 30: ch.x = 1280 - 30
+        if ch.x <= WIDTH // 2 + 40: ch.x = WIDTH // 2 + 40
+        elif ch.x >= WIDTH - 230: ch.x = WIDTH - 230
         ch.x += ch.dirX * ch.RUN_SPEED_PPS * game_framework.frame_time
-        if ch.y >= 800: ch.y = 800
-        elif ch.y <= 80: ch.y = 80
+        if ch.y >= 800 - 20:
+            ch.y = 800 - 20
+        elif ch.y <= 100 - 20:
+            ch.y = 100 - 20
         ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
     @staticmethod
     def draw(ch):
@@ -362,7 +367,7 @@ class Player2:
             if self.state_machine.cur_state != Defense:
                 # player2 쳬력 1칸 감소
                 self.hp -= 1
-                # 피격 animation 출력
+                # 피격 animation 출력.
                 self.state_machine.cur_state = Damage
             if self.hp == 0:
                 print("player1 사망")
