@@ -24,7 +24,6 @@ class Ball:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-
         if play_mode.player1.getball == True:
             self.velocity = play_mode.player1.attack_speed
             self.x = play_mode.player1.x + 80
