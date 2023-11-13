@@ -284,7 +284,8 @@ class StateMachine:
                   up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle,
                   lets_defense: Defense},
             Attack: {lets_idle: Idle},
-            Defense: {lets_idle: Idle}
+            Defense: {lets_idle: Idle},
+            Damage: {lets_idle: Idle}
         }
 
     def start(self):
@@ -355,13 +356,14 @@ class Player2:
         self.font.draw(WIDTH // 2 + 500, HEIGHT // 2 + 300, f'MP:{self.mp}', (0, 0, 0))
     def handle_collision(self, group, other):
         if group == 'player2:ball':
-            # 피격 animation 출력
             # 공이 player2 에게 넘어감
             self.getball = True
-            # player2 쳬력 1칸 감소
-            # 만약 Defense 상태라면 무적
+            # 만약 Defense 상태가 아니라면
             if self.state_machine.cur_state != Defense:
+                # player2 쳬력 1칸 감소
                 self.hp -= 1
+                # 피격 animation 출력
+                self.state_machine.cur_state = Damage
             if self.hp == 0:
                 print("player1 사망")
             # player2 스킬 게이지 1칸 증가
