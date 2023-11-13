@@ -1,9 +1,9 @@
-from pico2d import load_image, draw_rectangle
+from pico2d import load_image, draw_rectangle, get_time, load_font
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_SPACE
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA
 
-
+WIDTH, HEIGHT = 1280, 1024
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
@@ -35,15 +35,17 @@ def down_down(e):
 def down_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_DOWN
 
+def atk_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_COMMA
+
+def def_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_PERIOD
 
 def lets_idle(e):
     return e[0] == 'LETS_IDLE'
 
-
-def space_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
-
-
+def lets_defense(e):
+    return e[0] == 'LETS_DEFENSE'
 class Idle:
 
     @staticmethod
@@ -55,9 +57,12 @@ class Idle:
         elif ch.job == 'gray':
             ch.action = 4
 
+        if def_down(e):
+            if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
     @staticmethod
     def exit(ch, e):
-        if space_down(e):
+        if atk_down(e):
             ch.shoot_ball()
 
     @staticmethod
@@ -137,9 +142,12 @@ class Run:
         if ch.dir_left == 0 and ch.dir_right == 0 and ch.dir_up == 0 and ch.dir_down == 0:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
 
+        if def_down(e):
+            if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
     @staticmethod
     def exit(ch, e):
-        if space_down(e):
+        if atk_down(e):
             ch.shoot_ball()
 
     @staticmethod
@@ -198,16 +206,53 @@ class Attack:
             ch.image.clip_draw(int(ch.frame) * 85, ch.action * 130, 85, 120,
                                          ch.x, ch.y, 100, 150)
 
+
+class Defense:
+
+    @staticmethod
+    def enter(ch, e):
+        ch.dir_x = 0
+        ch.frame = 0
+        if ch.job == 'sands':
+            ch.action = 2
+        elif ch.job == 'gray':
+            ch.action = 1
+
+    @staticmethod
+    def exit(ch, e):
+        ch.wait_time = get_time()
+
+    @staticmethod
+    def do(ch):
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 4:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+
+    @staticmethod
+    def draw(ch):
+        if ch.job == 'sands':
+            ch.image.clip_draw(int(ch.frame) * 250, 720, 250, 360,
+                                                ch.x, ch.y, 100, 150)
+        elif ch.job == 'gray':
+            ch.image.clip_draw(int(ch.frame) * 85, ch.action * 130, 85, 120,
+                                         ch.x, ch.y, 100, 150)
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
-                   down_down: Run, down_up: Run, space_down: Attack},
+                   down_down: Run, down_up: Run, atk_down: Attack, def_down: Idle, lets_defense: Defense},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
-                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, space_down: Attack},
-            Attack: {lets_idle: Idle}
+                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle,
+                  lets_defense: Defense},
+            Attack: {lets_idle: Idle},
+            Defense: {lets_idle: Idle}
         }
 
     def start(self):
@@ -239,13 +284,15 @@ class Player2:
         self.dirY = ch.dirY
         self.image = ch.image
         self.job = ch.job
-        self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
-        self.state_machine = StateMachine(self)
-        self.state_machine.start()
+        self.font = load_font('ENCR10B.TTF', 30)
+        self.wait_time = -5.0
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
         self.getball = False
+        self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
+        self.state_machine = StateMachine(self)
+        self.state_machine.start()
 
     def shoot_ball(self):
         if self.getball == True:
@@ -268,7 +315,10 @@ class Player2:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
-
+        if float(self.wait_time) - float(get_time()) > -5.0:
+            self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
+        else:
+            self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
     def handle_collision(self, group, other):
         if group == 'player2:ball':
             # 피격 animation 출력

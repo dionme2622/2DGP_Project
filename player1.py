@@ -49,11 +49,11 @@ def lets_defense(e):
     return e[0] == 'LETS_DEFENSE'
 
 
-def q_down(e):
+def atk_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
 
 
-def w_down(e):
+def def_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
 
 
@@ -71,13 +71,12 @@ class Idle:
             ch.action = 1
         elif ch.job == 'gray':
             ch.action = 4
-        if w_down(e):
+        if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
-                print("h")
     @staticmethod
     def exit(ch, e):
-        if q_down(e):
+        if atk_down(e):
             ch.shoot_ball()
 
         pass
@@ -161,12 +160,15 @@ class Run:
         if ch.dir_left == 0 and ch.dir_right == 0 and ch.dir_up == 0 and ch.dir_down == 0:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
 
+        if def_down(e):
+            if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
     @staticmethod
     def exit(ch, e):
-        if q_down(e):
+        if atk_down(e):
             ch.shoot_ball()
         # if ch.job == "gray":
-        #     if w_down(e):
+        #     if def_down(e):
         #         print("w down")
         #         ch.state_machine.handle_event(('LETS_DEFENSE', 0))
 
@@ -294,9 +296,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run, q_down: Attack, w_down: Idle, lets_defense: Defense},
+                   f_down: Run, f_up: Run, atk_down: Attack, def_down: Idle, lets_defense: Defense},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, q_down: Attack, lets_defense: Defense},
+                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, lets_defense: Defense},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle}
 
