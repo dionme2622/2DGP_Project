@@ -267,14 +267,16 @@ class Defense:
             ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
                                          ch.x, ch.y, 100, 150)
         elif ch.job == 'gray':
-            ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
+            ch.image.clip_composite_draw(int(ch.frame) * 85, 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
 class Damage:
 
     @staticmethod
     def enter(ch, e):
-        print("Damaged")
+        ch.dir_x = 0
+        ch.frame = 0
+
 
     @staticmethod
     def exit(ch, e):
@@ -282,12 +284,22 @@ class Damage:
 
     @staticmethod
     def do(ch):
-        pass
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
     def draw(ch):
-        pass
-
+        if ch.job == "sands":
+            ch.image.clip_composite_draw(int(ch.frame), 50, 250, 360, 0, 'h', ch.x, ch.y, 100, 150)
+        elif ch.job == "gray":
+            ch.image.clip_composite_draw(int(ch.frame) * 85, 270, 85, 110, 0, 'h',
+                                         ch.x, ch.y, 100, 150)
 
 class Skill:
 
