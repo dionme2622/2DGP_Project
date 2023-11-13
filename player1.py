@@ -260,6 +260,26 @@ class Defense:
             ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
+class Skill:
+
+    @staticmethod
+    def enter(ch, e):
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        pass
+
+
+
+    @staticmethod
+    def draw(ch):
+        pass
+
 
 class StateMachine:
     def __init__(self, ch):
