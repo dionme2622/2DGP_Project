@@ -258,7 +258,7 @@ class Defense:
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
         elif ch.job == "gray":
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 4:
+            if ch.frame >= 2:
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
@@ -336,7 +336,7 @@ class Player1:
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.job = ch.job
         self.wait_time = -5.0
-        self.font = load_font('ENCR10B.TTF', 30)
+        self.font = load_font('./object/ENCR10B.TTF', 30)
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
@@ -368,6 +368,8 @@ class Player1:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
+        self.font.draw(WIDTH // 2 - 600, HEIGHT // 2 + 300, f'HP:{self.hp}', (0, 0, 0))
+        self.font.draw(WIDTH // 2 - 500, HEIGHT // 2 + 300, f'MP:{self.mp}', (0, 0, 0))
         draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
@@ -384,4 +386,3 @@ class Player1:
             # player1 스킬 게이지 1칸 증가
             if self.mp < 3:
                 self.mp += 1
-            print(f"player1 hitted!, hp: {self.hp}, mp: {self.mp}")

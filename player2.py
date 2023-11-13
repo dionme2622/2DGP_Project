@@ -230,7 +230,7 @@ class Defense:
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
         elif ch.job == "gray":
             ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 4:
+            if ch.frame >= 2:
                 ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
@@ -284,7 +284,7 @@ class Player2:
         self.dirY = ch.dirY
         self.image = ch.image
         self.job = ch.job
-        self.font = load_font('ENCR10B.TTF', 30)
+        self.font = load_font('./object/ENCR10B.TTF', 30)
         self.wait_time = -5.0
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
@@ -319,16 +319,19 @@ class Player2:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
+        self.font.draw(WIDTH // 2 + 400, HEIGHT // 2 + 300, f'HP:{self.hp}', (0, 0, 0))
+        self.font.draw(WIDTH // 2 + 500, HEIGHT // 2 + 300, f'MP:{self.mp}', (0, 0, 0))
     def handle_collision(self, group, other):
         if group == 'player2:ball':
             # 피격 animation 출력
             # 공이 player2 에게 넘어감
             self.getball = True
             # player2 쳬력 1칸 감소
-            self.hp -= 1
+            # 만약 Defense 상태라면 무적
+            if self.state_machine.cur_state != Defense:
+                self.hp -= 1
             if self.hp == 0:
-                print("player2 사망")
+                print("player1 사망")
             # player2 스킬 게이지 1칸 증가
             if self.mp < 3:
                 self.mp += 1
-            print(f"player2 hitted!, hp: {self.hp}, mp: {self.mp}")
