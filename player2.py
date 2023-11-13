@@ -241,6 +241,38 @@ class Defense:
         elif ch.job == 'gray':
             ch.image.clip_draw(int(ch.frame) * 85, ch.action * 130, 85, 120,
                                          ch.x, ch.y, 100, 150)
+
+
+class Damage:
+
+    @staticmethod
+    def enter(ch, e):
+        ch.dir_x = 0
+        ch.frame = 0
+
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        if ch.job == "sands":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        elif ch.job == "gray":
+            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+            if ch.frame >= 2:
+                ch.state_machine.handle_event(('LETS_IDLE', 0))
+
+    @staticmethod
+    def draw(ch):
+        if ch.job == "sands":
+            ch.image.clip_draw(int(ch.frame), 50, 250, 360, ch.x, ch.y, 100, 150)
+        elif ch.job == "gray":
+            ch.image.clip_draw(int(ch.frame) * 85, 270, 85, 110, ch.x, ch.y, 100, 150)
+
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
