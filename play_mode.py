@@ -2,6 +2,7 @@ from pico2d import *
 
 import game_framework
 import select_mode
+from arrow import Arrow
 from ball import Ball
 from gray import Gray
 
@@ -38,22 +39,18 @@ def init():
     global player1, player2
     global ball
     global font
+
     font = load_font('./object/ENCR10B.TTF', 50)
     background = Background()
     game_world.add_object(background, 0)
-
-    # player1 = Player1(Gray())
-    # game_world.add_object(player1, 1)
-
-    # player2 = Player2(Sands())
-    # game_world.add_object(player2, 1)
-
 
     ball = Ball(select_mode.player1.x + 100, select_mode.player1.y, 5)
     game_world.add_object(ball, 1)
     game_world.add_collision_pair('player1:ball', None, ball)
     game_world.add_collision_pair('player2:ball', None, ball)
 
+    arrow = Arrow()
+    game_world.add_object(arrow, 1)
     running = True
 
 
