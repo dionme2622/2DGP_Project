@@ -1,12 +1,20 @@
 from pico2d import load_image, draw_rectangle, get_time, load_font
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA, SDLK_SLASH
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA, SDLK_SLASH, \
+    SDLK_SEMICOLON, SDLK_QUOTE
 
 from tkinter import *
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+
+def Semi_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
+
+def Quote_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_QUOTE
+
 def right_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
 
@@ -76,6 +84,10 @@ class Idle:
                 print("skill")
                 ch.state_machine.handle_event(('LETS_SKILL', 0))
                 ch.mp = 0
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
@@ -167,6 +179,11 @@ class Run:
                 print("skill")
                 ch.state_machine.handle_event(('LETS_SKILL', 0))
                 ch.mp = 0
+
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
@@ -322,9 +339,9 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
-                   down_down: Run, down_up: Run, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense, lets_skill: Skill},
+                   down_down: Run, down_up: Run, Semi_down: Idle, Quote_down: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense, lets_skill: Skill},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
-                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle,
+                  up_up: Run, down_down: Run, down_up: Run, Semi_down: Run, Quote_down: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle,
                   lets_defense: Defense, lets_skill: Skill},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle},
@@ -354,11 +371,13 @@ class StateMachine:
 class Player2:
     def __init__(self, ch):
         self.x, self.y = WIDTH - 250, 500
+        self.angle = 0
         self.hp, self.mp, self.speed, self.attack_speed = ch.hp, ch.mp, ch.speed, ch.attack_speed
         self.frame = ch.frame
         self.action = ch.action  # 오른쪽 IDLE
         self.dirX = ch.dirX
         self.dirY = ch.dirY
+        self.shoot = False
         self.image = ch.image
         self.job = ch.job
         self.font = load_font('./object/ENCR10B.TTF', 30)
@@ -373,8 +392,8 @@ class Player2:
 
     def shoot_ball(self):
         if self.getball == True:
-            print("player2 공 발사")
-            self.getball = False
+            self.shoot = True
+            #self.getball = False
 
     def get_bb(self):
         if self.job == 'sands':
@@ -401,7 +420,7 @@ class Player2:
     def handle_collision(self, group, other):
         if group == 'player2:ball':
             # 공이 player2 에게 넘어감
-            self.getball = True
+            #self.getball = True
             # 만약 Defense 상태가 아니라면
             if self.state_machine.cur_state != Defense:
                 # player2 쳬력 1칸 감소
