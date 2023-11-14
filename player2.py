@@ -1,7 +1,7 @@
 from pico2d import load_image, draw_rectangle, get_time, load_font
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA
+from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA, SDLK_SLASH
 
 from tkinter import *
 
@@ -44,11 +44,19 @@ def atk_down(e):
 def def_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_PERIOD
 
+
+def skill_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SLASH
+
 def lets_idle(e):
     return e[0] == 'LETS_IDLE'
 
 def lets_defense(e):
     return e[0] == 'LETS_DEFENSE'
+
+def lets_skill(e):
+    return e[0] == 'LETS_SKILL'
+
 class Idle:
 
     @staticmethod
@@ -63,6 +71,11 @@ class Idle:
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if skill_down(e):
+            if ch.mp == 3:
+                print("skill")
+                ch.state_machine.handle_event(('LETS_SKILL', 0))
+                ch.mp = 0
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
@@ -148,6 +161,12 @@ class Run:
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+
+        if skill_down(e):
+            if ch.mp == 3:
+                print("skill")
+                ch.state_machine.handle_event(('LETS_SKILL', 0))
+                ch.mp = 0
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
@@ -278,19 +297,39 @@ class Damage:
         elif ch.job == "gray":
             ch.image.clip_draw(int(ch.frame) * 85, 270, 85, 110, ch.x, ch.y, 100, 150)
 
+
+class Skill:
+
+    @staticmethod
+    def enter(ch, e):
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        pass
+
+    @staticmethod
+    def draw(ch):
+        pass
+
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
-                   down_down: Run, down_up: Run, atk_down: Attack, def_down: Idle, lets_defense: Defense},
+                   down_down: Run, down_up: Run, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense, lets_skill: Skill},
             Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
-                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle,
-                  lets_defense: Defense},
+                  up_up: Run, down_down: Run, down_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle,
+                  lets_defense: Defense, lets_skill: Skill},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle},
-            Damage: {lets_idle: Idle}
+            Damage: {lets_idle: Idle},
+            Skill: {lets_idle: Idle}
         }
 
     def start(self):
