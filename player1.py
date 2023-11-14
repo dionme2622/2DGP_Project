@@ -1,7 +1,7 @@
 from pico2d import load_image, draw_rectangle, get_time, load_font
 
 import game_framework
-from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w
+from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_e
 from tkinter import *
 
 root = Tk()
@@ -37,6 +37,15 @@ def g_down(e):
 def g_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_g
 
+def atk_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
+
+
+def def_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
+
+def skill_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_e
 
 def lets_idle(e):
     return e[0] == 'LETS_IDLE'
@@ -46,16 +55,8 @@ def lets_defense(e):
     return e[0] == 'LETS_DEFENSE'
 
 
-def atk_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
-
-
-def def_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
-
-
-def time_out(e):
-    return e[0] == 'TIME_OUT'
+def lets_skill(e):
+    return e[0] == 'LETS_SKILL'
 
 
 class Idle:
@@ -71,6 +72,11 @@ class Idle:
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if skill_down(e):
+            if ch.mp == 3:
+                print("skill")
+                ch.state_machine.handle_event(('LETS_SKILL', 0))
+                ch.mp = 0
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
@@ -160,14 +166,14 @@ class Run:
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+
+        if skill_down(e):
+            if ch.mp == 3:
+                ch.state_machine.handle_event(('LETS_SKILL', 0))
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
-        # if ch.job == "gray":
-        #     if def_down(e):
-        #         print("w down")
-        #         ch.state_machine.handle_event(('LETS_DEFENSE', 0))
 
     @staticmethod
     def do(ch):
@@ -323,13 +329,14 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run, atk_down: Attack, def_down: Idle, lets_defense: Defense},
+                   f_down: Run, f_up: Run, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense, lets_skill: Skill},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, lets_defense: Defense},
+                  r_up: Run, f_down: Run, f_up: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense
+                  , lets_skill: Skill},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle},
-            Damage: {lets_idle: Idle}
-
+            Damage: {lets_idle: Idle},
+            Skill: {lets_idle: Idle}
         }
 
     def start(self):
