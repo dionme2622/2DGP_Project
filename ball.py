@@ -24,19 +24,21 @@ class Ball:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        if play_mode.player1.getball == True:
+
+
+        if play_mode.player1.getball == True and play_mode.player2.getball == False:
             self.velocity = play_mode.player1.attack_speed
             self.x = play_mode.player1.x + 80
             self.y = play_mode.player1.y
-        else:
+        elif play_mode.player1.getball == False and play_mode.player2.getball == False:
             self.x += self.velocity * 100 * game_framework.frame_time
 
-        if play_mode.player2.getball == True:
+        elif play_mode.player1.getball == False and play_mode.player2.getball == True:
             self.velocity = -play_mode.player2.attack_speed
 
             self.x = play_mode.player2.x - 80
             self.y = play_mode.player2.y
-        else:
+        elif play_mode.player1.getball == False and play_mode.player2.getball == False:
             self.x += self.velocity * 100 * game_framework.frame_time
 
         if self.x > WIDTH + 50:
