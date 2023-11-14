@@ -314,7 +314,7 @@ class StateMachine:
 
 class Player2:
     def __init__(self, ch):
-        self.x, self.y = 1200, 500
+        self.x, self.y = WIDTH - 250, 500
         self.hp, self.mp, self.speed, self.attack_speed = ch.hp, ch.mp, ch.speed, ch.attack_speed
         self.frame = ch.frame
         self.action = ch.action  # 오른쪽 IDLE
@@ -324,10 +324,10 @@ class Player2:
         self.job = ch.job
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.wait_time = -5.0
+        self.getball = False
         self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
         self.ACTION_PER_TIME = ch.ACTION_PER_TIME
         self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
-        self.getball = False
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.state_machine = StateMachine(self)
         self.state_machine.start()

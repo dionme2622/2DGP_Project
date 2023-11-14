@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import select_mode
 from ball import Ball
 from gray import Gray
 
@@ -27,10 +28,8 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            player1.handle_event(event)
-            player2.handle_event(event)
-            # select_mode.player1.handle_event(event)
-            # select_mode.player2.handle_event(event)
+            select_mode.player1.handle_event(event)
+            select_mode.player2.handle_event(event)
 
 
 def init():
@@ -43,14 +42,14 @@ def init():
     background = Background()
     game_world.add_object(background, 0)
 
-    player1 = Player1(Gray())
-    game_world.add_object(player1, 1)
-    game_world.add_collision_pair('player1:ball', player1, None)
-    player2 = Player2(Sands())
-    game_world.add_object(player2, 1)
-    game_world.add_collision_pair('player2:ball', player2, None)
+    # player1 = Player1(Gray())
+    # game_world.add_object(player1, 1)
 
-    ball = Ball(player1.x + 100, player1.y, 5)
+    # player2 = Player2(Sands())
+    # game_world.add_object(player2, 1)
+
+
+    ball = Ball(select_mode.player1.x + 100, select_mode.player1.y, 5)
     game_world.add_object(ball, 1)
     game_world.add_collision_pair('player1:ball', None, ball)
     game_world.add_collision_pair('player2:ball', None, ball)
