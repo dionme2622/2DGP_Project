@@ -410,7 +410,7 @@ class Player2:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
         if float(self.wait_time) - float(get_time()) > -5.0:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:

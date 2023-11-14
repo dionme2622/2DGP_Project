@@ -425,7 +425,7 @@ class Player1:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
         self.font.draw(WIDTH // 2 - 600, HEIGHT // 2 + 300, f'HP:{self.hp}', (0, 0, 0))
         self.font.draw(WIDTH // 2 - 500, HEIGHT // 2 + 300, f'MP:{self.mp}', (0, 0, 0))
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
         if group == 'player1:ball':
