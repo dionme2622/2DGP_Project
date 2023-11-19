@@ -9,6 +9,15 @@ from tkinter import *
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m
+RUN_SPEED_KMPH = 15.0  # 시속
+RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
+RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
+RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 4
 def Semi_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
 
@@ -69,21 +78,10 @@ class Idle:
 
     @staticmethod
     def enter(ch, e):
-        ch.dir_x = 0
         ch.frame = 0
-        if ch.job == 'sands':
-            ch.action = 1
-        elif ch.job == 'gray':
-            ch.action = 4
-
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
-        if skill_down(e):
-            if ch.mp == 3:
-                print("skill")
-                ch.state_machine.handle_event(('LETS_SKILL', 0))
-                ch.mp = 0
         if Semi_down(e):
             ch.angle += 5
         if Quote_down(e):
@@ -92,6 +90,8 @@ class Idle:
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
+
+        pass
 
     @staticmethod
     def do(ch):
@@ -99,118 +99,185 @@ class Idle:
 
     @staticmethod
     def draw(ch):
-        if ch.job == 'sands':
-            ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
-                                            ch.x, ch.y, 100, 150)
-        elif ch.job == 'gray':
-            ch.image.clip_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, ch.x, ch.y, 100, 150)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
-class Run:
 
+class RunRight:
     @staticmethod
     def enter(ch, e):
-        ch.frame = 0
-        if ch.job == 'sands':
-            ch.action = 1
-        elif ch.job == 'gray':
-            ch.action = 3
+        ch.action = 3
+        pass
 
-        if right_down(e):
-            ch.dir_right = 1
-            ch.dirX = 1
-        elif left_down(e):
-            ch.dir_left = 1
-            ch.dirX = -1
-        elif up_down(e):
-            ch.dir_up = 1
-            ch.dirY = 1
-        elif down_down(e):
-            ch.dir_down = 1
-            ch.dirY = -1
-
-        elif right_up(e):
-            ch.dir_right = 0
-            ch.dirX = 0
-
-            if ch.dir_left == 1:
-                ch.dirX = -1
-            elif ch.dir_up == 1:
-                ch.dirX, ch.dirY = 0, 1
-            elif ch.dir_down == 1:
-                ch.dirX, ch.dirY = 0, -1
-        elif left_up(e):
-            ch.dir_left = 0
-            ch.dirX = 0
-            if ch.dir_right == 1:
-                ch.dirX = 1
-            elif ch.dir_up == 1:
-                ch.dirX, ch.dirY = 0, 1
-            elif ch.dir_down == 1:
-                ch.dirX, ch.dirY = 0, -1
-        elif up_up(e):
-            ch.dir_up = 0
-            ch.dirY = 0
-            if ch.dir_down == 1:
-                ch.dirY = -1
-            elif ch.dir_right == 1:
-                ch.dirX, ch.dirY = 1, 0
-            elif ch.dir_left == 1:
-                ch.dirX, ch.dirY = -1, 0
-
-        elif down_up(e):
-            ch.dir_down = 0
-            ch.dirY = 0
-            if ch.dir_up == 1:
-                ch.dirY = 1
-            elif ch.dir_right == 1:
-                ch.dirX, ch.dirY = 1, 0
-            elif ch.dir_left == 1:
-                ch.dirX, ch.dirY = -1, 0
-
-        if ch.dir_left == 0 and ch.dir_right == 0 and ch.dir_up == 0 and ch.dir_down == 0:
-            ch.state_machine.handle_event(('LETS_IDLE', 0))
-
-        if def_down(e):
-            if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
-                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
-
-        if skill_down(e):
-            if ch.mp == 3:
-                print("skill")
-                ch.state_machine.handle_event(('LETS_SKILL', 0))
-                ch.mp = 0
-
-        if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
-            ch.angle -= 5
     @staticmethod
     def exit(ch, e):
-        if atk_down(e):
-            ch.shoot_ball()
+        pass
 
     @staticmethod
     def do(ch):
-        if ch.job == "sands":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
-        elif ch.job == "gray":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.x += RUN_SPEED_PPS * game_framework.frame_time
+        pass
 
-        if ch.x <= WIDTH // 2 + 40: ch.x = WIDTH // 2 + 40
-        elif ch.x >= WIDTH - 230: ch.x = WIDTH - 230
-        ch.x += ch.dirX * ch.RUN_SPEED_PPS * game_framework.frame_time
-        if ch.y >= 800 - 20:
-            ch.y = 800 - 20
-        elif ch.y <= 100 - 20:
-            ch.y = 100 - 20
-        ch.y += ch.dirY * ch.RUN_SPEED_PPS * game_framework.frame_time
     @staticmethod
     def draw(ch):
-        if ch.job == 'sands':
-            ch.image.clip_draw(int(ch.frame) * 250, ch.action * 420, 250, 330,
-                               ch.x, ch.y, 100, 150)
-        elif ch.job == "gray":
-            ch.image.clip_draw(int(ch.frame) * 95, ch.action * 130, 85, 120, ch.x, ch.y, 100, 150)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+
+class RunRightUp:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 3
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.x += RUN_SPEED_PPS * game_framework.frame_time
+        ch.y += RUN_SPEED_PPS * game_framework.frame_time
+
+        pass
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+class RunRightDown:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 3
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.x += RUN_SPEED_PPS * game_framework.frame_time
+        ch.y -= RUN_SPEED_PPS * game_framework.frame_time
+        pass
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+
+
+
+class RunLeft:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 4
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.x -= RUN_SPEED_PPS * game_framework.frame_time
+
+
+        pass
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+
+class RunLeftUp:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 4
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.x -= RUN_SPEED_PPS * game_framework.frame_time
+        ch.y += RUN_SPEED_PPS * game_framework.frame_time
+
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+
+class RunLeftDown:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 4
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.x -= RUN_SPEED_PPS * game_framework.frame_time
+        ch.y -= RUN_SPEED_PPS * game_framework.frame_time
+
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+
+
+
+class RunUp:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 2
+
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.y += RUN_SPEED_PPS * game_framework.frame_time
+        pass
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+
+class RunDown:
+    @staticmethod
+    def enter(ch, e):
+        ch.action = 5
+        pass
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        ch.y -= RUN_SPEED_PPS * game_framework.frame_time
+        pass
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 class Attack:
 
@@ -315,38 +382,30 @@ class Damage:
             ch.image.clip_draw(int(ch.frame) * 85, 270, 85, 110, ch.x, ch.y, 100, 150)
 
 
-class Skill:
 
-    @staticmethod
-    def enter(ch, e):
-        pass
-
-    @staticmethod
-    def exit(ch, e):
-        pass
-
-    @staticmethod
-    def do(ch):
-        pass
-
-    @staticmethod
-    def draw(ch):
-        pass
 
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
         self.cur_state = Idle
         self.transitions = {
-            Idle: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run, up_up: Run,
-                   down_down: Run, down_up: Run, Semi_down: Idle, Quote_down: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense, lets_skill: Skill},
-            Run: {right_down: Run, left_down: Run, right_up: Run, left_up: Run, up_down: Run,
-                  up_up: Run, down_down: Run, down_up: Run, Semi_down: Run, Quote_down: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle,
-                  lets_defense: Defense, lets_skill: Skill},
+            Idle: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, up_down: RunUp,
+                   down_down: RunDown, up_up: RunDown, down_up: RunUp},
+            RunRight: {right_up: Idle, left_down: Idle, up_down: RunRightUp, up_up: RunRightDown,
+                       down_down: RunRightDown, down_up: RunRightUp},
+            RunRightUp: {up_up: RunRight, right_up: RunUp, left_down: RunUp, down_down: RunRight},
+            RunUp: {up_up: Idle, left_down: RunLeftUp, down_down: Idle, right_down: RunRightUp,
+                    left_up: RunRightUp, right_up: RunLeftUp},
+            RunLeftUp: {right_down: RunUp, down_down: RunLeft, left_up: RunUp, up_up: RunLeft},
+            RunLeft: {left_up: Idle, up_down: RunLeftUp, right_down: Idle, down_down: RunLeftDown,
+                      up_up: RunLeftDown, down_up: RunLeftUp},
+            RunLeftDown: {left_up: RunDown, down_up: RunLeft, up_down: RunLeft, right_down: RunDown},
+            RunDown: {down_up: Idle, left_down: RunLeftDown, up_down: Idle, right_down: RunRightDown,
+                      left_up: RunRightDown, right_up: RunLeftDown},
+            RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle},
-            Damage: {lets_idle: Idle},
-            Skill: {lets_idle: Idle}
+            Damage: {lets_idle: Idle}
         }
 
     def start(self):
@@ -368,25 +427,18 @@ class StateMachine:
     def draw(self):
         self.cur_state.draw(self.ch)
 
-class Player2:
-    def __init__(self, ch):
+class Redteam:
+    image = None
+    def __init__(self):
+        if Redteam.image == None:
+            Redteam.image = load_image("./character/sands_red.png")
         self.x, self.y = WIDTH - 250, 500
+        self.frame, self.action = 0, 0
         self.angle = 0
-        self.hp, self.mp, self.speed, self.attack_speed = ch.hp, ch.mp, ch.speed, ch.attack_speed
-        self.frame = ch.frame
-        self.action = ch.action  # 오른쪽 IDLE
-        self.dirX = ch.dirX
-        self.dirY = ch.dirY
+        self.getball = True
         self.shoot = False
-        self.image = ch.image
-        self.job = ch.job
-        self.font = load_font('./object/ENCR10B.TTF', 30)
         self.wait_time = -5.0
-        self.getball = False
-        self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
-        self.ACTION_PER_TIME = ch.ACTION_PER_TIME
-        self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
-        self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
+        self.font = load_font('./object/ENCR10B.TTF', 30)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
@@ -415,8 +467,6 @@ class Player2:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
-        self.font.draw(WIDTH // 2 + 400, HEIGHT // 2 + 300, f'HP:{self.hp}', (0, 0, 0))
-        self.font.draw(WIDTH // 2 + 500, HEIGHT // 2 + 300, f'MP:{self.mp}', (0, 0, 0))
     def handle_collision(self, group, other):
         if group == 'player2:ball':
             # 공이 player2 에게 넘어감
