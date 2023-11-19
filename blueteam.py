@@ -8,7 +8,7 @@ root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 15.0  # 시속
+RUN_SPEED_KMPH = 45.0  # 시속
 RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
@@ -117,6 +117,8 @@ class RunRight:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -139,7 +141,8 @@ class RunRightUp:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
-
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -161,6 +164,8 @@ class RunRightDown:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -184,8 +189,9 @@ class RunLeft:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
-
-
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 30)
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -208,7 +214,8 @@ class RunLeftUp:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
-
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
 
     @staticmethod
     def draw(ch):
@@ -230,7 +237,8 @@ class RunLeftDown:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
-
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
 
     @staticmethod
     def draw(ch):
@@ -253,6 +261,9 @@ class RunUp:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
+        ch.y = clamp(180, ch.y, 700)
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -274,6 +285,9 @@ class RunDown:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
+        ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
+        ch.y = clamp(180, ch.y, 700)
+
         pass
 
     @staticmethod
@@ -433,7 +447,7 @@ class Blueteam:
     def __init__(self):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
-        self.x, self.y = 250, 500
+        self.x, self.y = 0 + 300, 480
         self.frame, self.action = 0, 0
         self.angle = 0
         self.getball = True
