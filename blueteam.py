@@ -378,16 +378,16 @@ class StateMachine:
 
 
 class Player1:
+    image = None
     def __init__(self, ch):
+        if Player1.image == None:
+            Player1.image = Player1.image
         self.x, self.y = 250, 500
         self.angle = 0
-        self.hp, self.mp, self.speed, self.attack_speed = ch.hp, ch.mp, ch.speed, ch.attack_speed
-        self.frame = ch.frame
-        self.action = ch.action  # 오른쪽 IDLE
+        self.frame, self.action = 0, 0
         self.dirX = ch.dirX
         self.dirY = ch.dirY
         self.shoot = False
-        self.image = ch.image
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.job = ch.job
         self.wait_time = -5.0
