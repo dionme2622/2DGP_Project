@@ -1,5 +1,5 @@
-from pico2d import load_image, draw_rectangle, get_time, load_font
-
+#from pico2d import load_image, draw_rectangle, get_time, load_font, clip_draw
+from pico2d import *
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_e, SDLK_a, SDLK_s
 from tkinter import *
@@ -79,7 +79,6 @@ class Idle:
 
     @staticmethod
     def enter(ch, e):
-        ch.dir_x = 0
         ch.frame = 0
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
@@ -101,7 +100,7 @@ class Idle:
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, 500, 500, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunRight:
@@ -122,7 +121,7 @@ class RunRight:
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunRightUp:
@@ -137,7 +136,7 @@ class RunRightUp:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
 
@@ -145,7 +144,7 @@ class RunRightUp:
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 class RunRightDown:
     @staticmethod
@@ -159,14 +158,14 @@ class RunRightDown:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
         pass
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 
@@ -183,7 +182,7 @@ class RunLeft:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
 
 
@@ -191,7 +190,7 @@ class RunLeft:
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunLeftUp:
@@ -206,14 +205,14 @@ class RunLeftUp:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
 
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunLeftDown:
@@ -228,14 +227,14 @@ class RunLeftDown:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
 
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 
@@ -252,13 +251,13 @@ class RunUp:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
         pass
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunDown:
@@ -273,13 +272,13 @@ class RunDown:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
         pass
 
     @staticmethod
     def draw(ch):
-        ch.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class Attack:
@@ -431,17 +430,14 @@ class StateMachine:
 
 class Blueteam:
     image = None
-    def __init__(self, ch):
+    def __init__(self):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
         self.x, self.y = 250, 500
         self.frame, self.action = 0, 0
-        self.dirX = ch.dirX
-        self.dirY = ch.dirY
         self.angle = 0
         self.getball = True
         self.shoot = False
-        self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
         self.wait_time = -5.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.state_machine = StateMachine(self)
