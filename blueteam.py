@@ -7,6 +7,17 @@ from tkinter import *
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m
+RUN_SPEED_KMPH = 15.0  # 시속
+RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
+RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
+RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 4
+
+
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
@@ -53,8 +64,6 @@ def atk_down(e):
 def def_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
 
-def skill_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_e
 
 def lets_idle(e):
     return e[0] == 'LETS_IDLE'
@@ -64,8 +73,6 @@ def lets_defense(e):
     return e[0] == 'LETS_DEFENSE'
 
 
-def lets_skill(e):
-    return e[0] == 'LETS_SKILL'
 
 
 class Idle:
@@ -81,11 +88,6 @@ class Idle:
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
-        if skill_down(e):
-            if ch.mp == 3:
-                print("skill")
-                ch.state_machine.handle_event(('LETS_SKILL', 0))
-                ch.mp = 0
         if a_down(e):
             ch.angle += 5
         if s_down(e):
@@ -180,9 +182,6 @@ class Run:
             if get_time() - ch.wait_time > 5.0:   # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
 
-        if skill_down(e):
-            if ch.mp == 3:
-                ch.state_machine.handle_event(('LETS_SKILL', 0))
 
         if a_down(e):
             ch.angle += 5
@@ -322,24 +321,6 @@ class Damage:
             ch.image.clip_composite_draw(int(ch.frame) * 85, 270, 85, 110, 0, 'h',
                                          ch.x, ch.y, 100, 150)
 
-class Skill:
-
-    @staticmethod
-    def enter(ch, e):
-        pass
-
-    @staticmethod
-    def exit(ch, e):
-        pass
-
-    @staticmethod
-    def do(ch):
-        pass
-
-    @staticmethod
-    def draw(ch):
-        pass
-
 
 class StateMachine:
     def __init__(self, ch):
@@ -347,14 +328,12 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run, r_up: Run,
-                   f_down: Run, f_up: Run, a_down: Idle, s_down: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense, lets_skill: Skill},
+                   f_down: Run, f_up: Run, a_down: Idle, s_down: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense},
             Run: {g_down: Run, d_down: Run, g_up: Run, d_up: Run, r_down: Run,
-                  r_up: Run, f_down: Run, f_up: Run, a_down: Run, s_down: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense
-                  , lets_skill: Skill},
+                  r_up: Run, f_down: Run, f_up: Run, a_down: Run, s_down: Run, lets_idle: Idle, atk_down: Attack, def_down: Idle, skill_down: Idle, lets_defense: Defense},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle},
             Damage: {lets_idle: Idle},
-            Skill: {lets_idle: Idle}
         }
 
     def start(self):
@@ -377,25 +356,21 @@ class StateMachine:
         self.cur_state.draw(self.ch)
 
 
-class Player1:
+class Blueteam:
     image = None
     def __init__(self, ch):
-        if Player1.image == None:
-            Player1.image = Player1.image
+        if Blueteam.image == None:
+            Blueteam.image = load_image("./character/sands_blue.png")
         self.x, self.y = 250, 500
-        self.angle = 0
         self.frame, self.action = 0, 0
         self.dirX = ch.dirX
         self.dirY = ch.dirY
+        self.angle = 0
+        self.getball = True
         self.shoot = False
         self.dir_left, self.dir_right, self.dir_up, self.dir_down = ch.dir_left, ch.dir_right, ch.dir_up, ch.dir_down
-        self.job = ch.job
         self.wait_time = -5.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
-        self.FRAMES_PER_ACTION = ch.FRAMES_PER_ACTION
-        self.ACTION_PER_TIME = ch.ACTION_PER_TIME
-        self.RUN_SPEED_PPS = ch.RUN_SPEED_PPS
-        self.getball = True
         self.state_machine = StateMachine(self)
         self.state_machine.start()
     def shoot_ball(self):
@@ -423,22 +398,21 @@ class Player1:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
-        self.font.draw(WIDTH // 2 - 600, HEIGHT // 2 + 300, f'HP:{self.hp}', (0, 0, 0))
-        self.font.draw(WIDTH // 2 - 500, HEIGHT // 2 + 300, f'MP:{self.mp}', (0, 0, 0))
         #draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
-        if group == 'player1:ball':
-            # 공이 player1 에게 넘어감
-            #self.getball = True
-            # 만약 Defense 상태가 아니라면
-            if self.state_machine.cur_state != Defense:
-                # player1 쳬력 1칸 감소
-                self.hp -= 1
-                # 피격 animation 출력
-                self.state_machine.cur_state = Damage
-            if self.hp == 0:
-                print("player1 사망")
-            # player1 스킬 게이지 1칸 증가
-            if self.mp < 3:
-                self.mp += 1
+        # if group == 'player1:ball':
+        #     # 공이 player1 에게 넘어감
+        #     #self.getball = True
+        #     # 만약 Defense 상태가 아니라면
+        #     if self.state_machine.cur_state != Defense:
+        #         # player1 쳬력 1칸 감소
+        #         self.hp -= 1
+        #         # 피격 animation 출력
+        #         self.state_machine.cur_state = Damage
+        #     if self.hp == 0:
+        #         print("player1 사망")
+        #     # player1 스킬 게이지 1칸 증가
+        #     if self.mp < 3:
+        #         self.mp += 1
+        pass
