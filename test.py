@@ -1,8 +1,13 @@
 from pico2d import *
-WIDTH, HEIGHT = 1280, 1024
+#WIDTH, HEIGHT = 1280, 1024
+
+from tkinter import *
+
+root = Tk()
+WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 open_canvas(WIDTH, HEIGHT)
 
-# Character = load_image("Barnard Gray.png")
+character = load_image("./character/sands_blue.png")
 # Background = load_image("GROUND.png")
 arrow = load_image("./object/Arrow.png")
 running = True
@@ -26,14 +31,23 @@ def draw_character(x, y):
     global frame
     global move
     global radian
-    frame = (frame + 1) % 4
+    global character
+    frame = (frame + 1) % 2
     move += 10
+    action = 1
     #radian += 1
     r = 3
     radian += r
-    print(radian)
     angle = float(radian) * 2 * 3.14 / 180
-    arrow.clip_composite_draw(0, 0, 300, 160, angle, ' ', 540, 540, 300, 160)
+    #arrow.clip_composite_draw(0, 0, 300, 160, angle, ' ', 540, 540, 300, 160)
+    #블루 샌즈
+    if action == 1:
+        if frame == 0:
+            character.clip_draw(frame * 29, action * 52, 29, 52 - 14, 250, 500, 100, 100)
+        elif frame == 1:
+            character.clip_draw(frame * 32, action * 52, 32, 52 - 14, 250, 500, 100, 100)
+    else :character.clip_draw(frame * 29 ,action * 52, 29, 52 - 14, 250, 500, 100, 100)     # 피격 시
+
     # 샌즈
     # Character.clip_draw(frame * 250, 420, 250, 330, x - 150 - move, y - 200, 100, 150)     # 이동 모션
     #
