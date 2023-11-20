@@ -299,15 +299,16 @@ class Attack:
 
     @staticmethod
     def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
     def draw(ch):
-        if ch.frame == 0:
-            ch.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
-        elif ch.frame == 1:
-            ch.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
+        if ch.frame < 1:
+            ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        elif ch.frame >= 1:
+            ch.image.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class Defense:
@@ -323,15 +324,16 @@ class Defense:
 
     @staticmethod
     def do(ch):
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
     def draw(ch):
-        if ch.frame == 0:
-            ch.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
-        elif ch.frame == 1:
-            ch.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
+        if ch.frame < 1:
+            ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        elif ch.frame >= 1:
+            ch.image.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
 class Damage:
 
@@ -347,7 +349,7 @@ class Damage:
 
     @staticmethod
     def do(ch):
-        ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
 
@@ -365,7 +367,7 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, up_down: RunUp,
-                   down_down: RunDown, up_up: RunDown, down_up: RunUp},
+                   down_down: RunDown, up_up: RunDown, down_up: RunUp, atk_down: Attack, def_down: Defense},
             RunRight: {right_up: Idle, left_down: Idle, up_down: RunRightUp, up_up: RunRightDown,
                        down_down: RunRightDown, down_up: RunRightUp},
             RunRightUp: {up_up: RunRight, right_up: RunUp, left_down: RunUp, down_down: RunRight},
