@@ -299,12 +299,8 @@ class Attack:
 
     @staticmethod
     def enter(ch, e):
-        ch.dir_x = 0
+        ch.action = 1
         ch.frame = 0
-        if ch.job == 'sands':
-            ch.action = 2
-        elif ch.job == 'gray':
-            ch.action = 1
 
     @staticmethod
     def exit(ch, e):
@@ -312,35 +308,23 @@ class Attack:
 
     @staticmethod
     def do(ch):
-        if ch.job == "sands":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 2:
-                ch.state_machine.handle_event(('LETS_IDLE', 0))
-        elif ch.job == "gray":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 4:
-                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        if ch.frame >= 2:
+            ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
     def draw(ch):
-        if ch.job == 'sands':
-            ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
-                                         ch.x, ch.y, 100, 150)
-        elif ch.job == 'gray':
-            ch.image.clip_composite_draw(int(ch.frame) * 85, ch.action * 130, 85, 120, 0, 'h',
-                                         ch.x, ch.y, 100, 150)
+        if ch.frame == 0:
+            ch.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        elif ch.frame == 1:
+            ch.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class Defense:
     @staticmethod
     def enter(ch, e):
-        ch.dir_x = 0
+        ch.action = 1
         ch.frame = 0
-        if ch.job == 'sands':
-            ch.action = 2
-        elif ch.job == 'gray':
-            ch.action = 1
-        print("player1 defense!")
+
 
     @staticmethod
     def exit(ch, e):
@@ -348,29 +332,21 @@ class Defense:
 
     @staticmethod
     def do(ch):
-        if ch.job == "sands":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 2:
-                ch.state_machine.handle_event(('LETS_IDLE', 0))
-        elif ch.job == "gray":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 2:
-                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        if ch.frame >= 2:
+            ch.state_machine.handle_event(('LETS_IDLE', 0))
 
     @staticmethod
     def draw(ch):
-        if ch.job == 'sands':
-            ch.image.clip_composite_draw(int(ch.frame) * 250, 720, 250, 360, 0, 'h',
-                                         ch.x, ch.y, 100, 150)
-        elif ch.job == 'gray':
-            ch.image.clip_composite_draw(int(ch.frame) * 85, 130, 85, 120, 0, 'h',
-                                         ch.x, ch.y, 100, 150)
+        if ch.frame == 0:
+            ch.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        elif ch.frame == 1:
+            ch.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
 class Damage:
 
     @staticmethod
     def enter(ch, e):
-        ch.dir_x = 0
+        ch.action = 0
         ch.frame = 0
 
 
@@ -380,22 +356,14 @@ class Damage:
 
     @staticmethod
     def do(ch):
-        if ch.job == "sands":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 2:
-                ch.state_machine.handle_event(('LETS_IDLE', 0))
-        elif ch.job == "gray":
-            ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
-            if ch.frame >= 2:
-                ch.state_machine.handle_event(('LETS_IDLE', 0))
+        ch.frame = (ch.frame + ch.FRAMES_PER_ACTION * ch.ACTION_PER_TIME * game_framework.frame_time)
+        if ch.frame >= 2:
+            ch.state_machine.handle_event(('LETS_IDLE', 0))
+
 
     @staticmethod
     def draw(ch):
-        if ch.job == "sands":
-            ch.image.clip_composite_draw(int(ch.frame), 50, 250, 360, 0, 'h', ch.x, ch.y, 100, 150)
-        elif ch.job == "gray":
-            ch.image.clip_composite_draw(int(ch.frame) * 85, 270, 85, 110, 0, 'h',
-                                         ch.x, ch.y, 100, 150)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class StateMachine:
@@ -452,7 +420,7 @@ class Blueteam:
         self.angle = 0
         self.getball = True
         self.shoot = False
-        self.wait_time = -5.0
+        self.wait_time = -2.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
@@ -462,12 +430,9 @@ class Blueteam:
             #self.getball = False
 
     def get_bb(self):
-        if self.job == 'sands':
-            return self.x - 40, self.y - 60, self.x + 40, self.y + 50
-        elif self.job == 'gray':
-            return self.x - 30, self.y - 60, self.x + 50, self.y + 50
-        else:
-            return
+        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+
+
 
     def update(self):
         self.state_machine.update()
@@ -481,7 +446,7 @@ class Blueteam:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
-        #draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
         # if group == 'player1:ball':
