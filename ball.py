@@ -1,9 +1,11 @@
 from math import tan
 import random
 
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 
 from tkinter import *
+
+import play_mode
 import select_mode, game_framework
 
 root = Tk()
@@ -28,9 +30,17 @@ class Ball:
 
     def draw(self):
         self.image.draw(self.x, self.y)
-        #draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_bb())
 
     def update(self):
+        for i in range(0, 5):
+            if play_mode.player[i].getball == True:
+                self.x = play_mode.player[i].x + 80
+                self.y = play_mode.player[i].y
+        for i in range(5, 10):
+            if play_mode.player[i].getball == True:
+                self.x = play_mode.player[i].x - 80
+                self.y = play_mode.player[i].y
     #     angle1 = select_mode.player1.angle * 2 * 3.14 / 180
     #     angle2 = select_mode.player2.angle * 2 * 3.14 / 180
     #

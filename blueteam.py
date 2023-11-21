@@ -450,13 +450,14 @@ class Blueteam:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
-        #draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
         if group == 'Blueteam:ball':
             if play_mode.ball.state == 'floor':
                 print("블루팀 공 주움")
                 self.getball = True
+                play_mode.ball.state = 'Blueteam_get'
         # if group == 'player1:ball':
         #     # 공이 player1 에게 넘어감
         #     #self.getball = True

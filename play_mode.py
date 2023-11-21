@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework, game_world
+from arrow import Arrow
 
 from background import Background
 from tkinter import *
@@ -115,10 +116,9 @@ def init():
     # Redteam
     for i in range(5, 10):
         game_world.add_collision_pair('Redteam:ball', player[i], ball)
-    # game_world.add_collision_pair('player2:ball', None, ball)
-    #
-    # arrow = Arrow()
-    # game_world.add_object(arrow, 1)
+
+    arrow = Arrow()
+    game_world.add_object(arrow, 1)
     running = True
 
 
