@@ -108,7 +108,13 @@ class RunRight:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
-        pass
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
 
     @staticmethod
     def exit(ch, e):
@@ -131,6 +137,13 @@ class RunRightUp:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
         pass
 
     @staticmethod
@@ -154,6 +167,13 @@ class RunRightDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
         pass
 
     @staticmethod
@@ -179,6 +199,13 @@ class RunLeft:
     @staticmethod
     def enter(ch, e):
         ch.action = 4
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
         pass
 
     @staticmethod
@@ -202,6 +229,13 @@ class RunLeftUp:
     @staticmethod
     def enter(ch, e):
         ch.action = 4
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
         pass
 
     @staticmethod
@@ -225,6 +259,13 @@ class RunLeftDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 4
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
         pass
 
     @staticmethod
@@ -250,7 +291,13 @@ class RunUp:
     @staticmethod
     def enter(ch, e):
         ch.action = 2
-
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
 
     @staticmethod
     def exit(ch, e):
@@ -272,6 +319,13 @@ class RunDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 5
+        if def_down(e):
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+                ch.state_machine.handle_event(('LETS_DEFENSE', 0))
+        if Semi_down(e):
+            ch.angle += 5
+        if Quote_down(e):
+            ch.angle -= 5
         pass
 
     @staticmethod
@@ -370,22 +424,31 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, up_down: RunUp,
-                   down_down: RunDown, up_up: RunDown, down_up: RunUp, atk_down: Attack, def_down: Defense},
+                   down_down: RunDown, up_up: RunDown, down_up: RunUp, atk_down: Attack, def_down: Idle, Semi_down: Idle,
+                   Quote_down: Idle, lets_defense: Defense},
             RunRight: {right_up: Idle, left_down: Idle, up_down: RunRightUp, up_up: RunRightDown,
-                       down_down: RunRightDown, down_up: RunRightUp},
-            RunRightUp: {up_up: RunRight, right_up: RunUp, left_down: RunUp, down_down: RunRight},
+                       down_down: RunRightDown, down_up: RunRightUp, atk_down: Attack, def_down: RunRight, Semi_down: RunRight,
+                       Quote_down: RunRight, lets_defense: Defense},
+            RunRightUp: {up_up: RunRight, right_up: RunUp, left_down: RunUp, down_down: RunRight, atk_down: Attack,
+                         def_down: RunRightUp, Semi_down: RunRightUp, Quote_down: RunRightUp, lets_defense: Defense},
             RunUp: {up_up: Idle, left_down: RunLeftUp, down_down: Idle, right_down: RunRightUp,
-                    left_up: RunRightUp, right_up: RunLeftUp},
-            RunLeftUp: {right_down: RunUp, down_down: RunLeft, left_up: RunUp, up_up: RunLeft},
+                    left_up: RunRightUp, right_up: RunLeftUp, atk_down: Attack, def_down: RunUp, Semi_down: RunUp, Quote_down: RunUp,
+                    lets_defense: Defense},
+            RunLeftUp: {right_down: RunUp, down_down: RunLeft, left_up: RunUp, up_up: RunLeft,
+                        atk_down: Attack, def_down: RunLeftUp, Semi_down: RunLeftUp, Quote_down: RunLeftUp,
+                        lets_defense: Defense},
             RunLeft: {left_up: Idle, up_down: RunLeftUp, right_down: Idle, down_down: RunLeftDown,
-                      up_up: RunLeftDown, down_up: RunLeftUp},
-            RunLeftDown: {left_up: RunDown, down_up: RunLeft, up_down: RunLeft, right_down: RunDown},
+                      up_up: RunLeftDown, down_up: RunLeftUp, atk_down: Attack, def_down: RunLeft, Semi_down: RunLeft,
+                      Quote_down: RunLeft, lets_defense: Defense},
+            RunLeftDown: {left_up: RunDown, down_up: RunLeft, up_down: RunLeft, right_down: RunDown,
+                          atk_down: Attack, def_down: RunLeftDown, Semi_down: RunLeftDown, Quote_down: RunLeftDown,
+                          lets_defense: Defense},
             RunDown: {down_up: Idle, left_down: RunLeftDown, up_down: Idle, right_down: RunRightDown,
-                      left_up: RunRightDown, right_up: RunLeftDown},
-            RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight},
-            Attack: {lets_idle: Idle},
-            Defense: {lets_idle: Idle},
-            Damage: {lets_idle: Idle}
+                      left_up: RunRightDown, right_up: RunLeftDown,
+                      atk_down: Attack, def_down: RunDown, Semi_down: RunDown, Quote_down: RunDown, lets_defense: Defense},
+            RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight,
+                           atk_down: Attack, def_down: RunRightDown, Semi_down: RunRightDown, Quote_down: RunRightDown,
+                           lets_defense: Defense},
         }
 
     def start(self):
