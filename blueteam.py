@@ -515,10 +515,13 @@ class Blueteam:
 
     def handle_collision(self, group, other):
         if group == 'Blueteam:ball':
-            if play_mode.ball.state == 'floor':
+            if play_mode.ball.state == 'floor':             # 공이 바닥에 놓여져있다면
                 print("블루팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Blueteam_get'
+            if play_mode.ball.state == 'Redteam_get':       # 공을 레드팀이 들고있었다면
+                play_mode.ball.state = 'floor'
+                play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
         # if group == 'player1:ball':
         #     # 공이 player1 에게 넘어감
         #     #self.getball = True
