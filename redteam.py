@@ -125,8 +125,9 @@ class RunRight:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -156,8 +157,9 @@ class RunRightUp:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -186,8 +188,9 @@ class RunRightDown:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x += RUN_SPEED_PPS * game_framework.frame_time
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -217,8 +220,9 @@ class RunLeft:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
         pass
 
     @staticmethod
@@ -248,8 +252,9 @@ class RunLeftUp:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
 
     @staticmethod
     def draw(ch):
@@ -278,8 +283,9 @@ class RunLeftDown:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.x -= RUN_SPEED_PPS * game_framework.frame_time
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
 
     @staticmethod
     def draw(ch):
@@ -308,8 +314,9 @@ class RunUp:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
 
     @staticmethod
     def draw(ch):
@@ -337,8 +344,9 @@ class RunDown:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y -= RUN_SPEED_PPS * game_framework.frame_time
-        ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
-        ch.y = clamp(180, ch.y, 700)
+        if ch.state == 'alive':
+            ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 270)
+            ch.y = clamp(180, ch.y, 700)
 
     @staticmethod
     def draw(ch):
@@ -481,6 +489,7 @@ class Redteam:
             Redteam.image = load_image("./character/sands_red.png")
         self.x, self.y, self.num = x, y, num
         self.frame, self.action = 0, 0
+        self.state = 'alive'
         self.angle = 0
         self.getball = False
         self.shoot = False
@@ -522,7 +531,7 @@ class Redteam:
                 for i in range(0, 10):
                     play_mode.player[i].shoot = False
                 play_mode.ball.state = 'floor'
-                self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
+                self.x, self.y, self.state = 200, 400, 'dead'
 
         # if group == 'player2:ball':
         #     # 공이 player2 에게 넘어감

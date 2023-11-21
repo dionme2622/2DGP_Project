@@ -318,7 +318,6 @@ class RunUp:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         ch.y += RUN_SPEED_PPS * game_framework.frame_time
-        ch.y = clamp(180, ch.y, 700)
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
@@ -534,7 +533,7 @@ class Blueteam:
                 for i in range(0, 10):
                     play_mode.player[i].shoot = False
                 play_mode.ball.state = 'floor'
-                self.x, self.y, self.state = 200, 400, 'dead'
+                self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
                 #game_world.remove_object(self)
 
         # if group == 'player1:ball':
