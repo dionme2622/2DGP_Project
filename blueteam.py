@@ -3,6 +3,8 @@ from pico2d import *
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_a, SDLK_s
 from tkinter import *
+
+import game_world
 import play_mode
 from ball import Ball
 
@@ -490,8 +492,8 @@ class Blueteam:
         self.state_machine.start()
     def shoot_ball(self):
         if self.getball == True:
-            self.shoot = True
             self.getball = False
+            self.shoot = True
 
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
@@ -507,10 +509,10 @@ class Blueteam:
     def draw(self):
         self.state_machine.draw()
         self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
-        if float(self.wait_time) - float(get_time()) > -5.0:
-            self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
-        else:
-            self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
+        # if float(self.wait_time) - float(get_time()) > -5.0:
+        #     self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
+        # else:
+        #     self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
         draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
@@ -519,9 +521,14 @@ class Blueteam:
                 print("블루팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Blueteam_get'
-            if play_mode.ball.state == 'Redteam_get':       # 공을 레드팀이 들고있었다면
-                play_mode.ball.state = 'floor'
+            elif play_mode.ball.state == 'Redteam_get':       # 공을 레드팀이 들고있었다면
                 play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
+                for i in range(0, 10):
+                    play_mode.player[i].shoot = False
+                play_mode.ball.state = 'floor'
+                self.x, self.y, self.state = 200, 400, 'dead'
+                #game_world.remove_object(self)
+
         # if group == 'player1:ball':
         #     # 공이 player1 에게 넘어감
         #     #self.getball = True

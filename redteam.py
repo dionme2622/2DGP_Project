@@ -5,6 +5,7 @@ from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DO
 
 from tkinter import *
 
+import game_world
 import play_mode
 from ball import Ball
 
@@ -490,8 +491,8 @@ class Redteam:
 
     def shoot_ball(self):
         if self.getball == True:
-            self.shoot = True
             self.getball = False
+            self.shoot = True
 
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
@@ -515,10 +516,14 @@ class Redteam:
                 print("레드팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Redteam_get'
-            if play_mode.ball.state == 'Blueteam_get':       # 공을 블루팀이 들고있었다면
-                play_mode.ball.state = 'floor'
+            elif play_mode.ball.state == 'Blueteam_get':       # 공을 블루팀이 들고있었다면
                 self.state_machine.cur_state = Damage
                 play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
+                for i in range(0, 10):
+                    play_mode.player[i].shoot = False
+                play_mode.ball.state = 'floor'
+                self.x, self.y, self.state = WIDTH - 200, 400, 'dead'
+
         # if group == 'player2:ball':
         #     # 공이 player2 에게 넘어감
         #     #self.getball = True

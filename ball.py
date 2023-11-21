@@ -51,8 +51,8 @@ class Ball:
                 self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
         for i in range(5, 10):
             if play_mode.player[i].shoot == True:
-                self.x += self.velocity * 100 * game_framework.frame_time
-                self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
+                self.x -= self.velocity * 100 * game_framework.frame_time
+                self.y -= self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
                 #         self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
         # if play_mode.player1.getball == True and play_mode.player2.getball == False:
         #     if play_mode.player1.shoot == True:
