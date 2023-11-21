@@ -5,6 +5,9 @@ from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DO
 
 from tkinter import *
 
+import play_mode
+from ball import Ball
+
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
@@ -406,10 +409,10 @@ class StateMachine:
 
 class Redteam:
     image = None
-    def __init__(self, x, y):
+    def __init__(self, x, y, num):
         if Redteam.image == None:
             Redteam.image = load_image("./character/sands_red.png")
-        self.x, self.y = x, y
+        self.x, self.y, self.num = x, y, num
         self.frame, self.action = 0, 0
         self.angle = 0
         self.getball = True
@@ -425,7 +428,7 @@ class Redteam:
             #self.getball = False
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
     def update(self):
         self.state_machine.update()
@@ -434,23 +437,29 @@ class Redteam:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+        self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
+        #draw_rectangle(*self.get_bb())
         if float(self.wait_time) - float(get_time()) > -5.0:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
     def handle_collision(self, group, other):
-        if group == 'player2:ball':
-            # 공이 player2 에게 넘어감
-            #self.getball = True
-            # 만약 Defense 상태가 아니라면
-            if self.state_machine.cur_state != Defense:
-                # player2 쳬력 1칸 감소
-                self.hp -= 1
-                # 피격 animation 출력.
-                self.state_machine.cur_state = Damage
-            if self.hp == 0:
-                print("player1 사망")
-            # player2 스킬 게이지 1칸 증가
-            if self.mp < 3:
-                self.mp += 1
+        if group == 'Redteam:ball':
+            if play_mode.ball.state == 'floor':
+                print("레드팀 공 주움")
+                self.getball = True
+        # if group == 'player2:ball':
+        #     # 공이 player2 에게 넘어감
+        #     #self.getball = True
+        #     # 만약 Defense 상태가 아니라면
+        #     if self.state_machine.cur_state != Defense:
+        #         # player2 쳬력 1칸 감소
+        #         self.hp -= 1
+        #         # 피격 animation 출력.
+        #         self.state_machine.cur_state = Damage
+        #     if self.hp == 0:
+        #         print("player1 사망")
+        #     # player2 스킬 게이지 1칸 증가
+        #     if self.mp < 3:
+        #         self.mp += 1
+        pass

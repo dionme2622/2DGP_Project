@@ -3,6 +3,8 @@ from pico2d import *
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_a, SDLK_s
 from tkinter import *
+import play_mode
+from ball import Ball
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -76,7 +78,6 @@ def lets_defense(e):
 
 
 class Idle:
-
     @staticmethod
     def enter(ch, e):
         ch.frame = 0
@@ -414,13 +415,13 @@ class StateMachine:
 
 class Blueteam:
     image = None
-    def __init__(self, x, y):
+    def __init__(self, x, y, num):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
-        self.x, self.y = x, y
+        self.x, self.y, self.num = x, y, num
         self.frame, self.action = 0, 0
         self.angle = 0
-        self.getball = True
+        self.getball = False
         self.shoot = False
         self.wait_time = -2.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
@@ -432,7 +433,7 @@ class Blueteam:
             #self.getball = False
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
 
 
@@ -444,13 +445,18 @@ class Blueteam:
 
     def draw(self):
         self.state_machine.draw()
+        self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
         if float(self.wait_time) - float(get_time()) > -5.0:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
         else:
             self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
+        if group == 'Blueteam:ball':
+            if play_mode.ball.state == 'floor':
+                print("블루팀 공 주움")
+                self.getball = True
         # if group == 'player1:ball':
         #     # 공이 player1 에게 넘어감
         #     #self.getball = True

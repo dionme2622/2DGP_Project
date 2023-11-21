@@ -4,6 +4,8 @@ import game_framework, game_world
 
 from background import Background
 from tkinter import *
+
+from ball import Ball
 from blueteam import Blueteam
 from redteam import Redteam
 
@@ -80,30 +82,35 @@ def init():
     background = Background()
     game_world.add_object(background, 0)
 
-    player1 = Blueteam(300, 200)
+    # Blueteam 객체 추가
+    player1 = Blueteam(300, 200, 1)
     game_world.add_object(player1, 1)
-    player2 = Blueteam(300, 400)
+    player2 = Blueteam(300, 400, 2)
     game_world.add_object(player2, 1)
-    player3 = Blueteam(300, 600)
+    player3 = Blueteam(300, 600, 3)
     game_world.add_object(player3, 1)
-    player4 = Blueteam(480, 300)
+    player4 = Blueteam(480, 300, 4)
     game_world.add_object(player4, 1)
-    player5 = Blueteam(480, 500)
+    player5 = Blueteam(480, 500, 5)
     game_world.add_object(player5, 1)
-
-    player6 = Redteam(WIDTH - 300, 200)
+    # Redteam 객체 추가
+    player6 = Redteam(WIDTH - 300, 200, 1)
     game_world.add_object(player6, 1)
-    player7 = Redteam(WIDTH - 300, 400)
+    player7 = Redteam(WIDTH - 300, 400, 2)
     game_world.add_object(player7, 1)
-    player8 = Redteam(WIDTH - 300, 600)
+    player8 = Redteam(WIDTH - 300, 600, 3)
     game_world.add_object(player8, 1)
-    player9 = Redteam(WIDTH - 480, 300)
+    player9 = Redteam(WIDTH - 480, 300, 4)
     game_world.add_object(player9, 1)
-    player10 = Redteam(WIDTH - 480, 500)
+    player10 = Redteam(WIDTH - 480, 500, 5)
     game_world.add_object(player10, 1)
-    # ball = Ball(select_mode.player1.x + 100, select_mode.player1.y, 5)
-    # game_world.add_object(ball, 1)
-    # game_world.add_collision_pair('player1:ball', None, ball)
+
+    ball = Ball()
+    game_world.add_object(ball, 1)
+    # Blueteam
+    game_world.add_collision_pair('Blueteam:ball', player1, ball)
+    # Redteam
+    game_world.add_collision_pair('Redteam:ball', player6, ball)
     # game_world.add_collision_pair('player2:ball', None, ball)
     #
     # arrow = Arrow()
