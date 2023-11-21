@@ -12,6 +12,7 @@ from redteam import Redteam
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 select = [1, 1]
+player = [[], [], [], [], [], [], [], [], [], []]
 # Game object class here
 
 
@@ -47,25 +48,25 @@ def handle_events():
 
         else:
             if select[0] == 1:
-                player1.handle_event(event)
+                player[0].handle_event(event)
             elif select[0] == 2:
-                player2.handle_event(event)
+                player[1].handle_event(event)
             elif select[0] == 3:
-                player3.handle_event(event)
+                player[2].handle_event(event)
             elif select[0] == 4:
-                player4.handle_event(event)
+                player[3].handle_event(event)
             elif select[0] == 5:
-                player5.handle_event(event)
+                player[4].handle_event(event)
             if select[1] == 1:
-                player6.handle_event(event)
+                player[5].handle_event(event)
             elif select[1] == 2:
-                player7.handle_event(event)
+                player[6].handle_event(event)
             elif select[1] == 3:
-                player8.handle_event(event)
+                player[7].handle_event(event)
             elif select[1] == 4:
-                player9.handle_event(event)
+                player[8].handle_event(event)
             elif select[1] == 5:
-                player10.handle_event(event)
+                player[9].handle_event(event)
             pass
             # select_mode.player1.handle_event(event)
             # select_mode.player2.handle_event(event)
@@ -74,7 +75,8 @@ def handle_events():
 def init():
     global running
     global background
-    global player1, player2, player3, player4, player5, player6, player7, player8, player9, player10
+    #global player1, player2, player3, player4, player5, player6, player7, player8, player9, player10
+    global player
     global ball
     global font
 
@@ -83,34 +85,36 @@ def init():
     game_world.add_object(background, 0)
 
     # Blueteam 객체 추가
-    player1 = Blueteam(300, 200, 1)
-    game_world.add_object(player1, 1)
-    player2 = Blueteam(300, 400, 2)
-    game_world.add_object(player2, 1)
-    player3 = Blueteam(300, 600, 3)
-    game_world.add_object(player3, 1)
-    player4 = Blueteam(480, 300, 4)
-    game_world.add_object(player4, 1)
-    player5 = Blueteam(480, 500, 5)
-    game_world.add_object(player5, 1)
+    player[0] = Blueteam(300, 200, 1)
+    game_world.add_object(player[0], 1)
+    player[1] = Blueteam(300, 400, 2)
+    game_world.add_object(player[1], 1)
+    player[2] = Blueteam(300, 600, 3)
+    game_world.add_object(player[2], 1)
+    player[3] = Blueteam(480, 300, 4)
+    game_world.add_object(player[3], 1)
+    player[4] = Blueteam(480, 500, 5)
+    game_world.add_object(player[4], 1)
     # Redteam 객체 추가
-    player6 = Redteam(WIDTH - 300, 200, 1)
-    game_world.add_object(player6, 1)
-    player7 = Redteam(WIDTH - 300, 400, 2)
-    game_world.add_object(player7, 1)
-    player8 = Redteam(WIDTH - 300, 600, 3)
-    game_world.add_object(player8, 1)
-    player9 = Redteam(WIDTH - 480, 300, 4)
-    game_world.add_object(player9, 1)
-    player10 = Redteam(WIDTH - 480, 500, 5)
-    game_world.add_object(player10, 1)
+    player[5] = Redteam(WIDTH - 300, 200, 1)
+    game_world.add_object(player[5], 1)
+    player[6] = Redteam(WIDTH - 300, 400, 2)
+    game_world.add_object(player[6], 1)
+    player[7] = Redteam(WIDTH - 300, 600, 3)
+    game_world.add_object(player[7], 1)
+    player[8] = Redteam(WIDTH - 480, 300, 4)
+    game_world.add_object(player[8], 1)
+    player[9] = Redteam(WIDTH - 480, 500, 5)
+    game_world.add_object(player[9], 1)
 
     ball = Ball()
     game_world.add_object(ball, 1)
     # Blueteam
-    game_world.add_collision_pair('Blueteam:ball', player1, ball)
+    for i in range(0, 5):
+        game_world.add_collision_pair('Blueteam:ball', player[i], ball)
     # Redteam
-    game_world.add_collision_pair('Redteam:ball', player6, ball)
+    for i in range(5, 10):
+        game_world.add_collision_pair('Redteam:ball', player[i], ball)
     # game_world.add_collision_pair('player2:ball', None, ball)
     #
     # arrow = Arrow()
