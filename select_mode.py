@@ -1,7 +1,6 @@
 from pico2d import load_image, get_events, clear_canvas, update_canvas
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
-
-from code import game_framework, game_world, play_mode
+import game_framework, game_world, play_mode
 
 from tkinter import *
 

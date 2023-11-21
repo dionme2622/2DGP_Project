@@ -491,7 +491,7 @@ class Blueteam:
     def shoot_ball(self):
         if self.getball == True:
             self.shoot = True
-            #self.getball = False
+            self.getball = False
 
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50

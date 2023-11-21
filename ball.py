@@ -5,8 +5,7 @@ from pico2d import load_image, draw_rectangle
 
 from tkinter import *
 
-import play_mode
-import select_mode, game_framework
+import play_mode, game_framework
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -25,6 +24,7 @@ class Ball:
             self.x = WIDTH // 2 + 100
         self.y, self.velocity = HEIGHT // 2 - 100, velocity
         self.state = 'floor'
+        self.angle1, self.angle2 = 0, 0
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
@@ -41,46 +41,56 @@ class Ball:
             if play_mode.player[i].getball == True:
                 self.x = play_mode.player[i].x - 80
                 self.y = play_mode.player[i].y
-    #     angle1 = select_mode.player1.angle * 2 * 3.14 / 180
-    #     angle2 = select_mode.player2.angle * 2 * 3.14 / 180
-    #
-    #     if select_mode.player1.getball == True and select_mode.player2.getball == False:
-    #         if select_mode.player1.shoot == True:
-    #             self.x += self.velocity * 100 * game_framework.frame_time
-    #             self.y += self.velocity * 100 * game_framework.frame_time * tan(angle1)
-    #         elif select_mode.player1.shoot == False:
-    #             self.velocity = select_mode.player1.attack_speed
-    #             self.x = select_mode.player1.x + 80
-    #             self.y = select_mode.player1.y
-    #
-    #     elif select_mode.player1.getball == False and select_mode.player2.getball == True:
-    #         if select_mode.player2.shoot == True:
-    #             self.x += self.velocity * 100 * game_framework.frame_time
-    #             self.y += self.velocity * 100 * game_framework.frame_time * -tan(angle2)
-    #         elif select_mode.player2.shoot == False:
-    #             self.velocity = -select_mode.player2.attack_speed
-    #             self.x = select_mode.player2.x - 80
-    #             self.y = select_mode.player2.y
+
+        self.angle1 = play_mode.arrow.angle1
+        self.angle2 = play_mode.arrow.angle2
+
+        for i in range(0, 5):
+            if play_mode.player[i].shoot == True:
+                self.x += self.velocity * 100 * game_framework.frame_time
+                self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
+        for i in range(5, 10):
+            if play_mode.player[i].shoot == True:
+                self.x += self.velocity * 100 * game_framework.frame_time
+                self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
+                #         self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
+        # if play_mode.player1.getball == True and play_mode.player2.getball == False:
+        #     if play_mode.player1.shoot == True:
+        #         self.x += self.velocity * 100 * game_framework.frame_time
+        #         self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
+        #     elif play_mode.player1.shoot == False:
+        #         self.velocity = play_mode.player1.attack_speed
+        #         self.x = play_mode.player1.x + 80
+        #         self.y = play_mode.player1.y
+
+        # elif play_mode.player1.getball == False and play_mode.player2.getball == True:
+        #     if play_mode.player2.shoot == True:
+        #         self.x += self.velocity * 100 * game_framework.frame_time
+        #         self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
+        #     elif play_mode.player2.shoot == False:
+        #         self.velocity = -play_mode.player2.attack_speed
+        #         self.x = play_mode.player2.x - 80
+        #         self.y = play_mode.player2.y
     #
     #
     #     if self.x > WIDTH + 50:
-    #         select_mode.player1.shoot = False
-    #         select_mode.player1.getball = False
-    #         select_mode.player2.getball = True
+    #         play_mode.player1.shoot = False
+    #         play_mode.player1.getball = False
+    #         play_mode.player2.getball = True
     #
     #     if self.x < 0 - 50:
-    #         select_mode.player2.shoot = False
-    #         select_mode.player1.getball = True
-    #         select_mode.player2.getball = False
+    #         play_mode.player2.shoot = False
+    #         play_mode.player1.getball = True
+    #         play_mode.player2.getball = False
         pass
     def handle_collision(self, group, other):
     #     if group == 'player1:ball':
-    #         select_mode.player1.getball = True
-    #         select_mode.player2.getball = False
-    #         select_mode.player2.shoot = False
+    #         play_mode.player1.getball = True
+    #         play_mode.player2.getball = False
+    #         play_mode.player2.shoot = False
     #     elif group == 'player2:ball':
-    #         select_mode.player1.getball = False
-    #         select_mode.player2.getball = True
-    #         select_mode.player1.shoot = False
+    #         play_mode.player1.getball = False
+    #         play_mode.player2.getball = True
+    #         play_mode.player1.shoot = False
 
         pass

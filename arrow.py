@@ -33,12 +33,12 @@ class Arrow:
         global angle1, angle2
         for i in range(0, 5):
             if play_mode.player[i].getball == True:
-                self.x = play_mode.player[i].x + 120
+                self.x = play_mode.player[i].x + 100
                 self.y = play_mode.player[i].y
                 self.angle1 = play_mode.player[i].angle * 2 * 3.14 / 180
         for i in range(5, 10):
             if play_mode.player[i].getball == True:
-                self.x = play_mode.player[i].x - 120
+                self.x = play_mode.player[i].x - 100
                 self.y = play_mode.player[i].y
                 self.angle2 = play_mode.player[i].angle * 2 * 3.14 / 180
         # angle1 = select_mode.player1.angle * 2 * 3.14 / 180

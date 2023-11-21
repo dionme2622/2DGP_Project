@@ -76,11 +76,10 @@ def handle_events():
 def init():
     global running
     global background
-    #global player1, player2, player3, player4, player5, player6, player7, player8, player9, player10
     global player
     global ball
     global font
-
+    global arrow
     font = load_font('./object/ENCR10B.TTF', 50)
     background = Background()
     game_world.add_object(background, 0)

@@ -449,6 +449,9 @@ class StateMachine:
             RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, Semi_down: RunRightDown, Quote_down: RunRightDown,
                            lets_defense: Defense},
+            Attack: {lets_idle: Idle},
+            Defense: {lets_idle: Idle},
+            Damage: {lets_idle: Idle},
         }
 
     def start(self):
@@ -488,7 +491,7 @@ class Redteam:
     def shoot_ball(self):
         if self.getball == True:
             self.shoot = True
-            #self.getball = False
+            self.getball = False
 
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
@@ -508,10 +511,14 @@ class Redteam:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
     def handle_collision(self, group, other):
         if group == 'Redteam:ball':
-            if play_mode.ball.state == 'floor':
+            if play_mode.ball.state == 'floor':             # 공이 바닥에 놓여있다면
                 print("레드팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Redteam_get'
+            if play_mode.ball.state == 'Blueteam_get':       # 공을 블루팀이 들고있었다면
+                play_mode.ball.state = 'floor'
+                self.state_machine.cur_state = Damage
+                play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
         # if group == 'player2:ball':
         #     # 공이 player2 에게 넘어감
         #     #self.getball = True
