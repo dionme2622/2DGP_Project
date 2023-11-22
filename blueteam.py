@@ -500,7 +500,6 @@ class Blueteam:
     def shoot_ball(self):
         if self.getball == True:
             self.getball = False
-            #self.shoot = True
             play_mode.ball.shoot = True
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
@@ -534,12 +533,10 @@ class Blueteam:
             elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:       # 공을 적 팀이 들고있었다면
                 if self.state == 'alive':
                     play_mode.ball.x, play_mode.ball.y = self.x, self.y     # 맞은 플레이어 앞에 떨어짐
-                    #remove_shoot(0, 10)
                     play_mode.ball.shoot = False
                     play_mode.ball.state = 'floor'          # 공의 상태를 floor 로 변경
                     self.x, self.y, self.state = WIDTH - 180, 400, 'dead'   # 네트 밖으로 나가고 상태를 dead로 변경
             elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
-                #remove_shoot(0, 10)
                 self.getball = True
                 play_mode.ball.shoot = False
 

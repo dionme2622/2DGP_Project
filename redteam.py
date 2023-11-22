@@ -501,7 +501,6 @@ class Redteam:
     def shoot_ball(self):
         if self.getball == True:
             self.getball = False
-            #self.shoot = True
             play_mode.ball.shoot = True
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
@@ -532,21 +531,6 @@ class Redteam:
                     play_mode.ball.state = 'floor'
                     self.x, self.y, self.state = 200, 400, 'dead'
             elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
-                #remove_shoot(0, 10)
                 self.getball = True
                 play_mode.ball.shoot = False
-        # if group == 'player2:ball':
-        #     # 공이 player2 에게 넘어감
-        #     #self.getball = True
-        #     # 만약 Defense 상태가 아니라면
-        #     if self.state_machine.cur_state != Defense:
-        #         # player2 쳬력 1칸 감소
-        #         self.hp -= 1
-        #         # 피격 animation 출력.
-        #         self.state_machine.cur_state = Damage
-        #     if self.hp == 0:
-        #         print("player1 사망")
-        #     # player2 스킬 게이지 1칸 증가
-        #     if self.mp < 3:
-        #         self.mp += 1
         pass
