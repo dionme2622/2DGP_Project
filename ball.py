@@ -53,35 +53,21 @@ class Ball:
             if play_mode.player[i].shoot == True:
                 self.x -= self.velocity * 100 * game_framework.frame_time
                 self.y -= self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
-                #         self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
-        # if play_mode.player1.getball == True and play_mode.player2.getball == False:
-        #     if play_mode.player1.shoot == True:
-        #         self.x += self.velocity * 100 * game_framework.frame_time
-        #         self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
-        #     elif play_mode.player1.shoot == False:
-        #         self.velocity = play_mode.player1.attack_speed
-        #         self.x = play_mode.player1.x + 80
-        #         self.y = play_mode.player1.y
 
-        # elif play_mode.player1.getball == False and play_mode.player2.getball == True:
-        #     if play_mode.player2.shoot == True:
-        #         self.x += self.velocity * 100 * game_framework.frame_time
-        #         self.y += self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
-        #     elif play_mode.player2.shoot == False:
-        #         self.velocity = -play_mode.player2.attack_speed
-        #         self.x = play_mode.player2.x - 80
-        #         self.y = play_mode.player2.y
     #
     #
-    #     if self.x > WIDTH + 50:
-    #         play_mode.player1.shoot = False
-    #         play_mode.player1.getball = False
-    #         play_mode.player2.getball = True
-    #
-    #     if self.x < 0 - 50:
-    #         play_mode.player2.shoot = False
-    #         play_mode.player1.getball = True
-    #         play_mode.player2.getball = False
+        if self.x > WIDTH + 50:
+            self.state = 'floor'
+            self.x = WIDTH * 3 // 4
+            self.y = 400
+            for i in range(0, 10):
+                play_mode.player[i].shoot = False
+        if self.x < 0 - 50:
+            self.state = 'floor'
+            self.x = WIDTH // 1 // 4
+            self.y = 400
+            for i in range(0, 10):
+                play_mode.player[i].shoot = False
         pass
     def handle_collision(self, group, other):
     #     if group == 'player1:ball':

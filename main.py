@@ -9,4 +9,4 @@ open_canvas(WIDTH, HEIGHT)
 game_framework.run(start_mode)
 close_canvas()
 
-# finalization code
+# 0finalization code

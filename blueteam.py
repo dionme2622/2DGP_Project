@@ -529,11 +529,12 @@ class Blueteam:
                 self.getball = True
                 play_mode.ball.state = 'Blueteam_get'
             elif play_mode.ball.state == 'Redteam_get':       # 공을 레드팀이 들고있었다면
-                play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
-                for i in range(0, 10):
-                    play_mode.player[i].shoot = False
-                play_mode.ball.state = 'floor'
-                self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
+                if self.state == 'alive':
+                    play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
+                    for i in range(0, 10):
+                        play_mode.player[i].shoot = False
+                    play_mode.ball.state = 'floor'
+                    self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
                 #game_world.remove_object(self)
 
         # if group == 'player1:ball':
