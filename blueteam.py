@@ -500,8 +500,8 @@ class Blueteam:
     def shoot_ball(self):
         if self.getball == True:
             self.getball = False
-            self.shoot = True
-
+            #self.shoot = True
+            play_mode.ball.shoot = True
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
@@ -522,20 +522,26 @@ class Blueteam:
         #     self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
         draw_rectangle(*self.get_bb())
 
+
+
+
     def handle_collision(self, group, other):
         if group == 'Blueteam:ball':
             if play_mode.ball.state == 'floor':             # 공이 바닥에 놓여져있다면
                 print("블루팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Blueteam_get'
-            elif play_mode.ball.state == 'Redteam_get':       # 공을 레드팀이 들고있었다면
+            elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:       # 공을 적 팀이 들고있었다면
                 if self.state == 'alive':
-                    play_mode.ball.x, play_mode.ball.y = self.x, self.y # 맞은 플레이어 앞에 떨어짐
-                    for i in range(0, 10):
-                        play_mode.player[i].shoot = False
-                    play_mode.ball.state = 'floor'
-                    self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
-                #game_world.remove_object(self)
+                    play_mode.ball.x, play_mode.ball.y = self.x, self.y     # 맞은 플레이어 앞에 떨어짐
+                    #remove_shoot(0, 10)
+                    play_mode.ball.shoot = False
+                    play_mode.ball.state = 'floor'          # 공의 상태를 floor 로 변경
+                    self.x, self.y, self.state = WIDTH - 180, 400, 'dead'   # 네트 밖으로 나가고 상태를 dead로 변경
+            elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
+                #remove_shoot(0, 10)
+                self.getball = True
+                play_mode.ball.shoot = False
 
         # if group == 'player1:ball':
         #     # 공이 player1 에게 넘어감
@@ -552,3 +558,7 @@ class Blueteam:
         #     if self.mp < 3:
         #         self.mp += 1
         pass
+
+def remove_shoot(beg, end):
+    for i in range(beg, end):
+        play_mode.player[i].shoot = False

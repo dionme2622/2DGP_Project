@@ -24,6 +24,7 @@ class Ball:
             self.x = WIDTH // 2 + 100
         self.y, self.velocity = HEIGHT // 2 - 100, velocity
         self.state = 'floor'
+        self.shoot = False
         self.angle1, self.angle2 = 0, 0
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
@@ -45,17 +46,24 @@ class Ball:
         self.angle1 = play_mode.arrow.angle1
         self.angle2 = play_mode.arrow.angle2
 
-        for i in range(0, 5):
-            if play_mode.player[i].shoot == True:
+
+        if self.shoot == True:
+            if self.state == 'Blueteam_get':
                 self.x += self.velocity * 100 * game_framework.frame_time
                 self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
-        for i in range(5, 10):
-            if play_mode.player[i].shoot == True:
+            elif self.state == 'Redteam_get':
                 self.x -= self.velocity * 100 * game_framework.frame_time
                 self.y -= self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
 
-    #
-    #
+        # for i in range(0, 5):
+        #     if play_mode.player[i].shoot == True:
+        #         self.x += self.velocity * 100 * game_framework.frame_time
+        #         self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
+        # for i in range(5, 10):
+        #     if play_mode.player[i].shoot == True:
+        #         self.x -= self.velocity * 100 * game_framework.frame_time
+        #         self.y -= self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
+
         if self.x > WIDTH + 50:
             self.state = 'floor'
             self.x = WIDTH * 3 // 4
