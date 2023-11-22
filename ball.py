@@ -34,14 +34,21 @@ class Ball:
         draw_rectangle(*self.get_bb())
 
     def update(self):
-        for i in range(0, 5):
+        for i in range(0, 10):
             if play_mode.player[i].getball == True:
-                self.x = play_mode.player[i].x + 80
-                self.y = play_mode.player[i].y
-        for i in range(5, 10):
-            if play_mode.player[i].getball == True:
-                self.x = play_mode.player[i].x - 80
-                self.y = play_mode.player[i].y
+                if play_mode.player[i].action == 2:
+                    self.x = play_mode.player[i].x
+                    self.y = play_mode.player[i].y + 80
+                elif play_mode.player[i].action == 3:
+                    self.x = play_mode.player[i].x + 80
+                    self.y = play_mode.player[i].y
+                elif play_mode.player[i].action == 4:
+                    self.x = play_mode.player[i].x - 80
+                    self.y = play_mode.player[i].y
+                elif play_mode.player[i].action == 5:
+                    self.x = play_mode.player[i].x
+                    self.y = play_mode.player[i].y - 80
+
 
         self.angle1 = play_mode.arrow.angle1
         self.angle2 = play_mode.arrow.angle2
