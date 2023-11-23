@@ -5,7 +5,7 @@ import select_mode
 import play_mode
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
-
+PI = 3.141592
 
 class Arrow:
     image = None
@@ -21,7 +21,14 @@ class Arrow:
     def draw(self):
         for i in range(0, 5):
             if play_mode.player[i].getball == True:
-                self.image.clip_composite_draw(0, 0, 100, 100, self.angle1, ' ', self.x, self.y, 100, 100)
+                if play_mode.player[i].action == 2:
+                    self.image.clip_composite_draw(0, 0, 100, 100, PI / 2 + self.angle1, ' ', self.x, self.y, 100, 100)
+                elif play_mode.player[i].action == 3:
+                    self.image.clip_composite_draw(0, 0, 100, 100, self.angle1, ' ', self.x, self.y, 100, 100)
+                elif play_mode.player[i].action == 4:
+                    self.image.clip_composite_draw(0, 0, 100, 100, PI + self.angle1, ' ', self.x, self.y, 100, 100)
+                elif play_mode.player[i].action == 5:
+                    self.image.clip_composite_draw(0, 0, 100, 100, PI * 3 / 2 + self.angle1, ' ', self.x, self.y, 100, 100)
         for i in range(5, 10):
             if play_mode.player[i].getball == True:
                 self.image.clip_composite_draw(0, 0, 100, 100, -self.angle2, 'h', self.x, self.y, 100, 100)
