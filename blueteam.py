@@ -1,4 +1,4 @@
-#from pico2d import load_image, draw_rectangle, get_time, load_font, clip_draw
+# from pico2d import load_image, draw_rectangle, get_time, load_font, clip_draw
 from pico2d import *
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_a, SDLK_s
@@ -61,6 +61,7 @@ def g_down(e):
 def g_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_g
 
+
 def atk_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_q
 
@@ -77,24 +78,38 @@ def lets_defense(e):
     return e[0] == 'LETS_DEFENSE'
 
 
-
-
 class Idle:
     @staticmethod
     def enter(ch, e):
         ch.frame = 0
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
         if s_down(e):
             ch.angle -= 5
+        if ch.action == 2:
+            ch.angle += 45
+        elif ch.action == 3:
+            ch.angle += 0
+        elif ch.action == 4:
+            ch.angle += 90
+        elif ch.action == 5:
+            ch.angle += 135
+
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
-
+        if ch.action == 2:
+            ch.angle -= 45
+        elif ch.action == 3:
+            ch.angle -= 0
+        elif ch.action == 4:
+            ch.angle -= 90
+        elif ch.action == 5:
+            ch.angle -= 135
         pass
 
     @staticmethod
@@ -111,7 +126,7 @@ class RunRight:
     def enter(ch, e):
         ch.action = 3
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -134,7 +149,7 @@ class RunRight:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunRightUp:
@@ -142,7 +157,7 @@ class RunRightUp:
     def enter(ch, e):
         ch.action = 3
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -166,14 +181,15 @@ class RunRightUp:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
 
 class RunRightDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -197,17 +213,16 @@ class RunRightDown:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
-
-
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunLeft:
     @staticmethod
     def enter(ch, e):
         ch.action = 4
+        ch.angle += 90
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -217,6 +232,7 @@ class RunLeft:
 
     @staticmethod
     def exit(ch, e):
+        ch.angle -= 90
         pass
 
     @staticmethod
@@ -230,15 +246,16 @@ class RunLeft:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunLeftUp:
     @staticmethod
     def enter(ch, e):
         ch.action = 4
+        ch.angle += 90
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -248,6 +265,7 @@ class RunLeftUp:
 
     @staticmethod
     def exit(ch, e):
+        ch.angle -= 90
         pass
 
     @staticmethod
@@ -261,15 +279,16 @@ class RunLeftUp:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunLeftDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 4
+        ch.angle += 90
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -279,6 +298,7 @@ class RunLeftDown:
 
     @staticmethod
     def exit(ch, e):
+        ch.angle -= 90
         pass
 
     @staticmethod
@@ -292,26 +312,27 @@ class RunLeftDown:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
-
-
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunUp:
     @staticmethod
     def enter(ch, e):
         ch.action = 2
+        ch.angle += 45
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
+            print("증가")
         if s_down(e):
             ch.angle -= 5
-
+        print(ch.angle)
 
     @staticmethod
     def exit(ch, e):
+        ch.angle -= 45
         pass
 
     @staticmethod
@@ -325,15 +346,17 @@ class RunUp:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class RunDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 5
+        ch.angle += 135
+        print("각도 270 증가")
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:   # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += 5
@@ -343,7 +366,8 @@ class RunDown:
 
     @staticmethod
     def exit(ch, e):
-        pass
+        ch.angle -= 135
+        print("각도 270 감소")
 
     @staticmethod
     def do(ch):
@@ -357,7 +381,7 @@ class RunDown:
 
     @staticmethod
     def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29 ,ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 
 class Attack:
@@ -391,7 +415,6 @@ class Defense:
         ch.action = 1
         ch.frame = 0
 
-
     @staticmethod
     def exit(ch, e):
         ch.wait_time = get_time()
@@ -409,13 +432,13 @@ class Defense:
         elif ch.frame >= 1:
             ch.image.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
+
 class Damage:
 
     @staticmethod
     def enter(ch, e):
         ch.action = 0
         ch.frame = 0
-
 
     @staticmethod
     def exit(ch, e):
@@ -426,7 +449,6 @@ class Damage:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             ch.state_machine.handle_event(('LETS_IDLE', 0))
-
 
     @staticmethod
     def draw(ch):
@@ -439,24 +461,31 @@ class StateMachine:
         self.cur_state = Idle
         self.transitions = {
             Idle: {g_down: RunRight, d_down: RunLeft, d_up: RunRight, g_up: RunLeft, r_down: RunUp,
-                   f_down: RunDown, r_up: RunDown, f_up: RunUp, atk_down: Attack, def_down: Idle, a_down: Idle, s_down: Idle, lets_defense: Defense},
+                   f_down: RunDown, r_up: RunDown, f_up: RunUp, atk_down: Attack, def_down: Idle, a_down: Idle,
+                   s_down: Idle, lets_defense: Defense},
             RunRight: {g_up: Idle, d_down: Idle, r_down: RunRightUp, r_up: RunRightDown,
-                       f_down: RunRightDown, f_up: RunRightUp, atk_down: Attack, def_down: RunRight, a_down: RunRight, s_down: RunRight, lets_defense: Defense},
+                       f_down: RunRightDown, f_up: RunRightUp, atk_down: Attack, def_down: RunRight, a_down: RunRight,
+                       s_down: RunRight, lets_defense: Defense},
             RunRightUp: {r_up: RunRight, g_up: RunUp, d_down: RunUp, f_down: RunRight, atk_down: Attack,
-                         def_down: RunRightUp, a_down: RunRightUp, s_down: RunRightUp , lets_defense: Defense},
+                         def_down: RunRightUp, a_down: RunRightUp, s_down: RunRightUp, lets_defense: Defense},
             RunUp: {r_up: Idle, d_down: RunLeftUp, f_down: Idle, g_down: RunRightUp,
-                    d_up: RunRightUp, g_up: RunLeftUp, atk_down: Attack, def_down: RunUp, a_down: RunUp, s_down: RunUp , lets_defense: Defense},
+                    d_up: RunRightUp, g_up: RunLeftUp, atk_down: Attack, def_down: RunUp, a_down: RunUp, s_down: RunUp,
+                    lets_defense: Defense},
             RunLeftUp: {g_down: RunUp, f_down: RunLeft, d_up: RunUp, r_up: RunLeft,
-                        atk_down: Attack, def_down: RunLeftUp, a_down: RunLeftUp, s_down: RunLeftUp, lets_defense: Defense},
+                        atk_down: Attack, def_down: RunLeftUp, a_down: RunLeftUp, s_down: RunLeftUp,
+                        lets_defense: Defense},
             RunLeft: {d_up: Idle, r_down: RunLeftUp, g_down: Idle, f_down: RunLeftDown,
-                      r_up: RunLeftDown, f_up: RunLeftUp, atk_down: Attack, def_down: RunLeft, a_down: RunLeft, s_down: RunLeft, lets_defense: Defense},
+                      r_up: RunLeftDown, f_up: RunLeftUp, atk_down: Attack, def_down: RunLeft, a_down: RunLeft,
+                      s_down: RunLeft, lets_defense: Defense},
             RunLeftDown: {d_up: RunDown, f_up: RunLeft, r_down: RunLeft, g_down: RunDown,
-                          atk_down: Attack, def_down: RunLeftDown, a_down: RunLeftDown, s_down: RunLeftDown, lets_defense: Defense},
+                          atk_down: Attack, def_down: RunLeftDown, a_down: RunLeftDown, s_down: RunLeftDown,
+                          lets_defense: Defense},
             RunDown: {f_up: Idle, d_down: RunLeftDown, r_down: Idle, g_down: RunRightDown,
                       d_up: RunRightDown, g_up: RunLeftDown,
                       atk_down: Attack, def_down: RunDown, a_down: RunDown, s_down: RunDown, lets_defense: Defense},
             RunRightDown: {g_up: RunDown, f_up: RunRight, d_down: RunDown, r_down: RunRight,
-                           atk_down: Attack, def_down: RunRightDown, a_down: RunRightDown, s_down: RunRightDown, lets_defense: Defense},
+                           atk_down: Attack, def_down: RunRightDown, a_down: RunRightDown, s_down: RunRightDown,
+                           lets_defense: Defense},
             Attack: {lets_idle: Idle},
             Defense: {lets_idle: Idle},
             Damage: {lets_idle: Idle},
@@ -484,6 +513,7 @@ class StateMachine:
 
 class Blueteam:
     image = None
+
     def __init__(self, x, y, num):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
@@ -497,14 +527,14 @@ class Blueteam:
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.state_machine = StateMachine(self)
         self.state_machine.start()
+
     def shoot_ball(self):
         if self.getball == True:
             self.getball = False
             play_mode.ball.shoot = True
+
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
-
-
 
     def update(self):
         self.state_machine.update()
@@ -521,21 +551,18 @@ class Blueteam:
         #     self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
         draw_rectangle(*self.get_bb())
 
-
-
-
     def handle_collision(self, group, other):
         if group == 'Blueteam:ball':
-            if play_mode.ball.state == 'floor':             # 공이 바닥에 놓여져있다면
+            if play_mode.ball.state == 'floor':  # 공이 바닥에 놓여져있다면
                 print("블루팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Blueteam_get'
-            elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:       # 공을 적 팀이 들고있었다면
+            elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:  # 공을 적 팀이 들고있었다면
                 if self.state == 'alive':
-                    play_mode.ball.x, play_mode.ball.y = self.x, self.y     # 맞은 플레이어 앞에 떨어짐
+                    play_mode.ball.x, play_mode.ball.y = self.x, self.y  # 맞은 플레이어 앞에 떨어짐
                     play_mode.ball.shoot = False
-                    play_mode.ball.state = 'floor'          # 공의 상태를 floor 로 변경
-                    self.x, self.y, self.state = WIDTH - 180, 400, 'dead'   # 네트 밖으로 나가고 상태를 dead로 변경
+                    play_mode.ball.state = 'floor'  # 공의 상태를 floor 로 변경
+                    self.x, self.y, self.state = WIDTH - 180, 400, 'dead'  # 네트 밖으로 나가고 상태를 dead로 변경
             elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
                 self.getball = True
                 play_mode.ball.shoot = False
@@ -555,6 +582,7 @@ class Blueteam:
         #     if self.mp < 3:
         #         self.mp += 1
         pass
+
 
 def remove_shoot(beg, end):
     for i in range(beg, end):
