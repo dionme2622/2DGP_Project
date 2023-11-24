@@ -60,8 +60,8 @@ class Ball:
                 self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle1)
                 self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle1)
             elif self.state == 'Redteam_get':
-                self.x -= self.velocity * 100 * game_framework.frame_time * math.cos(self.angle2)
-                self.y -= self.velocity * 100 * game_framework.frame_time * math.sin(self.angle2)
+                self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle2)
+                self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle2)
 
 
         if self.x > WIDTH + 50:

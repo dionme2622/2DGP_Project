@@ -113,13 +113,13 @@ class Idle:
         if atk_down(e):
             ch.shoot_ball()
         if ch.action == 2:
-            ch.angle += 45
+            ch.angle -= 45
         elif ch.action == 3:
-            ch.angle += 0
+            ch.angle -= 0
         elif ch.action == 4:
-            ch.angle += 90
+            ch.angle -= 90
         elif ch.action == 5:
-            ch.angle += 135
+            ch.angle -= 135
         pass
 
     @staticmethod
@@ -371,7 +371,7 @@ class RunDown:
 
     @staticmethod
     def exit(ch, e):
-        ch.angle += 135
+        ch.angle -= 135
         pass
 
     @staticmethod

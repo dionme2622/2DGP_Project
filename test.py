@@ -10,11 +10,14 @@ open_canvas(WIDTH, HEIGHT)
 character = load_image("./character/sands_blue.png")
 # Background = load_image("GROUND.png")
 arrow = load_image("./object/Arrow.png")
+ball = load_image("./object/ball.png")
 running = True
 frame = 0
 move = 0
 radian = 0
 angle = 0.0
+
+arr = [1, 2, 3, 4, 5]
 def handle_events():
     global running, mx, my, num, arrive
     events = get_events()
@@ -32,14 +35,15 @@ def draw_character(x, y):
     global move
     global radian
     global character
+    global ball
     frame = (frame + 1) % 2
     move += 10
     action = 1
-    #radian += 1
+    radian += 1
     r = 3
     radian += r
     angle = float(radian) * 2 * 3.14 / 180
-    #arrow.clip_composite_draw(0, 0, 300, 160, angle, ' ', 540, 540, 300, 160)
+    arrow.clip_composite_draw(0, 0, 100, 100, angle, ' ', 540, 540, 100, 100)
     #블루 샌즈
     if action == 1:
         if frame == 0:
@@ -48,6 +52,7 @@ def draw_character(x, y):
             character.clip_draw(frame * 32, action * 52, 32, 52 - 14, 250, 500, 100, 100)
     else :character.clip_draw(frame * 29 ,action * 52, 29, 52 - 14, 250, 500, 100, 100)     # 피격 시
 
+    ball.clip_draw(0, 0, 40, 40, 200, 200)
     # 샌즈
     # Character.clip_draw(frame * 250, 420, 250, 330, x - 150 - move, y - 200, 100, 150)     # 이동 모션
     #
