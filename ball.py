@@ -1,3 +1,4 @@
+import math
 from math import tan
 import random
 
@@ -56,20 +57,12 @@ class Ball:
 
         if self.shoot == True:
             if self.state == 'Blueteam_get':
-                self.x += self.velocity * 100 * game_framework.frame_time
-                self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
+                self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle1)
+                self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle1)
             elif self.state == 'Redteam_get':
-                self.x -= self.velocity * 100 * game_framework.frame_time
-                self.y -= self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
+                self.x -= self.velocity * 100 * game_framework.frame_time * math.cos(self.angle2)
+                self.y -= self.velocity * 100 * game_framework.frame_time * math.sin(self.angle2)
 
-        # for i in range(0, 5):
-        #     if play_mode.player[i].shoot == True:
-        #         self.x += self.velocity * 100 * game_framework.frame_time
-        #         self.y += self.velocity * 100 * game_framework.frame_time * tan(self.angle1)
-        # for i in range(5, 10):
-        #     if play_mode.player[i].shoot == True:
-        #         self.x -= self.velocity * 100 * game_framework.frame_time
-        #         self.y -= self.velocity * 100 * game_framework.frame_time * -tan(self.angle2)
 
         if self.x > WIDTH + 50:
             self.state = 'floor'
