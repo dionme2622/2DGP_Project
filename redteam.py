@@ -96,9 +96,9 @@ class Idle:
             if get_time() - ch.wait_time > 5.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         if ch.action == 2:
             ch.angle += 45
         elif ch.action == 3:
@@ -139,12 +139,14 @@ class RunRight:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
 
     @staticmethod
     def exit(ch, e):
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -169,13 +171,15 @@ class RunRightUp:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         pass
 
     @staticmethod
     def exit(ch, e):
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -201,13 +205,15 @@ class RunRightDown:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         pass
 
     @staticmethod
     def exit(ch, e):
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -234,14 +240,16 @@ class RunLeft:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         pass
 
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -267,14 +275,16 @@ class RunLeftUp:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         pass
 
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -300,14 +310,16 @@ class RunLeftDown:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         pass
 
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -333,13 +345,15 @@ class RunUp:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
 
     @staticmethod
     def exit(ch, e):
         ch.angle -= 45
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -364,14 +378,16 @@ class RunDown:
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle += 5
-        if Quote_down(e):
             ch.angle -= 5
+        if Quote_down(e):
+            ch.angle += 5
         pass
 
     @staticmethod
     def exit(ch, e):
         ch.angle -= 135
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -561,17 +577,26 @@ class Redteam:
 
     def handle_collision(self, group, other):
         if group == 'Redteam:ball':
-            if play_mode.ball.state == 'floor':  # 공이 바닥에 놓여있다면
+            # 공이 바닥에 놓여있다면
+            if play_mode.ball.state == 'floor':
                 print("레드팀 공 주움")
                 self.getball = True
                 play_mode.ball.state = 'Redteam_get'
-            elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 블루팀이 들고있었다면
+            # 공을 블루팀이 들고있었다면
+            elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:
+                # 플레이어가 alive 상태라면
                 if self.state == 'alive':
-                    self.state_machine.cur_state = Damage
-                    play_mode.ball.x, play_mode.ball.y = self.x, self.y  # 맞은 플레이어 앞에 떨어진다
-                    play_mode.ball.state = 'floor'
-                    self.x, self.y, self.state = 200, 400, 'dead'
-            elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
+                    play_mode.ball.shoot = False
+                    if self.state_machine.cur_state != Defense:
+                        play_mode.ball.x, play_mode.ball.y = self.x, self.y  # 맞은 플레이어 앞에 떨어진다
+                        self.state_machine.cur_state = Damage
+                        self.x, self.y, self.state = 200, 400, 'dead'
+                        play_mode.ball.state = 'floor'
+                    else:
+                        self.getball = True
+
+            # 공을 같은 팀이 들고있었다면
+            elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:
                 self.getball = True
                 play_mode.ball.shoot = False
         pass

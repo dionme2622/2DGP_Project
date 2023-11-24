@@ -136,6 +136,8 @@ class RunRight:
 
     @staticmethod
     def exit(ch, e):
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -167,6 +169,8 @@ class RunRightUp:
 
     @staticmethod
     def exit(ch, e):
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -199,6 +203,8 @@ class RunRightDown:
 
     @staticmethod
     def exit(ch, e):
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -233,6 +239,8 @@ class RunLeft:
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -266,6 +274,8 @@ class RunLeftUp:
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -299,6 +309,8 @@ class RunLeftDown:
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -333,6 +345,8 @@ class RunUp:
     @staticmethod
     def exit(ch, e):
         ch.angle -= 45
+        if atk_down(e):
+            ch.shoot_ball()
         pass
 
     @staticmethod
@@ -367,7 +381,8 @@ class RunDown:
     @staticmethod
     def exit(ch, e):
         ch.angle -= 135
-        print("각도 270 감소")
+        if atk_down(e):
+            ch.shoot_ball()
 
     @staticmethod
     def do(ch):
@@ -559,28 +574,17 @@ class Blueteam:
                 play_mode.ball.state = 'Blueteam_get'
             elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:  # 공을 적 팀이 들고있었다면
                 if self.state == 'alive':
-                    play_mode.ball.x, play_mode.ball.y = self.x, self.y  # 맞은 플레이어 앞에 떨어짐
                     play_mode.ball.shoot = False
-                    play_mode.ball.state = 'floor'  # 공의 상태를 floor 로 변경
-                    self.x, self.y, self.state = WIDTH - 180, 400, 'dead'  # 네트 밖으로 나가고 상태를 dead로 변경
+                    if self.state_machine.cur_state != Defense:
+                        play_mode.ball.x, play_mode.ball.y = self.x, self.y  # 맞은 플레이어 앞에 떨어진다
+                        self.state_machine.cur_state = Damage
+                        self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
+                        play_mode.ball.state = 'floor'
+                    else:
+                        self.getball = True
             elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
                 self.getball = True
                 play_mode.ball.shoot = False
-
-        # if group == 'player1:ball':
-        #     # 공이 player1 에게 넘어감
-        #     #self.getball = True
-        #     # 만약 Defense 상태가 아니라면
-        #     if self.state_machine.cur_state != Defense:
-        #         # player1 쳬력 1칸 감소
-        #         self.hp -= 1
-        #         # 피격 animation 출력
-        #         self.state_machine.cur_state = Damage
-        #     if self.hp == 0:
-        #         print("player1 사망")
-        #     # player1 스킬 게이지 1칸 증가
-        #     if self.mp < 3:
-        #         self.mp += 1
         pass
 
 
