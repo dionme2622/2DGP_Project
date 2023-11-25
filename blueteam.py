@@ -147,6 +147,20 @@ class RunRight:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
+
         pass
 
     @staticmethod
@@ -181,7 +195,19 @@ class RunRightUp:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
-        pass
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
 
     @staticmethod
     def draw(ch):
@@ -215,7 +241,19 @@ class RunRightDown:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
-        pass
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
 
     @staticmethod
     def draw(ch):
@@ -250,7 +288,19 @@ class RunLeft:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
-        pass
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
 
     @staticmethod
     def draw(ch):
@@ -286,7 +336,19 @@ class RunLeftUp:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
-
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -321,7 +383,19 @@ class RunLeftDown:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
-
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -356,7 +430,19 @@ class RunUp:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
-        pass
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
 
     @staticmethod
     def draw(ch):
@@ -391,8 +477,20 @@ class RunDown:
         if ch.state == 'alive':
             ch.x = clamp(300, ch.x, WIDTH // 2 - 20)
             ch.y = clamp(180, ch.y, 700)
+        elif ch.state == 'dead':
+            if ch.x > WIDTH - 190 and ch.x < WIDTH - 130 and ch.y >= 100 and ch.y <= 780:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(50, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y >= 770:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(780, ch.y, 800)
+            elif ch.x < WIDTH - 130 and ch.y <= 125:
+                ch.x = clamp(WIDTH // 2 + 70, ch.x, WIDTH - 170)
+                ch.y = clamp(50, ch.y, 100)
+            else:
+                ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
+                ch.y = clamp(0, ch.y, 800)
 
-        pass
 
     @staticmethod
     def draw(ch):
