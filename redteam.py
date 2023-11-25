@@ -1,3 +1,6 @@
+import math
+import random
+
 from pico2d import load_image, get_time, load_font, clamp, draw_rectangle
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA, SDLK_SLASH, \
@@ -8,6 +11,7 @@ from tkinter import *
 import game_world
 import play_mode
 from ball import Ball
+from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -647,6 +651,8 @@ class Redteam:
         self.shoot = False
         self.wait_time = -2.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
+        self.tx, self.ty = 0, 0
+        self.build_behavior_tree()
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
@@ -660,7 +666,8 @@ class Redteam:
 
     def update(self):
         self.state_machine.update()
-
+        if play_mode.select[1] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
+            self.bt.run()
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
@@ -699,3 +706,68 @@ class Redteam:
                 self.getball = True
                 play_mode.ball.shoot = False
         pass
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (PIXEL_PER_METER * r) ** 2
+
+
+    def move_slightly_to(self, tx, ty):
+        self.dir = math.atan2(ty - self.y, tx - self.x)
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+
+    def move_to(self, r=0.5):
+        #self.state = 'Walk'
+        self.move_slightly_to(self.tx, self.ty)
+        if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+
+    def set_random_location(self):
+        self.tx, self.ty = random.randint(WIDTH // 2 + 70, WIDTH - 270), random.randint(180, 700)
+        return BehaviorTree.SUCCESS
+
+    def is_alive(self):
+        if self.state == 'alive':
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def is_ball_nearby(self, distance):
+        if self.distance_less_than(play_mode.boy.x, play_mode.boy.y, self.x, self.y, distance):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def move_to_boy(self, r=0.5):
+        self.state = 'Walk'
+        self.move_slightly_to(play_mode.boy.x, play_mode.boy.y)
+        if self.distance_less_than(play_mode.boy.x, play_mode.boy.y, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+
+
+
+    def flee(self):
+        self.state = 'Walk'
+        # 소년으로부터 멀어지는 방향
+        self.dir = math.atan2(self.y - play_mode.boy.y, self.x - play_mode.boy.x)
+
+        # 살짝 이동
+        self.speed = RUN_SPEED_PPS
+        self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
+        self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
+
+        return BehaviorTree.RUNNING
+        pass
+    def build_behavior_tree(self):
+        a1 = Action("랜덤위치지정", self.set_random_location)
+        a2 = Action("이동", self.move_to)
+        root = SEQ_wander = Sequence("Wander", a1, a2)
+        c1 = Condition("살아있는가?", self.is_alive)
+        root = SEQ_wander = Sequence("살아있으면 배회", c1, SEQ_wander)
+
+        self.bt = BehaviorTree(root)
