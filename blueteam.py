@@ -657,7 +657,7 @@ class Blueteam:
 
     def update(self):
         self.state_machine.update()
-        if play_mode.select[0] != self.num:     # 선택되지 않았다면 AI가 조작한다
+        if play_mode.select[0] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
