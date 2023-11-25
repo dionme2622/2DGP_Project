@@ -707,8 +707,7 @@ class Blueteam:
             return BehaviorTree.RUNNING
 
     def set_random_location(self):
-        self.tx, self.ty = random.randint(100, 1280 - 100), random.randint(100, 1024 - 100)
-        self.tx, self.ty = 400, 600
+        self.tx, self.ty = random.randint(300, WIDTH // 2 - 20), random.randint(180, 700)
         return BehaviorTree.SUCCESS
 
 
