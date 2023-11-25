@@ -713,9 +713,9 @@ class Blueteam:
 
     def is_alive(self):
         if self.state == 'alive':
-            return True
+            return BehaviorTree.SUCCESS
         else:
-            return False
+            return BehaviorTree.FAIL
 
     def is_ball_nearby(self, distance):
         if self.distance_less_than(play_mode.boy.x, play_mode.boy.y, self.x, self.y, distance):
