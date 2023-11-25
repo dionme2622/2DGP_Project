@@ -7,6 +7,7 @@ from tkinter import *
 import game_world
 import play_mode
 from ball import Ball
+from behavior_tree import BehaviorTree
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -651,17 +652,14 @@ class Blueteam:
 
     def update(self):
         self.state_machine.update()
-
+        if play_mode.select[0] != self.num:     # 선택되지 않았다면 AI가 조작한다
+            self.bt.run()
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
         self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
-        # if float(self.wait_time) - float(get_time()) > -5.0:
-        #     self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}', (0, 0, 0))
-        # else:
-        #     self.font.draw(WIDTH // 2 - 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
         draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
@@ -684,7 +682,9 @@ class Blueteam:
                 self.getball = True
                 play_mode.ball.shoot = False
         pass
+    def build_behavior_tree(self):
 
+        self.bt = BehaviorTree(root)
 
 def remove_shoot(beg, end):
     for i in range(beg, end):
