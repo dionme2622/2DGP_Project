@@ -9,7 +9,7 @@ from tkinter import *
 
 import game_world
 import play_mode
-from ball import Ball
+import ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 
@@ -28,6 +28,7 @@ FRAMES_PER_ACTION = 4
 
 PI = 3.141592
 radian = 10
+survivor = 5
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
@@ -435,7 +436,6 @@ class RunUp:
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
-            print("증가")
         if s_down(e):
             ch.angle -= radian
         print(ch.angle)
@@ -479,7 +479,6 @@ class RunDown:
         ch.action, ch.run = 5, 5
         ch.angle += 135
         ch.run_state = RunDown
-        print("각도 270 증가")
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
@@ -659,7 +658,6 @@ class StateMachine:
 
 class Blueteam:
     image = None
-
     def __init__(self, x, y, num):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
@@ -789,12 +787,14 @@ def ball_is_team(ch):
     pass
 
 def ball_is_enemy(ch):
+    global survivor
     if ch.state == 'alive':
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.state_machine.cur_state = Damage
             ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
+            survivor -= 1
             play_mode.ball.state = 'floor'
         else:                                       # 방어에 성공했다면
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y

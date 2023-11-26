@@ -6,7 +6,9 @@ from pico2d import load_image, draw_rectangle
 
 from tkinter import *
 
+import blueteam
 import play_mode, game_framework
+import redteam
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -15,10 +17,10 @@ WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 class Ball:
     image = None
 
-    def __init__(self, velocity = 5):
+    def __init__(self, velocity=5):
         if Ball.image == None:
             Ball.image = load_image('./object/ball.png')
-        self.spawn = 0#random.randint(0,1)
+        self.spawn = 1  # random.randint(0,1)
         if self.spawn == 0:
             self.x = WIDTH // 2 - 100
         else:
@@ -27,6 +29,7 @@ class Ball:
         self.state = 'floor'
         self.shoot = False
         self.angle1, self.angle2 = 0, 0
+
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
@@ -50,10 +53,8 @@ class Ball:
                     self.x = play_mode.player[i].x
                     self.y = play_mode.player[i].y - 80
 
-
         self.angle1 = play_mode.arrow.angle1
         self.angle2 = play_mode.arrow.angle2
-
 
         if self.shoot == True:
             if self.state == 'Blueteam_get':
@@ -63,19 +64,60 @@ class Ball:
                 self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle2)
                 self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle2)
 
+        if blueteam.survivor == 5:
+            if self.x > WIDTH + 50 or (self.x > WIDTH // 2 and (self.y > HEIGHT + 150 or self.y < -150)):
+                self.state = 'floor'
+                self.x = WIDTH * 3 // 4
+                self.y = 400
+                for i in range(0, 5):
+                    play_mode.player[i].shoot = False
+        else:
+            if self.x > WIDTH + 50:
+                print("hello")
+                self.state = 'floor'
+                self.x = WIDTH - 180
+                self.y = 400
+                for i in range(0, 5):
+                    play_mode.player[i].shoot = False
+            elif self.x > WIDTH // 2 and self.y > HEIGHT + 150:
+                self.state = 'floor'
+                self.y = 790
+                for i in range(0, 5):
+                    play_mode.player[i].shoot = False
+            elif self.x > WIDTH // 2 and self.y < -150:
+                self.state = 'floor'
+                self.y = 70
+                for i in range(0, 5):
+                    play_mode.player[i].shoot = False
 
-        if self.x > WIDTH + 50:
-            self.state = 'floor'
-            self.x = WIDTH * 3 // 4
-            self.y = 400
-            for i in range(0, 10):
-                play_mode.player[i].shoot = False
-        if self.x < 0 - 50:
-            self.state = 'floor'
-            self.x = WIDTH // 1 // 4
-            self.y = 400
-            for i in range(0, 10):
-                play_mode.player[i].shoot = False
+        if redteam.survivor == 5:
+            if self.x < -50 or (self.x < WIDTH // 2 and (self.y > HEIGHT + 150 or self.y < -150)):
+                self.state = 'floor'
+                self.x = WIDTH * 1 // 4
+                self.y = 400
+                for i in range(5, 10):
+                    play_mode.player[i].shoot = False
+        else:
+            if self.x < -50:
+                self.state = 'floor'
+                self.x = 200
+                self.y = 400
+                for i in range(5, 10):
+                    play_mode.player[i].shoot = False
+            elif self.x < WIDTH // 2 and self.y > HEIGHT + 150:
+                self.state = 'floor'
+                self.y = 790
+                for i in range(5, 10):
+                    play_mode.player[i].shoot = False
+            elif self.x < WIDTH // 2 and self.y < -150:
+                self.state = 'floor'
+                self.y = 70
+                for i in range(5, 10):
+                    play_mode.player[i].shoot = False
+
+        print(play_mode.player[1].state)
         pass
+
+
     def handle_collision(self, group, other):
         pass

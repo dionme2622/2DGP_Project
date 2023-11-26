@@ -10,7 +10,7 @@ from tkinter import *
 
 import game_world
 import play_mode
-from ball import Ball
+import ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 root = Tk()
@@ -26,6 +26,7 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
+survivor = 5
 
 def Semi_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
@@ -685,7 +686,6 @@ class StateMachine:
 
 class Redteam:
     image = None
-
     def __init__(self, x, y, num):
         if Redteam.image == None:
             Redteam.image = load_image("./character/sands_red.png")
@@ -822,12 +822,14 @@ def ball_is_team(ch):
     pass
 
 def ball_is_enemy(ch):
+    global survivor
     if ch.state == 'alive':
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.state_machine.cur_state = Damage
             ch.x, ch.y, ch.state = 200, 400, 'dead'
+            survivor -= 1
             play_mode.ball.state = 'floor'
         else:                                       # 방어에 성공했다면
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y
