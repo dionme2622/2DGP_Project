@@ -106,26 +106,26 @@ class Idle:
             ch.angle += radian
         if s_down(e):
             ch.angle -= radian
-        if ch.action == 2:
+        if ch.run == 2:
             ch.angle += 45
-        elif ch.action == 3:
+        elif ch.run == 3:
             ch.angle += 0
-        elif ch.action == 4:
+        elif ch.run == 4:
             ch.angle += 90
-        elif ch.action == 5:
+        elif ch.run == 5:
             ch.angle += 135
 
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
-        if ch.action == 2:
+        if ch.run == 2:
             ch.angle -= 45
-        elif ch.action == 3:
+        elif ch.run == 3:
             ch.angle -= 0
-        elif ch.action == 4:
+        elif ch.run == 4:
             ch.angle -= 90
-        elif ch.action == 5:
+        elif ch.run == 5:
             ch.angle -= 135
         pass
 
@@ -141,7 +141,7 @@ class Idle:
 class RunRight:
     @staticmethod
     def enter(ch, e):
-        ch.action = 3
+        ch.action, ch.run = 3, 3
         ch.run_state = RunRight
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
@@ -189,7 +189,7 @@ class RunRight:
 class RunRightUp:
     @staticmethod
     def enter(ch, e):
-        ch.action = 3
+        ch.action, ch.run = 3, 3
         ch.run_state = RunRightUp
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
@@ -236,7 +236,7 @@ class RunRightUp:
 class RunRightDown:
     @staticmethod
     def enter(ch, e):
-        ch.action = 3
+        ch.action, ch.run = 3, 3
         ch.run_state = RunRightDown
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
@@ -283,7 +283,7 @@ class RunRightDown:
 class RunLeft:
     @staticmethod
     def enter(ch, e):
-        ch.action = 4
+        ch.action, ch.run = 4, 4
         ch.angle += 90
         ch.run_state = RunLeft
         if def_down(e):
@@ -331,7 +331,7 @@ class RunLeft:
 class RunLeftUp:
     @staticmethod
     def enter(ch, e):
-        ch.action = 4
+        ch.action, ch.run = 4, 4
         ch.angle += 90
         ch.run_state = RunLeftUp
         if def_down(e):
@@ -379,7 +379,7 @@ class RunLeftUp:
 class RunLeftDown:
     @staticmethod
     def enter(ch, e):
-        ch.action = 4
+        ch.action, ch.run = 4, 4
         ch.angle += 90
         ch.run_state = RunLeftDown
         if def_down(e):
@@ -427,7 +427,7 @@ class RunLeftDown:
 class RunUp:
     @staticmethod
     def enter(ch, e):
-        ch.action = 2
+        ch.action, ch.run = 2, 2
         ch.angle += 45
         ch.run_state = RunUp
         if def_down(e):
@@ -476,7 +476,7 @@ class RunUp:
 class RunDown:
     @staticmethod
     def enter(ch, e):
-        ch.action = 5
+        ch.action, ch.run = 5, 5
         ch.angle += 135
         ch.run_state = RunDown
         print("각도 270 증가")
@@ -641,8 +641,7 @@ class StateMachine:
     def start(self):
         self.cur_state.enter(self.ch, ('NONE', 0))
 
-    def update(self,ch):
-        self.run_state = ch.run_state
+    def update(self):
         self.cur_state.do(self.ch)
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
@@ -665,6 +664,7 @@ class Blueteam:
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
         self.x, self.y, self.num = x, y, num
+        self.run = 0
         self.state = 'alive'
         self.frame, self.action = 0, 0
         self.angle = 0
@@ -691,7 +691,7 @@ class Blueteam:
         if play_mode.select[0] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
             #self.bt.run()
             pass
-        self.state_machine.update(self)
+        self.state_machine.update()
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
@@ -792,13 +792,13 @@ def ball_is_enemy(ch):
     if ch.state == 'alive':
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
-            play_mode.ball.x, play_mode.ball.y = ch.x, ch.y  # 맞은 플레이어 앞에 떨어진다
+            play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.state_machine.cur_state = Damage
-            ch.x, ch.y, ch.state = 200, 400, 'dead'
+            ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
             play_mode.ball.state = 'floor'
         else:                                       # 방어에 성공했다면
-            ch.getball = True
-            play_mode.ball.state = 'Blueteam_get'
+            play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y
+            play_mode.ball.state = 'floor'
     pass
 
 def ball_is_floor(ch):

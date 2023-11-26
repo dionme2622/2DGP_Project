@@ -18,8 +18,8 @@ class Ball:
     def __init__(self, velocity = 5):
         if Ball.image == None:
             Ball.image = load_image('./object/ball.png')
-        spawn = random.randint(0,1)
-        if spawn == 0:
+        self.spawn = 0#random.randint(0,1)
+        if self.spawn == 0:
             self.x = WIDTH // 2 - 100
         else:
             self.x = WIDTH // 2 + 100
@@ -78,13 +78,4 @@ class Ball:
                 play_mode.player[i].shoot = False
         pass
     def handle_collision(self, group, other):
-    #     if group == 'player1:ball':
-    #         play_mode.player1.getball = True
-    #         play_mode.player2.getball = False
-    #         play_mode.player2.shoot = False
-    #     elif group == 'player2:ball':
-    #         play_mode.player1.getball = False
-    #         play_mode.player2.getball = True
-    #         play_mode.player1.shoot = False
-
         pass
