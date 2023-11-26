@@ -652,6 +652,7 @@ class Redteam:
         self.wait_time = -2.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.tx, self.ty = 0, 0
+        self.dir = 0.0
         self.build_behavior_tree()
         self.state_machine = StateMachine(self)
         self.state_machine.start()
@@ -718,7 +719,12 @@ class Redteam:
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
     def move_to(self, r=0.5):
-        #self.state = 'Walk'
+        if math.cos(self.dir) < 0:
+            self.action = 4
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        else:
+            self.action = 3
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         self.move_slightly_to(self.tx, self.ty)
         if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):
             return BehaviorTree.SUCCESS

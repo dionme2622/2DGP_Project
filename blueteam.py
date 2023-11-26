@@ -24,7 +24,7 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
-
+PI = 3.141592
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
@@ -642,8 +642,8 @@ class Blueteam:
         self.wait_time = -2.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.tx, self.ty = 0, 0
+        self.dir = 0.0
         self.build_behavior_tree()
-
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
@@ -656,9 +656,9 @@ class Blueteam:
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
     def update(self):
-        self.state_machine.update()
         if play_mode.select[0] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
+        self.state_machine.update()
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
@@ -698,17 +698,27 @@ class Blueteam:
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
+
+
+    def set_random_location(self):
+        self.tx, self.ty = random.randint(300, WIDTH // 2 - 20), random.randint(180, 700)
+        return BehaviorTree.SUCCESS
+
+
     def move_to(self, r=0.5):
-        #self.state = 'Walk'
+        if math.cos(self.dir) < 0:
+            self.action = 4
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+        else:
+            self.action = 3
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         self.move_slightly_to(self.tx, self.ty)
         if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
 
-    def set_random_location(self):
-        self.tx, self.ty = random.randint(300, WIDTH // 2 - 20), random.randint(180, 700)
-        return BehaviorTree.SUCCESS
+
 
 
     def is_alive(self):
@@ -723,13 +733,7 @@ class Blueteam:
         else:
             return BehaviorTree.FAIL
 
-    def move_to_boy(self, r=0.5):
-        self.state = 'Walk'
-        self.move_slightly_to(play_mode.boy.x, play_mode.boy.y)
-        if self.distance_less_than(play_mode.boy.x, play_mode.boy.y, self.x, self.y, r):
-            return BehaviorTree.SUCCESS
-        else:
-            return BehaviorTree.RUNNING
+
 
 
 
@@ -751,7 +755,6 @@ class Blueteam:
         root = SEQ_wander = Sequence("Wander", a1, a2)
         c1 = Condition("살아있는가?", self.is_alive)
         root = SEQ_wander = Sequence("살아있으면 배회", c1, SEQ_wander)
-
 
 
 
