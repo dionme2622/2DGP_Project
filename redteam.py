@@ -12,7 +12,7 @@ import game_world
 import play_mode
 from ball import Ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
-
+from function import *
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
@@ -78,31 +78,40 @@ def def_down(e):
 def skill_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SLASH
 
-
-def lets_idle(e):
-    return e[0] == 'LETS_IDLE'
-
-
-def lets_defense(e):
-    return e[0] == 'LETS_DEFENSE'
-
-
-def lets_skill(e):
-    return e[0] == 'LETS_SKILL'
-
-
+def return_run_state(ch):
+    if ch.run_state == Idle:
+        ch.state_machine.handle_event(('LETS_IDLE', 0))
+    elif ch.run_state == RunRight:
+        ch.state_machine.handle_event(('LETS_RIGHT', 0))
+    elif ch.run_state == RunRightUp:
+        ch.state_machine.handle_event(('LETS_RIGHT_UP', 0))
+    elif ch.run_state == RunRightDown:
+        ch.state_machine.handle_event(('LETS_RIGHT_DOWN', 0))
+    elif ch.run_state == RunLeft:
+        ch.state_machine.handle_event(('LETS_LEFT', 0))
+    elif ch.run_state == RunLeftUp:
+        ch.state_machine.handle_event(('LETS_LEFT_UP', 0))
+    elif ch.run_state == RunLeftDown:
+        ch.state_machine.handle_event(('LETS_LEFT_DOWN', 0))
+    elif ch.run_state == RunUp:
+        ch.state_machine.handle_event(('LETS_UP', 0))
+    elif ch.run_state == RunDown:
+        ch.state_machine.handle_event(('LETS_DOWN', 0))
+PI = 3.141592
+radian = 10
 class Idle:
 
     @staticmethod
     def enter(ch, e):
         ch.frame = 0
+        ch.run_state = Idle
         if def_down(e):
             if get_time() - ch.wait_time > 5.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         if ch.action == 2:
             ch.angle += 45
         elif ch.action == 3:
@@ -139,13 +148,14 @@ class RunRight:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
+        ch.run_state = RunRight
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
 
     @staticmethod
     def exit(ch, e):
@@ -185,13 +195,14 @@ class RunRightUp:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
+        ch.run_state = RunRightUp
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         pass
 
     @staticmethod
@@ -232,13 +243,14 @@ class RunRightDown:
     @staticmethod
     def enter(ch, e):
         ch.action = 3
+        ch.run_state = RunRightDown
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         pass
 
     @staticmethod
@@ -278,13 +290,14 @@ class RunLeft:
     def enter(ch, e):
         ch.action = 4
         ch.angle += 90
+        ch.run_state = RunLeft
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         pass
 
     @staticmethod
@@ -325,13 +338,14 @@ class RunLeftUp:
     def enter(ch, e):
         ch.action = 4
         ch.angle += 90
+        ch.run_state = RunLeftUp
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         pass
 
     @staticmethod
@@ -372,13 +386,14 @@ class RunLeftDown:
     def enter(ch, e):
         ch.action = 4
         ch.angle += 90
+        ch.run_state = RunLeftDown
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         pass
 
     @staticmethod
@@ -419,13 +434,14 @@ class RunUp:
     def enter(ch, e):
         ch.action = 2
         ch.angle += 45
+        ch.run_state = RunUp
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
 
     @staticmethod
     def exit(ch, e):
@@ -464,13 +480,14 @@ class RunDown:
     def enter(ch, e):
         ch.action = 5
         ch.angle += 135
+        ch.run_state = RunDown
         if def_down(e):
             if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
-            ch.angle -= 5
+            ch.angle -= radian
         if Quote_down(e):
-            ch.angle += 5
+            ch.angle += radian
         pass
 
     @staticmethod
@@ -521,7 +538,7 @@ class Attack:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            ch.state_machine.handle_event(('LETS_IDLE', 0))
+            return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -545,7 +562,7 @@ class Defense:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            ch.state_machine.handle_event(('LETS_IDLE', 0))
+            return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -570,7 +587,7 @@ class Damage:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            ch.state_machine.handle_event(('LETS_IDLE', 0))
+            return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -612,9 +629,18 @@ class StateMachine:
             RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, Semi_down: RunRightDown, Quote_down: RunRightDown,
                            lets_defense: Defense},
-            Attack: {lets_idle: Idle},
-            Defense: {lets_idle: Idle},
-            Damage: {lets_idle: Idle},
+            Attack: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
+                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                     },
+            Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
+                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
+                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                      },
+            Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
+                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                     }
         }
 
     def start(self):
@@ -646,6 +672,7 @@ class Redteam:
         self.x, self.y, self.num = x, y, num
         self.frame, self.action = 0, 0
         self.state = 'alive'
+        self.run_state = Idle
         self.angle = 0
         self.getball = False
         self.shoot = False
@@ -668,7 +695,8 @@ class Redteam:
     def update(self):
         self.state_machine.update()
         if play_mode.select[1] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
-            self.bt.run()
+            #self.bt.run()
+            pass
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
