@@ -714,26 +714,13 @@ class Redteam:
         if group == 'Redteam:ball':
             # 공이 바닥에 놓여있다면
             if play_mode.ball.state == 'floor':
-                print("레드팀 공 주움")
-                self.getball = True
-                play_mode.ball.state = 'Redteam_get'
+                ball_is_floor(self)
             # 공을 블루팀이 들고있었다면
             elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:
-                # 플레이어가 alive 상태라면
-                if self.state == 'alive':
-                    play_mode.ball.shoot = False
-                    if self.state_machine.cur_state != Defense:
-                        play_mode.ball.x, play_mode.ball.y = self.x, self.y  # 맞은 플레이어 앞에 떨어진다
-                        self.state_machine.cur_state = Damage
-                        self.x, self.y, self.state = 200, 400, 'dead'
-                        play_mode.ball.state = 'floor'
-                    else:
-                        self.getball = True
-
+                ball_is_enemy(self)
             # 공을 같은 팀이 들고있었다면
             elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:
-                self.getball = True
-                play_mode.ball.shoot = False
+                ball_is_team(self)
         pass
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -805,3 +792,27 @@ class Redteam:
         root = SEQ_wander = Sequence("살아있으면 배회", c1, SEQ_wander)
 
         self.bt = BehaviorTree(root)
+
+def ball_is_team(ch):
+    play_mode.ball.shoot = False
+    ch.getball = True
+    play_mode.ball.state = 'Redteam_get'
+    pass
+
+def ball_is_enemy(ch):
+    if ch.state == 'alive':
+        play_mode.ball.shoot = False
+        if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
+            play_mode.ball.x, play_mode.ball.y = ch.x, ch.y  # 맞은 플레이어 앞에 떨어진다
+            ch.state_machine.cur_state = Damage
+            ch.x, ch.y, ch.state = 200, 400, 'dead'
+            play_mode.ball.state = 'floor'
+        else:                                       # 방어에 성공했다면
+            ch.getball = True
+            play_mode.ball.state = 'Redteam_get'
+    pass
+
+def ball_is_floor(ch):
+    ch.getball = True
+    play_mode.ball.state = 'Redteam_get'
+    pass
