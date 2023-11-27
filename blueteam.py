@@ -792,7 +792,7 @@ def ball_is_enemy(ch):
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
-            ch.state_machine.cur_state = Damage
+            #ch.state_machine.cur_state = Damage
             ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'

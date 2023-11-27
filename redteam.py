@@ -569,14 +569,6 @@ class Defense:
     @staticmethod
     def exit(ch, e):
         ch.wait_time = get_time()
-        # if ch.action == 2:
-        #     ch.angle += 45
-        # elif ch.action == 3:
-        #     ch.angle += 0
-        # elif ch.action == 4:
-        #     ch.angle += 90
-        # elif ch.action == 5:
-        #     ch.angle += 135
 
     @staticmethod
     def do(ch):
@@ -601,7 +593,6 @@ class Damage:
 
     @staticmethod
     def exit(ch, e):
-
         pass
 
     @staticmethod
@@ -805,7 +796,7 @@ class Redteam:
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
         return BehaviorTree.RUNNING
-        pass
+
     def build_behavior_tree(self):
         a1 = Action("랜덤위치지정", self.set_random_location)
         a2 = Action("이동", self.move_to)
@@ -827,7 +818,7 @@ def ball_is_enemy(ch):
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y  # 맞은 플레이어 앞에 떨어진다
-            ch.state_machine.cur_state = Damage
+            #ch.state_machine.cur_state = Damage
             ch.x, ch.y, ch.state = 200, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
