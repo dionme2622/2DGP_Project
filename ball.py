@@ -17,7 +17,7 @@ WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 class Ball:
     image = None
 
-    def __init__(self, velocity=5):
+    def __init__(self, velocity=7):
         if Ball.image == None:
             Ball.image = load_image('./object/ball.png')
         self.spawn = 1  # random.randint(0,1)

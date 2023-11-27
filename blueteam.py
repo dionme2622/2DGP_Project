@@ -17,7 +17,7 @@ root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 45.0  # 시속
+RUN_SPEED_KMPH = 25.0  # 시속
 RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
@@ -687,7 +687,7 @@ class Blueteam:
 
     def update(self):
         if play_mode.select[0] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
-            #self.bt.run()
+            self.bt.run()
             pass
         self.state_machine.update()
     def handle_event(self, event):
