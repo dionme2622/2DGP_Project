@@ -72,7 +72,6 @@ class Ball:
                     play_mode.player[i].shoot = False
         else:
             if self.x > WIDTH + 50:
-                print("hello")
                 self.state = 'floor'
                 self.x = WIDTH - 180
                 self.y = 400
@@ -80,11 +79,13 @@ class Ball:
                     play_mode.player[i].shoot = False
             elif self.x > WIDTH // 2 and self.y > HEIGHT + 150:
                 self.state = 'floor'
+                self.x = WIDTH // 2 + 200
                 self.y = 790
                 for i in range(0, 5):
                     play_mode.player[i].shoot = False
             elif self.x > WIDTH // 2 and self.y < -150:
                 self.state = 'floor'
+                self.x = WIDTH // 2 + 200
                 self.y = 70
                 for i in range(0, 5):
                     play_mode.player[i].shoot = False
@@ -104,11 +105,13 @@ class Ball:
                     play_mode.player[i].shoot = False
             elif self.x < WIDTH // 2 and self.y > HEIGHT + 150:
                 self.state = 'floor'
+                self.x = WIDTH // 2 - 200
                 self.y = 790
                 for i in range(5, 10):
                     play_mode.player[i].shoot = False
             elif self.x < WIDTH // 2 and self.y < -150:
                 self.state = 'floor'
+                self.x = WIDTH // 2 - 200
                 self.y = 70
                 for i in range(5, 10):
                     play_mode.player[i].shoot = False
