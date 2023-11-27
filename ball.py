@@ -38,6 +38,15 @@ class Ball:
         draw_rectangle(*self.get_bb())
 
     def update(self):
+        self.player_getball()
+        self.angle1 = play_mode.arrow.angle1
+        self.angle2 = play_mode.arrow.angle2
+        self.shoot_ball()
+        self.ball_out()
+
+        pass
+
+    def player_getball(self):
         for i in range(0, 10):
             if play_mode.player[i].getball == True:
                 if play_mode.player[i].action == 2:
@@ -53,17 +62,7 @@ class Ball:
                     self.x = play_mode.player[i].x
                     self.y = play_mode.player[i].y - 80
 
-        self.angle1 = play_mode.arrow.angle1
-        self.angle2 = play_mode.arrow.angle2
-
-        if self.shoot == True:
-            if self.state == 'Blueteam_get':
-                self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle1)
-                self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle1)
-            elif self.state == 'Redteam_get':
-                self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle2)
-                self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle2)
-
+    def ball_out(self):
         if blueteam.survivor == 5:
             if self.x > WIDTH + 50 or (self.x > WIDTH // 2 and (self.y > HEIGHT + 150 or self.y < -150)):
                 self.state = 'floor'
@@ -89,7 +88,6 @@ class Ball:
                 self.y = 70
                 for i in range(0, 5):
                     play_mode.player[i].shoot = False
-
         if redteam.survivor == 5:
             if self.x < -50 or (self.x < WIDTH // 2 and (self.y > HEIGHT + 150 or self.y < -150)):
                 self.state = 'floor'
@@ -115,9 +113,14 @@ class Ball:
                 for i in range(5, 10):
                     play_mode.player[i].shoot = False
 
-        print(play_mode.player[1].state)
-        pass
-
+    def shoot_ball(self):
+        if self.shoot == True:
+            if self.state == 'Blueteam_get':
+                self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle1)
+                self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle1)
+            elif self.state == 'Redteam_get':
+                self.x += self.velocity * 100 * game_framework.frame_time * math.cos(self.angle2)
+                self.y += self.velocity * 100 * game_framework.frame_time * math.sin(self.angle2)
 
     def handle_collision(self, group, other):
         pass
