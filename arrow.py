@@ -15,8 +15,8 @@ class Arrow:
     def __init__(self):
         if Arrow.image == None:
             Arrow.image = load_image('./object/arrow.png')
-            self.x, self.y = 0, 0
-            self.angle1, self.angle2 = 0, 0
+        self.x, self.y = 0, 0
+        self.angle1, self.angle2 = 0, 0
 
     def get_bb(self):
         pass
@@ -31,19 +31,22 @@ class Arrow:
 
     def update(self):
         global angle1, angle2
+        self.locate_arrow()
+
+    def locate_arrow(self):
         for i in range(0, 5):
             if play_mode.player[i].getball == True:
                 self.angle1 = play_mode.player[i].angle * 2 * 3.14 / 180
-                if play_mode.player[i].action == 2:         # 위
+                if play_mode.player[i].action == 2:  # 위
                     self.x = play_mode.player[i].x
                     self.y = play_mode.player[i].y + 100
-                elif play_mode.player[i].action == 3:       # 오른쪽
+                elif play_mode.player[i].action == 3:  # 오른쪽
                     self.x = play_mode.player[i].x + 100
                     self.y = play_mode.player[i].y
-                elif play_mode.player[i].action == 4:       # 왼쪽
+                elif play_mode.player[i].action == 4:  # 왼쪽
                     self.x = play_mode.player[i].x - 100
                     self.y = play_mode.player[i].y
-                elif play_mode.player[i].action == 5:       # 아래
+                elif play_mode.player[i].action == 5:  # 아래
                     self.x = play_mode.player[i].x
                     self.y = play_mode.player[i].y - 100
         for i in range(5, 10):
