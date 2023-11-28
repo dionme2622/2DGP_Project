@@ -1,6 +1,9 @@
 from pico2d import *
 
+import blueteam
 import game_framework, game_world
+import redteam
+import select_mode
 from arrow import Arrow
 
 from background import Background
@@ -46,7 +49,9 @@ def handle_events():
             select[1] = 4
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_5:
             select[1] = 5
-
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            if event.x >= 1680 and event.x <= 1920 and event.y >= 25 and event.y <= 115:
+                game_framework.change_mode(select_mode)
         else:
             if select[0] == 1:
                 player[0].handle_event(event)
@@ -127,14 +132,17 @@ def finish():
 
 
 def update():
+    global getball_player
     game_world.update()
     game_world.handle_collisions()
-
-
+    if blueteam.survivor == 0:
+        game_framework.quit()
+    elif redteam.survivor == 0:
+        game_framework.quit()
 def draw():
     clear_canvas()
     game_world.render()
-    font.draw(WIDTH // 2 - 50, HEIGHT // 2 + 350, f'{90- get_time():.2f}', (255, 255, 255))
+    #font.draw(WIDTH // 2 - 50, HEIGHT // 2 + 350, f'{90- get_time():.2f}', (255, 255, 255))
 
     update_canvas()
 

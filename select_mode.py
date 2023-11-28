@@ -1,8 +1,10 @@
 from pico2d import load_image, get_events, clear_canvas, update_canvas
-from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
+from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
 import game_framework, game_world, play_mode
 
 from tkinter import *
+
+import help_mode
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -26,10 +28,16 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_world.add_collision_pair('player1:ball', player1, None)
-            game_world.add_collision_pair('player2:ball', player2, None)
-            game_framework.change_mode(play_mode)
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            if event.x >= 320 and event.x <= 560 and event.y >= 980 and event.y <= 1060:
+                game_framework.change_mode(play_mode)
+            elif event.x >= 660 and event.x <= 900 and event.y >= 980 and event.y <= 1060:
+                game_framework.change_mode(help_mode)
+            elif event.x >= 1020 and event.x <= 1260 and event.y >= 980 and event.y <= 1060:
+                # 옵션 모드로 이동
+                pass
+            elif event.x >= 1370 and event.x <= 1610 and event.y >= 980 and event.y <= 1060:
+                game_framework.quit()
         # elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
         #     # 플레이어1 핑크빈 선택
         #     pass
