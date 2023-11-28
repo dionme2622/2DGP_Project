@@ -27,7 +27,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
 survivor = 5
-
+def_cooltime = 4.0
 def Semi_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
 
@@ -108,7 +108,7 @@ class Idle:
         ch.run_state = Idle
 
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -156,7 +156,7 @@ class RunRight:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRight
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -203,7 +203,7 @@ class RunRightUp:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightUp
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -251,7 +251,7 @@ class RunRightDown:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightDown
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -300,7 +300,7 @@ class RunLeft:
         print(ch.angle)
         ch.run_state = RunLeft
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -350,7 +350,7 @@ class RunLeftUp:
         ch.angle += 90
         ch.run_state = RunLeftUp
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -398,7 +398,7 @@ class RunLeftDown:
         ch.angle += 90
         ch.run_state = RunLeftDown
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -446,7 +446,7 @@ class RunUp:
         ch.angle += 45
         ch.run_state = RunUp
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -492,7 +492,7 @@ class RunDown:
         ch.angle += 135
         ch.run_state = RunDown
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian

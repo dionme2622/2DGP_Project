@@ -29,6 +29,7 @@ FRAMES_PER_ACTION = 4
 PI = 3.141592
 radian = 10
 survivor = 5
+def_cooltime = 4.0
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
@@ -101,7 +102,7 @@ class Idle:
         ch.frame = 0
         ch.run_state = Idle
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -145,7 +146,7 @@ class RunRight:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRight
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -193,7 +194,7 @@ class RunRightUp:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightUp
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -240,7 +241,7 @@ class RunRightDown:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightDown
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -288,7 +289,7 @@ class RunLeft:
         ch.angle += 90
         ch.run_state = RunLeft
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -336,7 +337,7 @@ class RunLeftUp:
         ch.angle += 90
         ch.run_state = RunLeftUp
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -384,7 +385,7 @@ class RunLeftDown:
         ch.angle += 90
         ch.run_state = RunLeftDown
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -432,7 +433,7 @@ class RunUp:
         ch.angle += 45
         ch.run_state = RunUp
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -480,7 +481,7 @@ class RunDown:
         ch.angle += 135
         ch.run_state = RunDown
         if def_down(e):
-            if get_time() - ch.wait_time > 2.0:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
             ch.angle += radian
@@ -668,7 +669,7 @@ class Blueteam:
         self.angle = 0
         self.getball = False
         self.shoot = False
-        self.wait_time = -2.0
+        self.wait_time = -4.0
         self.font = load_font('./object/ENCR10B.TTF', 30)
         self.tx, self.ty = 0, 0
         self.dir = 0.0
@@ -793,6 +794,8 @@ def ball_is_enemy(ch):
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             #ch.state_machine.cur_state = Damage
+            # ch.move_slightly_to(WIDTH - 180, 400)
+            # ch.state = 'dead'
             ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
