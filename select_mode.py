@@ -16,6 +16,7 @@ def init():
 
 
 def finish():
+    game_world.clear()
     pass
 
 
@@ -38,25 +39,6 @@ def handle_events():
                 pass
             elif event.x >= 1370 and event.x <= 1610 and event.y >= 980 and event.y <= 1060:
                 game_framework.quit()
-        # elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
-        #     # 플레이어1 핑크빈 선택
-        #     pass
-        # elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
-        #     player1 = Player1(Sands())
-        #     game_world.add_object(player1, 1)
-        # elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
-        #     player1 = Player1(Gray())
-        #     game_world.add_object(player1, 1)
-        # elif event.type == SDL_KEYDOWN and event.key == SDLK_4:
-        #     # 플레이어2 핑크빈 선택
-        #     pass
-        # elif event.type == SDL_KEYDOWN and event.key == SDLK_5:
-        #     player2 = Player2(Sands())
-        #     game_world.add_object(player2, 1)
-        # elif event.type == SDL_KEYDOWN and event.key == SDLK_6:
-        #     player2 = Player2(Gray())
-        #     game_world.add_object(player2, 1)
-
 
 
 def update():
