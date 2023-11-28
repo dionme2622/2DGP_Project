@@ -51,6 +51,7 @@ def handle_events():
             select[1] = 5
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             if event.x >= 1680 and event.x <= 1920 and event.y >= 25 and event.y <= 115:
+                select = 1, 1
                 game_framework.change_mode(select_mode)
         else:
             if select[0] == 1:
@@ -73,13 +74,10 @@ def handle_events():
                 player[8].handle_event(event)
             elif select[1] == 5:
                 player[9].handle_event(event)
-            pass
-            # select_mode.player1.handle_event(event)
-            # select_mode.player2.handle_event(event)
+
 
 
 def init():
-    global running
     global background
     global player
     global ball
@@ -90,6 +88,22 @@ def init():
     game_world.add_object(background, 0)
 
     # Blueteam 객체 추가
+    add_player(player)
+
+    ball = Ball()
+    game_world.add_object(ball, 1)
+    # Blueteam
+    for i in range(0, 5):
+        game_world.add_collision_pair('Blueteam:ball', player[i], ball)
+    # Redteam
+    for i in range(5, 10):
+        game_world.add_collision_pair('Redteam:ball', player[i], ball)
+
+    arrow = Arrow()
+    game_world.add_object(arrow, 1)
+
+
+def add_player(player):
     player[0] = Blueteam(300, 200, 1)
     game_world.add_object(player[0], 1)
     player[1] = Blueteam(300, 400, 2)
@@ -111,19 +125,6 @@ def init():
     game_world.add_object(player[8], 1)
     player[9] = Redteam(WIDTH - 480, 500, 5)
     game_world.add_object(player[9], 1)
-
-    ball = Ball()
-    game_world.add_object(ball, 1)
-    # Blueteam
-    for i in range(0, 5):
-        game_world.add_collision_pair('Blueteam:ball', player[i], ball)
-    # Redteam
-    for i in range(5, 10):
-        game_world.add_collision_pair('Redteam:ball', player[i], ball)
-
-    arrow = Arrow()
-    game_world.add_object(arrow, 1)
-    running = True
 
 
 def finish():
