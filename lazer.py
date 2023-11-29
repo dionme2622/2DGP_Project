@@ -1,9 +1,10 @@
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 
 from tkinter import *
 
 import game_framework
 import game_world
+import math
 import select_mode
 import play_mode
 
@@ -19,32 +20,37 @@ RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 4
+FRAMES_PER_ACTION = 5
 
 class Lazer:
     image = None
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, angle, frame, action):
         if Lazer.image == None:
             Lazer.image = load_image('./object/lazer.png')
         self.x, self.y = x, y
-        self.angle = 0.0
-        for i in range(0, 10):
-            if play_mode.player[i].getball == True:
-                self.angle = (play_mode.player[i].angle) * 2 * 3.14 / 180
-        self.frame = 0.0
+        self.angle = angle
+        self.frame = frame
+        self.action = action
     def get_bb(self):
-        pass
+        if self.action == 2:
+            return (self.x - 20, self.y, self.x + 20, self.y + 1000)
+        elif self.action == 3:
+            return (self.x, self.y - 20, self.x + 1000, self.y + 20)
+        elif self.action == 4:
+            return (self.x - 1000, self.y - 20, self.x, self.y + 20)
+        else:
+            return (self.x - 20, self.y, self.x + 20, self.y - 1000)
 
     def draw(self):
-        self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 200)
+        draw_rectangle(*self.get_bb())
+        self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 400)
 
 
     def update(self):
         self.frame = self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time
-        if self.frame > 2:
+        if self.frame > 5:
             game_world.remove_object(self)
-
         pass
 
 
