@@ -27,7 +27,7 @@ FRAMES_PER_ACTION = 2
 class Skill:
     image = None
 
-    def __init__(self, x, y, action):
+    def __init__(self, x, y, action, state):
         if Skill.image == None:
             Skill.image = load_image('./object/skill.png')
         self.x, self.y = x, y
@@ -42,6 +42,7 @@ class Skill:
             self.angle = math.radians(0)
         self.frame = 0.0
         self.radian = 0.0
+        self.state = state
     def get_bb(self):
         pass
 
@@ -53,7 +54,7 @@ class Skill:
         global lazer
         self.frame = self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time
         if self.frame > 3:
-            lazer = Lazer(self.x, self.y, self.angle - PI / 2, self.frame, self.action)
+            lazer = Lazer(self.x, self.y, self.angle - PI / 2, self.frame, self.action, self.state)
             game_world.add_object(lazer, 1)
             game_world.add_collision_pair("player:lazer", None, lazer)
         if self.frame > 5:

@@ -14,6 +14,7 @@ import ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 from skill import Skill
+import lazer
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -732,7 +733,8 @@ class Redteam:
     def use_skill(self):
         if self.getball == True:
             Redteam.skill_wait_time = get_time()
-            skill = Skill(self.x, self.y, self.action)
+            skill = Skill(self.x, self.y, self.action, "Redteam")
+            lazer.state = "Redteam"
             game_world.add_object(skill, 1)
 
     def get_bb(self):
@@ -766,7 +768,20 @@ class Redteam:
             # 공을 같은 팀이 들고있었다면
             elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:
                 ball_is_team(self)
-        pass
+        if group == 'player:lazer':
+            # 만약 아군이 쐈으면 안전함
+            if lazer.state == "Redteam":
+                pass
+            elif lazer.state == "Blueteam":
+                self.hitted_from_lazor()
+            # 적이 쐈으면 아웃
+            pass
+
+    def hitted_from_lazor(self):
+        global survivor
+        self.x, self.y, self.state =  200, 400, 'dead'
+        survivor -= 1
+
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2

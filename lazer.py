@@ -22,16 +22,18 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
+state = None
 class Lazer:
     image = None
 
-    def __init__(self, x, y, angle, frame, action):
+    def __init__(self, x, y, angle, frame, action, state):
         if Lazer.image == None:
             Lazer.image = load_image('./object/lazer.png')
         self.x, self.y = x, y
         self.angle = angle
         self.frame = frame
         self.action = action
+        self.state = state
     def get_bb(self):
         if self.action == 2:
             return (self.x - 20, self.y, self.x + 20, self.y + 1000)
@@ -41,7 +43,6 @@ class Lazer:
             return (self.x - 1000, self.y - 20, self.x, self.y + 20)
         else:
             return (self.x - 20, self.y, self.x + 20, self.y - 1000)
-
     def draw(self):
         draw_rectangle(*self.get_bb())
         self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 400)

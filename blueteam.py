@@ -8,6 +8,7 @@ from tkinter import *
 
 
 import game_world
+import lazer
 import play_mode
 import ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
@@ -718,7 +719,8 @@ class Blueteam:
     def use_skill(self):
         if self.getball == True:
             Blueteam.skill_wait_time = get_time()
-            skill = Skill(self.x, self.y, self.action)
+            skill = Skill(self.x, self.y, self.action, "Blueteam")
+            lazer.state = "Blueteam"
             game_world.add_object(skill, 1)
 
     def get_bb(self):
@@ -748,7 +750,13 @@ class Blueteam:
                 ball_is_enemy(self)
             elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
                 ball_is_team(self)
-        elif group == "player:lazer":
+        if group == 'player:lazer':
+        # 만약 아군이 쐈으면 안전함
+            if lazer.state == "Blueteam":
+                pass
+            elif lazer.state == "Redteam":
+                self.hitted_from_lazor()
+        # 적이 쐈으면 아웃
             pass
         pass
     def distance_less_than(self, x1, y1, x2, y2, r):
@@ -808,6 +816,11 @@ class Blueteam:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
+
+    def hitted_from_lazor(self):
+        global survivor
+        self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
+        survivor -= 1
 
     def flee(self):
         if math.cos(self.dir) < 0:
