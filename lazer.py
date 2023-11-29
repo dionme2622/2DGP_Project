@@ -6,7 +6,6 @@ import game_framework
 import game_world
 import select_mode
 import play_mode
-from lazer import Lazer
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -20,36 +19,32 @@ RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 2
+FRAMES_PER_ACTION = 4
 
-class Skill:
+class Lazer:
     image = None
 
     def __init__(self, x, y):
-        if Skill.image == None:
-            Skill.image = load_image('./object/skill.png')
+        if Lazer.image == None:
+            Lazer.image = load_image('./object/lazer.png')
         self.x, self.y = x, y
         self.angle = 0.0
         for i in range(0, 10):
             if play_mode.player[i].getball == True:
-                self.angle = (play_mode.player[i].angle + 45) * 2 * 3.14 / 180
+                self.angle = (play_mode.player[i].angle) * 2 * 3.14 / 180
         self.frame = 0.0
     def get_bb(self):
         pass
 
     def draw(self):
-
-        self.image.clip_composite_draw(int(self.frame) * 48, 0, 48, 59, self.angle, ' ', self.x, self.y, 48, 59)
+        self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 200)
 
 
     def update(self):
-        global lazer
         self.frame = self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time
-        if self.frame > 3:
-            lazer = Lazer(self.x, self.y)
-            game_world.add_object(lazer, 1)
-        if self.frame > 5:
+        if self.frame > 2:
             game_world.remove_object(self)
+
         pass
 
 
