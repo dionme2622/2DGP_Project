@@ -13,6 +13,8 @@ import play_mode
 import ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
+from skill import Skill
+
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
@@ -28,6 +30,7 @@ FRAMES_PER_ACTION = 4
 
 survivor = 5
 def_cooltime = 4.0
+skill_cool_time = 1.0
 def Semi_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
 
@@ -126,9 +129,11 @@ class Idle:
         print(ch.angle)
     @staticmethod
     def exit(ch, e):
-
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         if ch.run == 2:
             ch.angle -= 45
         elif ch.run == 3:
@@ -167,6 +172,9 @@ class RunRight:
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -215,6 +223,9 @@ class RunRightUp:
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -263,6 +274,9 @@ class RunRightDown:
     def exit(ch, e):
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -311,10 +325,11 @@ class RunLeft:
     @staticmethod
     def exit(ch, e):
         ch.angle -= 90
-        print("Left exit")
-        print(ch.angle)
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -363,6 +378,9 @@ class RunLeftUp:
         ch.angle -= 90
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -411,6 +429,9 @@ class RunLeftDown:
         ch.angle -= 90
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -458,6 +479,9 @@ class RunUp:
         ch.angle -= 45
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -505,6 +529,9 @@ class RunDown:
         ch.angle -= 135
         if atk_down(e):
             ch.shoot_ball()
+        if skill_down(e):
+            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+                ch.use_skill()
         pass
 
     @staticmethod
@@ -614,33 +641,33 @@ class StateMachine:
             Idle: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, up_down: RunUp,
                    down_down: RunDown, up_up: RunDown, down_up: RunUp, atk_down: Attack, def_down: Idle,
                    Semi_down: Idle,
-                   Quote_down: Idle, lets_defense: Defense},
+                   Quote_down: Idle, lets_defense: Defense, skill_down: Idle},
             RunRight: {right_up: Idle, left_down: Idle, up_down: RunRightUp, up_up: RunRightDown,
                        down_down: RunRightDown, down_up: RunRightUp, atk_down: Attack, def_down: RunRight,
                        Semi_down: RunRight,
-                       Quote_down: RunRight, lets_defense: Defense},
+                       Quote_down: RunRight, lets_defense: Defense, skill_down: RunRight},
             RunRightUp: {up_up: RunRight, right_up: RunUp, left_down: RunUp, down_down: RunRight, atk_down: Attack,
-                         def_down: RunRightUp, Semi_down: RunRightUp, Quote_down: RunRightUp, lets_defense: Defense},
+                         def_down: RunRightUp, Semi_down: RunRightUp, Quote_down: RunRightUp,
+                         lets_defense: Defense, skill_down: RunRightUp},
             RunUp: {up_up: Idle, left_down: RunLeftUp, down_down: Idle, right_down: RunRightUp,
                     left_up: RunRightUp, right_up: RunLeftUp, atk_down: Attack, def_down: RunUp, Semi_down: RunUp,
-                    Quote_down: RunUp,
-                    lets_defense: Defense},
+                    Quote_down: RunUp, lets_defense: Defense, skill_down: RunUp},
             RunLeftUp: {right_down: RunUp, down_down: RunLeft, left_up: RunUp, up_up: RunLeft,
                         atk_down: Attack, def_down: RunLeftUp, Semi_down: RunLeftUp, Quote_down: RunLeftUp,
-                        lets_defense: Defense},
+                        lets_defense: Defense, skill_down: RunLeftUp},
             RunLeft: {left_up: Idle, up_down: RunLeftUp, right_down: Idle, down_down: RunLeftDown,
                       up_up: RunLeftDown, down_up: RunLeftUp, atk_down: Attack, def_down: RunLeft, Semi_down: RunLeft,
-                      Quote_down: RunLeft, lets_defense: Defense},
+                      Quote_down: RunLeft, lets_defense: Defense, skill_down: RunLeft},
             RunLeftDown: {left_up: RunDown, down_up: RunLeft, up_down: RunLeft, right_down: RunDown,
                           atk_down: Attack, def_down: RunLeftDown, Semi_down: RunLeftDown, Quote_down: RunLeftDown,
-                          lets_defense: Defense},
+                          lets_defense: Defense, skill_down: RunLeftDown},
             RunDown: {down_up: Idle, left_down: RunLeftDown, up_down: Idle, right_down: RunRightDown,
                       left_up: RunRightDown, right_up: RunLeftDown,
                       atk_down: Attack, def_down: RunDown, Semi_down: RunDown, Quote_down: RunDown,
-                      lets_defense: Defense},
+                      lets_defense: Defense, skill_down: RunDown},
             RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, Semi_down: RunRightDown, Quote_down: RunRightDown,
-                           lets_defense: Defense},
+                           lets_defense: Defense, skill_down: RunRightDown},
             Attack: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
@@ -677,6 +704,7 @@ class StateMachine:
 
 class Redteam:
     image = None
+    skill_wait_time = -30.0
     def __init__(self, x, y, num):
         if Redteam.image == None:
             Redteam.image = load_image("./character/sands_red.png")
@@ -701,6 +729,12 @@ class Redteam:
             self.getball = False
             play_mode.ball.shoot = True
 
+    def use_skill(self):
+        if self.getball == True:
+            Redteam.skill_wait_time = get_time()
+            skill = Skill(self.x, self.y, self.action)
+            game_world.add_object(skill, 1)
+
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
@@ -716,9 +750,8 @@ class Redteam:
         self.state_machine.draw()
         self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
         draw_rectangle(*self.get_bb())
-        if float(self.wait_time) - float(get_time()) > -5.0:
-            self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'{float(self.wait_time) + 5 - float(get_time()):.1f}',
-                           (0, 0, 0))
+        if float(self.wait_time) - float(get_time()) > -30.0:
+            self.font.draw(self.x, self.y + 120, f'{float(Redteam.skill_wait_time) + 30 - float(get_time()):.1f}', (255, 255, 255))
         else:
             self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
 

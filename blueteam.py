@@ -716,9 +716,10 @@ class Blueteam:
             play_mode.ball.shoot = True
 
     def use_skill(self):
-        Blueteam.skill_wait_time = get_time()
-        skill = Skill(self.x, self.y, self.action)
-        game_world.add_object(skill, 1)
+        if self.getball == True:
+            Blueteam.skill_wait_time = get_time()
+            skill = Skill(self.x, self.y, self.action)
+            game_world.add_object(skill, 1)
 
     def get_bb(self):
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
