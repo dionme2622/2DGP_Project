@@ -751,13 +751,14 @@ class Blueteam:
             elif play_mode.ball.state == 'Blueteam_get' and play_mode.ball.shoot == True:  # 공을 같은 팀이 들고있었다면
                 ball_is_team(self)
         if group == 'player:lazer':
-        # 만약 아군이 쐈으면 안전함
-            if lazer.state == "Blueteam":
+            if self.state == 'alive':
+            # 만약 아군이 쐈으면 안전함
+                if lazer.state == "Blueteam":
+                    pass
+                elif lazer.state == "Redteam":
+                    self.hitted_from_lazor()
+            # 적이 쐈으면 아웃
                 pass
-            elif lazer.state == "Redteam":
-                self.hitted_from_lazor()
-        # 적이 쐈으면 아웃
-            pass
         pass
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2

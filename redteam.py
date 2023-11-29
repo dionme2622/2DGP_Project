@@ -769,12 +769,13 @@ class Redteam:
             elif play_mode.ball.state == 'Redteam_get' and play_mode.ball.shoot == True:
                 ball_is_team(self)
         if group == 'player:lazer':
-            # 만약 아군이 쐈으면 안전함
-            if lazer.state == "Redteam":
-                pass
-            elif lazer.state == "Blueteam":
-                self.hitted_from_lazor()
-            # 적이 쐈으면 아웃
+            if self.state == 'alive':
+                # 만약 아군이 쐈으면 안전함
+                if lazer.state == "Redteam":
+                    pass
+                elif lazer.state == "Blueteam":
+                    self.hitted_from_lazor()
+                # 적이 쐈으면 아웃
             pass
 
     def hitted_from_lazor(self):
