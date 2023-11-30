@@ -773,8 +773,11 @@ class Blueteam:
 
 
 
-    def set_random_location(self):
-        self.tx, self.ty = random.randint(300, WIDTH // 2 - 20), random.randint(180, 700)
+    def set_random_location(self, type):
+        if type == 'Wide':
+            self.tx, self.ty = random.randint(300, WIDTH // 2 - 20), random.randint(180, 700)
+        else:
+            self.tx, self.ty = random.randint(300, WIDTH // 2 - 300), random.randint(180, 700)
         return BehaviorTree.SUCCESS
 
 
@@ -859,20 +862,23 @@ class Blueteam:
         c1 = Condition("살아있는가?", self.is_alive)
         c2 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
         c3 = Condition("공이 몸 근처까지 날아왔는가?", self.is_ball_nearby, 5)
-
-        a1 = Action("랜덤위치지정", self.set_random_location)
+        c4 = Condition("아군이 공을 갖고 있는가?",self.is_ball_team)
+        a1 = Action("랜덤위치지정", self.set_random_location, 'Wide')
         a2 = Action("이동", self.move_to)
         a3 = Action("공 잡기", self.defense)
+        a4 = Action("랜덤위치좁게지정",self.set_random_location, 'Narrow')
         root = SEQ_defense = Sequence("공이 범위내로 들어오며 잡는다", c3, a3)
 
         root = SEQ_alive_and_defense = Sequence("살아있고 범위 내에 공이 날아오면 공 잡기", c1, SEQ_defense)
         root = SEQ_enemy_ball_alive_and_defense = Sequence("적이 공 갖고있고 살아있고 범위 내에 공이 날아오면 공 잡기", c2, SEQ_alive_and_defense)
 
-        root = SEQ_wander = Sequence("Wander", a1, a2)
-        root = SEQ_alive_and_wander = Sequence("살아있으면 배회", c1, SEQ_wander)
+        root = SEQ_wide_wander = Sequence("넓게배회", a1, a2)
+        root = SEQ_narrow_wander = Sequence("좁게배회", a4, a2)
+        root = SEQ_team_ball_and_narrow_wander = Sequence("팀이 공을 갖고 있다면 좁게 배회", c4, SEQ_narrow_wander)
+        root = SEL_wander_type = Selector("좁게 또는 넓게 배회", SEQ_team_ball_and_narrow_wander, SEQ_wide_wander)
+        root = SEQ_wander = Sequence("살아있으면 넓게배회", c1, SEL_wander_type)
 
-
-        root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_alive_and_wander)
+        root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_wander)
         self.bt = BehaviorTree(root)
 
 def ball_is_team(ch):
