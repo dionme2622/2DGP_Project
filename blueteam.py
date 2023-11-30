@@ -729,7 +729,6 @@ class Blueteam:
     def update(self):
         global get_ball_player
         get_ball_player = self.who_is_ball()
-        self.bt.run()
         if play_mode.select[0] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
             pass
@@ -847,7 +846,6 @@ class Blueteam:
         pass
 
     def defense(self):
-        print("defense")
         if get_time() - self.wait_time > def_cool_time:
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.FAIL
@@ -858,29 +856,23 @@ class Blueteam:
             return 9
 
     def build_behavior_tree(self):
+        c1 = Condition("살아있는가?", self.is_alive)
+        c2 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
+        c3 = Condition("공이 몸 근처까지 날아왔는가?", self.is_ball_nearby, 5)
+
         a1 = Action("랜덤위치지정", self.set_random_location)
         a2 = Action("이동", self.move_to)
+        a3 = Action("공 잡기", self.defense)
+        root = SEQ_defense = Sequence("공이 범위내로 들어오며 잡는다", c3, a3)
+
+        root = SEQ_alive_and_defense = Sequence("살아있고 범위 내에 공이 날아오면 공 잡기", c1, SEQ_defense)
+        root = SEQ_enemy_ball_alive_and_defense = Sequence("적이 공 갖고있고 살아있고 범위 내에 공이 날아오면 공 잡기", c2, SEQ_alive_and_defense)
+
         root = SEQ_wander = Sequence("Wander", a1, a2)
-        c1 = Condition("살아있는가?", self.is_alive)
-        root = SEQ_wander1 = Sequence("살아있으면 배회", c1, SEQ_wander)
-
-        c2 = Condition("아군이 공을 갖고있는가?", self.is_ball_team)
-        root = SEQ_team_ball_and_wander = Sequence("배회한다", c2, SEQ_wander1)
+        root = SEQ_alive_and_wander = Sequence("살아있으면 배회", c1, SEQ_wander)
 
 
-        c3 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
-
-        a3 = Action("도망", self.flee)
-
-        c4 = Condition("공이 몸 근처까지 날아왔는가?", self.is_ball_nearby, 5)
-        a4 = Action("공 잡기", self.defense)
-        root = SEQ_defense = Sequence("공이 범위내로 들어오며 잡는다" ,c4, a4)
-
-        root = SEL_flee_or_defense = Selector("도망 또는 공 잡기", SEQ_defense, a3)
-
-        root = SEQ_enemy_get_ball_flee_or_defense = Sequence("적이 공을 갖고있으면 도망간다", c3, SEL_flee_or_defense)
-        #
-        # root = SEL_wander_or_flee = Selector("배회 또는 도망", SEQ_team_ball_and_wander, SEQ_flee)
+        root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_alive_and_wander)
         self.bt = BehaviorTree(root)
 
 def ball_is_team(ch):
