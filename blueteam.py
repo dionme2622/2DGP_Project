@@ -850,7 +850,7 @@ class Blueteam:
         print("defense")
         if get_time() - self.wait_time > def_cool_time:
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
-        return BehaviorTree.RUNNING
+        return BehaviorTree.FAIL
     def who_is_ball(self):
         for i in range(5, 10):
             if play_mode.player[i].getball == True:
@@ -876,9 +876,9 @@ class Blueteam:
         a4 = Action("공 잡기", self.defense)
         root = SEQ_defense = Sequence("공이 범위내로 들어오며 잡는다" ,c4, a4)
 
-        # root = SEQ_flee_or_defense = Sequence("도망 또는 공 잡기", a3, a4)
-        #
-        # root = SEQ_flee = Sequence("적이 공을 갖고있으면 도망간다", c3, a3)
+        root = SEL_flee_or_defense = Selector("도망 또는 공 잡기", SEQ_defense, a3)
+
+        root = SEQ_enemy_get_ball_flee_or_defense = Sequence("적이 공을 갖고있으면 도망간다", c3, SEL_flee_or_defense)
         #
         # root = SEL_wander_or_flee = Selector("배회 또는 도망", SEQ_team_ball_and_wander, SEQ_flee)
         self.bt = BehaviorTree(root)
