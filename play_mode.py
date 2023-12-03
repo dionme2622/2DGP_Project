@@ -2,11 +2,12 @@ from pico2d import *
 
 import blueteam
 import game_framework, game_world
+import gameover_mode
 import redteam
 import select_mode
 from arrow import Arrow
 
-from background import Background
+from background import Background, Heart, Icon
 from tkinter import *
 
 from ball import Ball
@@ -77,7 +78,7 @@ def handle_events():
 
 
 def init():
-    global background
+    global background, heart
     global player
     global ball
     global font
@@ -88,8 +89,11 @@ def init():
     font = load_font('./object/ENCR10B.TTF', 50)
     background = Background()
     game_world.add_object(background, 0)
-
-    # Blueteam 객체 추가
+    heart = Heart()
+    game_world.add_object(heart, 0)
+    icon = Icon()
+    game_world.add_object(icon, 0)
+    # Player 객체 추가
     add_player(player)
 
     ball = Ball()
@@ -141,14 +145,16 @@ def update():
     game_world.update()
     game_world.handle_collisions()
     if blueteam.survivor == 0:
-        game_framework.quit()
+        game_framework.change_mode(gameover_mode)
     elif redteam.survivor == 0:
-        game_framework.quit()
+        game_framework.change_mode(gameover_mode)
 def draw():
     clear_canvas()
     game_world.render()
-    #font.draw(WIDTH // 2 - 50, HEIGHT // 2 + 350, f'{90- get_time():.2f}', (255, 255, 255))
-
+    font.draw(730, 960, f'{float(Blueteam.skill_wait_time) + 30 - float(get_time()):.1f}',
+                   (255, 255, 255))
+    font.draw(1230, 960, f'{float(Redteam.skill_wait_time) + 30 - float(get_time()):.1f}',
+              (255, 255, 255))
     update_canvas()
 
 
