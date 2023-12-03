@@ -14,7 +14,7 @@ def init():
     global image, background, word, bgm
     global size_W, size_H, sradian, sangle
     global start, wevent, time
-    global start_sound
+    global start_sound, sound
     size_W = 1980
     size_H = 1080
     sradian, sangle = 0, 0
@@ -24,7 +24,11 @@ def init():
     background = load_image('./object/background.png')
     word = load_image('./object/word.png')
 
-    start_sound = load_music('./bgm/game_start.mp3')
+    sound = load_music('./bgm/mus_boss1.mp3')
+    sound.set_volume(32)
+    sound.repeat_play()
+
+    start_sound = load_wav('./bgm/game_start.wav')
     start_sound.set_volume(32)
 
     pass
@@ -51,7 +55,7 @@ def handle_events():
                 wevent = True
                 timer = get_time()
             elif event.x >= 660 and event.x <= 900 and event.y >= 980 and event.y <= 1060:
-                game_framework.change_mode(help_mode)
+                game_framework.push_mode(help_mode)
             elif event.x >= 1020 and event.x <= 1260 and event.y >= 980 and event.y <= 1060:
                 # 옵션 모드로 이동
                 pass
