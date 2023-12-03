@@ -20,7 +20,7 @@ class Ball:
     def __init__(self, velocity=7):
         if Ball.image == None:
             Ball.image = load_image('./object/ball.png')
-        self.spawn = 0 #random.randint(0,1)
+        self.spawn = random.randint(0,1)
         if self.spawn == 0:
             self.x = WIDTH // 2 - 100
         else:
@@ -35,7 +35,7 @@ class Ball:
 
     def draw(self):
         self.image.draw(self.x, self.y)
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
 
     def update(self):
         self.player_getball()
