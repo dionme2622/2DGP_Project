@@ -15,7 +15,6 @@ from redteam import Redteam
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
-select = [1, 1]
 player = [[], [], [], [], [], [], [], [], [], []]
 # Game object class here
 
@@ -83,6 +82,9 @@ def init():
     global ball
     global font
     global arrow
+    global select
+    select = [1, 1]
+
     font = load_font('./object/ENCR10B.TTF', 50)
     background = Background()
     game_world.add_object(background, 0)
@@ -95,9 +97,11 @@ def init():
     # Blueteam
     for i in range(0, 5):
         game_world.add_collision_pair('Blueteam:ball', player[i], ball)
+        game_world.add_collision_pair("player:lazer", player[i], None)
     # Redteam
     for i in range(5, 10):
         game_world.add_collision_pair('Redteam:ball', player[i], ball)
+        game_world.add_collision_pair("player:lazer", player[i], None)
 
     arrow = Arrow()
     game_world.add_object(arrow, 1)
