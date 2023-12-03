@@ -29,7 +29,7 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             if event.x >= 1700 and event.x <= 1920 and event.y >= 945 and event.y <= 1045:
-                game_framework.change_mode(select_mode)
+                game_framework.pop_mode()
 
 def update():
     pass
