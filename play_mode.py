@@ -17,6 +17,8 @@ from redteam import Redteam
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 player = [[], [], [], [], [], [], [], [], [], []]
+
+
 # Game object class here
 
 
@@ -76,7 +78,6 @@ def handle_events():
                 player[9].handle_event(event)
 
 
-
 def init():
     global background, heart
     global player
@@ -84,7 +85,6 @@ def init():
     global arrow
     global select
     select = [1, 1]
-
 
     background = Background()
     game_world.add_object(background, 0)
@@ -147,6 +147,8 @@ def update():
         game_framework.change_mode(gameover_mode)
     elif redteam.survivor == 0:
         game_framework.change_mode(gameover_mode)
+
+
 def draw():
     clear_canvas()
     game_world.render()

@@ -6,10 +6,11 @@ import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_a, SDLK_s
 from tkinter import *
 
-
 import game_world
 import lazer
+import option_mode
 import play_mode
+import select_mode
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 from skill import Skill
@@ -32,6 +33,8 @@ radian = 10
 survivor = 5
 def_cool_time = 4.0
 skill_cool_time = 30.0
+
+
 def a_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
@@ -79,8 +82,10 @@ def atk_down(e):
 def def_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_w
 
+
 def skill_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_e
+
 
 def return_run_state(ch):
     if ch.run_state == Idle:
@@ -101,6 +106,8 @@ def return_run_state(ch):
         ch.state_machine.handle_event(('LETS_UP', 0))
     elif ch.run_state == RunDown:
         ch.state_machine.handle_event(('LETS_DOWN', 0))
+
+
 class Idle:
     @staticmethod
     def enter(ch, e):
@@ -396,6 +403,7 @@ class RunLeftUp:
             else:
                 ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
                 ch.y = clamp(0, ch.y, 800)
+
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -447,6 +455,7 @@ class RunLeftDown:
             else:
                 ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
                 ch.y = clamp(0, ch.y, 800)
+
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -526,6 +535,7 @@ class RunDown:
         if skill_down(e):
             if get_time() - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
+
     @staticmethod
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
@@ -547,7 +557,6 @@ class RunDown:
                 ch.x = clamp(WIDTH - 170, ch.x, WIDTH - 150)
                 ch.y = clamp(0, ch.y, 800)
 
-
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -560,6 +569,7 @@ class Attack:
         ch.action = 1
         ch.frame = 0
         Blueteam.atk_sound.play()
+
     @staticmethod
     def exit(ch, e):
         pass
@@ -637,10 +647,11 @@ class StateMachine:
                        f_down: RunRightDown, f_up: RunRightUp, atk_down: Attack, def_down: RunRight, a_down: RunRight,
                        s_down: RunRight, lets_defense: Defense, skill_down: RunRight},
             RunRightUp: {r_up: RunRight, g_up: RunUp, d_down: RunUp, f_down: RunRight, atk_down: Attack,
-                         def_down: RunRightUp, a_down: RunRightUp, s_down: RunRightUp, lets_defense: Defense, skill_down: RunRightUp},
+                         def_down: RunRightUp, a_down: RunRightUp, s_down: RunRightUp, lets_defense: Defense,
+                         skill_down: RunRightUp},
             RunUp: {r_up: Idle, d_down: RunLeftUp, f_down: Idle, g_down: RunRightUp,
                     d_up: RunRightUp, g_up: RunLeftUp, atk_down: Attack, def_down: RunUp, a_down: RunUp, s_down: RunUp,
-                    lets_defense: Defense, skill_down: RunUp },
+                    lets_defense: Defense, skill_down: RunUp},
             RunLeftUp: {g_down: RunUp, f_down: RunLeft, d_up: RunUp, r_up: RunLeft,
                         atk_down: Attack, def_down: RunLeftUp, a_down: RunLeftUp, s_down: RunLeftUp,
                         lets_defense: Defense, skill_down: RunLeftUp},
@@ -652,7 +663,8 @@ class StateMachine:
                           lets_defense: Defense, skill_down: RunLeftDown},
             RunDown: {f_up: Idle, d_down: RunLeftDown, r_down: Idle, g_down: RunRightDown,
                       d_up: RunRightDown, g_up: RunLeftDown,
-                      atk_down: Attack, def_down: RunDown, a_down: RunDown, s_down: RunDown, lets_defense: Defense, skill_down: RunDown},
+                      atk_down: Attack, def_down: RunDown, a_down: RunDown, s_down: RunDown, lets_defense: Defense,
+                      skill_down: RunDown},
             RunRightDown: {g_up: RunDown, f_up: RunRight, d_down: RunDown, r_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, a_down: RunRightDown, s_down: RunRightDown,
                            lets_defense: Defense, skill_down: RunRightDown},
@@ -661,9 +673,9 @@ class StateMachine:
                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
                      },
             Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
-                     },
+                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
+                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                      },
             Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
@@ -675,6 +687,7 @@ class StateMachine:
 
     def update(self):
         self.cur_state.do(self.ch)
+
     def handle_event(self, e):
         for check_event, next_state in self.transitions[self.cur_state].items():
             if check_event(e):
@@ -697,6 +710,7 @@ class Blueteam:
     skill_sound = None
     dead_sound = None
     out_sound = None
+
     def __init__(self, x, y, num):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
@@ -717,19 +731,19 @@ class Blueteam:
         self.state_machine.start()
         if not Blueteam.atk_sound:
             Blueteam.atk_sound = load_wav('./bgm/attack.wav')
-            Blueteam.atk_sound.set_volume(32) # option_mode.sound
+            Blueteam.atk_sound.set_volume(select_mode.volume)  # select_mode.volume
         if not Blueteam.def_sound:
             Blueteam.def_sound = load_wav('./bgm/defense.wav')
-            Blueteam.def_sound.set_volume(32)
+            Blueteam.def_sound.set_volume(select_mode.volume)
         if not Blueteam.skill_sound:
             Blueteam.skill_sound = load_wav('./bgm/blaster.wav')
-            Blueteam.skill_sound.set_volume(32)
+            Blueteam.skill_sound.set_volume(select_mode.volume)
         if not Blueteam.dead_sound:
             Blueteam.dead_sound = load_wav('./bgm/dead.wav')
-            Blueteam.dead_sound.set_volume(32)
+            Blueteam.dead_sound.set_volume(select_mode.volume)
         if not Blueteam.out_sound:
             Blueteam.out_sound = load_wav('./bgm/out.wav')
-            Blueteam.out_sound.set_volume(32)
+            Blueteam.out_sound.set_volume(select_mode.volume)
 
     def shoot_ball(self):
         if self.getball == True:
@@ -749,19 +763,19 @@ class Blueteam:
 
     def update(self):
         global get_ball_player
-        get_ball_player = self.who_is_ball()
-        if play_mode.select[0] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
+        if play_mode.select[0] != self.num and self.getball != True:  # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
             pass
         self.state_machine.update()
+
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
         self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
-        self.font.draw(self.x, self.y + 120, f'{float(Blueteam.skill_wait_time) + 30 - float(get_time()):.1f}', (255, 255, 255))
-        draw_rectangle(*self.get_bb())
+
+        # draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
         if group == 'Blueteam:ball':
@@ -775,13 +789,13 @@ class Blueteam:
             if self.state == 'alive':
                 if lazer.state == "Redteam":
                     self.hitted_from_lazor()
-            # 적이 쐈으면 아웃
+                # 적이 쐈으면 아웃
                 pass
         pass
+
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
-
 
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
@@ -789,15 +803,12 @@ class Blueteam:
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
-
-
     def set_random_location(self, type):
         if type == 'Wide':
             self.tx, self.ty = random.randint(300, WIDTH // 2 - 20), random.randint(180, 700)
         else:
             self.tx, self.ty = random.randint(300, WIDTH // 2 - 300), random.randint(180, 700)
         return BehaviorTree.SUCCESS
-
 
     def move_to(self, r=0.5):
         if math.cos(self.dir) < 0:
@@ -811,7 +822,6 @@ class Blueteam:
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
-
 
     def is_alive(self):
         if self.state == 'alive':
@@ -852,7 +862,8 @@ class Blueteam:
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
         # 소년으로부터 멀어지는 방향
 
-        self.dir = math.atan2(self.y - play_mode.player[get_ball_player].y, self.x - play_mode.player[get_ball_player].x)
+        self.dir = math.atan2(self.y - play_mode.player[get_ball_player].y,
+                              self.x - play_mode.player[get_ball_player].x)
 
         # 살짝 이동
         self.speed = RUN_SPEED_PPS
@@ -871,6 +882,7 @@ class Blueteam:
         if get_time() - self.wait_time > def_cool_time:
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.FAIL
+
     # def who_is_ball(self):
     #     for i in range(5, 10):
     #         if play_mode.player[i].getball == True:
@@ -881,15 +893,16 @@ class Blueteam:
         c1 = Condition("살아있는가?", self.is_alive)
         c2 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
         c3 = Condition("공이 몸 근처까지 날아왔는가?", self.is_ball_nearby, 5)
-        c4 = Condition("아군이 공을 갖고 있는가?",self.is_ball_team)
+        c4 = Condition("아군이 공을 갖고 있는가?", self.is_ball_team)
         a1 = Action("랜덤위치지정", self.set_random_location, 'Wide')
         a2 = Action("이동", self.move_to)
         a3 = Action("공 잡기", self.defense)
-        a4 = Action("랜덤위치좁게지정",self.set_random_location, 'Narrow')
+        a4 = Action("랜덤위치좁게지정", self.set_random_location, 'Narrow')
         root = SEQ_defense = Sequence("공이 범위내로 들어오며 잡는다", c3, a3)
 
         root = SEQ_alive_and_defense = Sequence("살아있고 범위 내에 공이 날아오면 공 잡기", c1, SEQ_defense)
-        root = SEQ_enemy_ball_alive_and_defense = Sequence("적이 공 갖고있고 살아있고 범위 내에 공이 날아오면 공 잡기", c2, SEQ_alive_and_defense)
+        root = SEQ_enemy_ball_alive_and_defense = Sequence("적이 공 갖고있고 살아있고 범위 내에 공이 날아오면 공 잡기", c2,
+                                                           SEQ_alive_and_defense)
 
         root = SEQ_wide_wander = Sequence("넓게배회", a1, a2)
         root = SEQ_narrow_wander = Sequence("좁게배회", a4, a2)
@@ -897,8 +910,9 @@ class Blueteam:
         root = SEL_wander_type = Selector("좁게 또는 넓게 배회", SEQ_team_ball_and_narrow_wander, SEQ_wide_wander)
         root = SEQ_wander = Sequence("살아있으면 넓게배회", c1, SEL_wander_type)
 
-        root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_wander)
+        # root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_wander)
         self.bt = BehaviorTree(root)
+
 
 def ball_is_team(ch):
     play_mode.ball.shoot = False
@@ -911,16 +925,17 @@ def ball_is_enemy(ch):
     global survivor
     if ch.state == 'alive':
         play_mode.ball.shoot = False
-        if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
+        if ch.state_machine.cur_state != Defense:  # 방어에 실패했다면
             Blueteam.out_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
-        else:                                       # 방어에 성공했다면
+        else:  # 방어에 성공했다면
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y
             play_mode.ball.state = 'floor'
     pass
+
 
 def ball_is_floor(ch):
     ch.getball = True

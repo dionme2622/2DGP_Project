@@ -23,6 +23,8 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
 state = None
+
+
 class Lazer:
     image = None
 
@@ -34,6 +36,7 @@ class Lazer:
         self.frame = frame
         self.action = action
         self.state = state
+
     def get_bb(self):
         if self.action == 2:
             return (self.x - 20, self.y, self.x + 20, self.y + 1000)
@@ -43,17 +46,16 @@ class Lazer:
             return (self.x - 1000, self.y - 20, self.x, self.y + 20)
         elif self.action == 5:
             return (self.x - 20, self.y - 1000, self.x + 20, self.y)
-    def draw(self):
-        #draw_rectangle(*self.get_bb())
-        self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 400)
 
+    def draw(self):
+        # draw_rectangle(*self.get_bb())
+        self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 400)
 
     def update(self):
         self.frame = self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time
         if self.frame > 5:
             game_world.remove_object(self)
         pass
-
 
     def handle_collision(self, group, other):
         pass

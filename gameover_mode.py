@@ -17,9 +17,12 @@ WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 FRAMES_PER_ACTION = 1
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+
+
 class BackGround:
     image = None
     sound = None
+
     def __init__(self):
         if BackGround.image == None:
             BackGround.image = load_image('./object/select_box.png')
@@ -27,16 +30,19 @@ class BackGround:
             BackGround.sound = load_music('./bgm/mus_gameover.ogg')
         BackGround.sound.set_volume(40)
         BackGround.sound.play()
+
     def draw(self):
         self.image.clip_draw(0, 0, WIDTH, HEIGHT, WIDTH // 2, HEIGHT // 2, WIDTH, HEIGHT)
 
     def update(self):
         pass
+
     pass
 
 
 class Heart:
     image = None
+
     def __init__(self):
         if Heart.image == None:
             Heart.image = load_image('./character/heart.png')
@@ -44,6 +50,7 @@ class Heart:
         self.alpha = 1.0
         self.font = load_font('./object/ENCR10B.TTF', 50)
         self.time = 0.0
+
     def draw(self):
         if not self.heart_break:
             if blueteam.survivor == 0:
@@ -63,6 +70,7 @@ class Heart:
                     self.alpha = 1.0
                     self.image.clip_draw(0, 16, 16, 16, 990, 500, 64, 64)
                     self.font.draw(950, 600, f'WIN', (255, 255, 255))
+
     def update(self):
         self.time = (self.time + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if self.time > 2.0:
@@ -73,9 +81,10 @@ class Heart:
         pass
 
     pass
+
+
 def init():
     global background, heart, font
-
 
     background = BackGround()
     game_world.add_object(background, 0)
@@ -111,6 +120,7 @@ def draw():
     game_world.render()
     update_canvas()
     pass
+
 
 def pause():
     pass

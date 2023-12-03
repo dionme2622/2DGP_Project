@@ -9,6 +9,7 @@ import select_mode
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
+
 def init():
     global image
     image = load_image('./object/help.png')
@@ -31,15 +32,17 @@ def handle_events():
             if event.x >= 1700 and event.x <= 1920 and event.y >= 945 and event.y <= 1045:
                 game_framework.pop_mode()
 
+
 def update():
     pass
 
 
 def draw():
     clear_canvas()
-    image.clip_draw(0, 0, 1375, 640, WIDTH//2, HEIGHT//2, WIDTH, HEIGHT)
+    image.clip_draw(0, 0, 1375, 640, WIDTH // 2, HEIGHT // 2, WIDTH, HEIGHT)
     update_canvas()
     pass
+
 
 def pause():
     pass

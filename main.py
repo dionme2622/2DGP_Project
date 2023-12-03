@@ -1,5 +1,10 @@
 from pico2d import *
-import play_mode as start_mode, game_framework
+import play_mode, game_framework
+import select_mode
+import help_mode
+import logo_mode as start_mode
+import title_mode
+import gameover_mode
 from tkinter import *
 
 root = Tk()

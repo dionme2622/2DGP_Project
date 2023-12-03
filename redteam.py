@@ -9,8 +9,10 @@ from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DO
 from tkinter import *
 
 import game_world
+import option_mode
 import play_mode
 import ball
+import select_mode
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 from skill import Skill
@@ -32,6 +34,8 @@ FRAMES_PER_ACTION = 4
 survivor = 5
 def_cool_time = 4.0
 skill_cool_time = 1.0
+
+
 def Semi_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
 
@@ -83,6 +87,7 @@ def def_down(e):
 def skill_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SLASH
 
+
 def return_run_state(ch):
     if ch.run_state == Idle:
         ch.state_machine.handle_event(('LETS_IDLE', 0))
@@ -102,8 +107,12 @@ def return_run_state(ch):
         ch.state_machine.handle_event(('LETS_UP', 0))
     elif ch.run_state == RunDown:
         ch.state_machine.handle_event(('LETS_DOWN', 0))
+
+
 PI = 3.141592
 radian = 10
+
+
 class Idle:
 
     @staticmethod
@@ -128,6 +137,7 @@ class Idle:
             ch.angle += 135
         print("Idle 입장")
         print(ch.angle)
+
     @staticmethod
     def exit(ch, e):
         if atk_down(e):
@@ -301,6 +311,7 @@ class RunRightDown:
             else:
                 ch.x = clamp(200, ch.x, 220)
                 ch.y = clamp(0, ch.y, 800)
+
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -405,6 +416,7 @@ class RunLeftUp:
             else:
                 ch.x = clamp(200, ch.x, 220)
                 ch.y = clamp(0, ch.y, 800)
+
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -456,6 +468,7 @@ class RunLeftDown:
             else:
                 ch.x = clamp(200, ch.x, 220)
                 ch.y = clamp(0, ch.y, 800)
+
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -505,6 +518,7 @@ class RunUp:
             else:
                 ch.x = clamp(200, ch.x, 220)
                 ch.y = clamp(0, ch.y, 800)
+
     @staticmethod
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
@@ -568,6 +582,7 @@ class Attack:
         ch.action = 1
         ch.frame = 0
         Redteam.atk_sound.play()
+
     @staticmethod
     def exit(ch, e):
         pass
@@ -710,6 +725,7 @@ class Redteam:
     skill_sound = None
     dead_sound = None
     out_sound = None
+
     def __init__(self, x, y, num):
         if Redteam.image == None:
             Redteam.image = load_image("./character/sands_red.png")
@@ -730,19 +746,20 @@ class Redteam:
         self.state_machine.start()
         if not Redteam.atk_sound:
             Redteam.atk_sound = load_wav('./bgm/attack.wav')
-            Redteam.atk_sound.set_volume(32)
+            Redteam.atk_sound.set_volume(select_mode.volume)
         if not Redteam.def_sound:
             Redteam.def_sound = load_wav('./bgm/defense.wav')
-            Redteam.def_sound.set_volume(32)
+            Redteam.def_sound.set_volume(select_mode.volume)
         if not Redteam.skill_sound:
             Redteam.skill_sound = load_wav('./bgm/blaster.wav')
-            Redteam.skill_sound.set_volume(32)
+            Redteam.skill_sound.set_volume(select_mode.volume)
         if not Redteam.dead_sound:
             Redteam.dead_sound = load_wav('./bgm/dead.wav')
-            Redteam.dead_sound.set_volume(32)
+            Redteam.dead_sound.set_volume(select_mode.volume)
         if not Redteam.out_sound:
             Redteam.out_sound = load_wav('./bgm/out.wav')
-            Redteam.out_sound.set_volume(32)
+            Redteam.out_sound.set_volume(select_mode.volume)
+
     def shoot_ball(self):
         if self.getball == True:
             self.getball = False
@@ -761,20 +778,17 @@ class Redteam:
 
     def update(self):
         self.state_machine.update()
-        if play_mode.select[1] != self.num and self.getball != True:     # 선택되지 않았다면 AI가 조작한다
+        if play_mode.select[1] != self.num and self.getball != True:  # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
             pass
+
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
         self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
-        draw_rectangle(*self.get_bb())
-        if float(self.wait_time) - float(get_time()) > -30.0:
-            self.font.draw(self.x, self.y + 120, f'{float(Redteam.skill_wait_time) + 30 - float(get_time()):.1f}', (255, 255, 255))
-        else:
-            self.font.draw(WIDTH // 2 + 100, HEIGHT // 2 + 300, f'ON', (0, 0, 0))
+        # draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
         if group == 'Redteam:ball':
@@ -806,7 +820,6 @@ class Redteam:
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (PIXEL_PER_METER * r) ** 2
-
 
     def move_slightly_to(self, tx, ty):
         self.dir = math.atan2(ty - self.y, tx - self.x)
@@ -867,8 +880,6 @@ class Redteam:
         else:
             return BehaviorTree.RUNNING
 
-    
-
     def flee(self):
         self.state = 'Walk'
         # 소년으로부터 멀어지는 방향
@@ -880,14 +891,12 @@ class Redteam:
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
         return BehaviorTree.RUNNING
-    
-    
+
     def defense(self):
         if get_time() - self.wait_time > def_cool_time:
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.FAIL
-    
-    
+
     def build_behavior_tree(self):
         c1 = Condition("살아있는가?", self.is_alive)
         c2 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
@@ -909,8 +918,9 @@ class Redteam:
         root = SEL_wander_type = Selector("좁게 또는 넓게 배회", SEQ_team_ball_and_narrow_wander, SEQ_wide_wander)
         root = SEQ_wander = Sequence("살아있으면 넓게배회", c1, SEL_wander_type)
 
-        root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_wander)
+        # root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_wander)
         self.bt = BehaviorTree(root)
+
 
 def ball_is_team(ch):
     play_mode.ball.shoot = False
@@ -918,20 +928,22 @@ def ball_is_team(ch):
     play_mode.ball.state = 'Redteam_get'
     pass
 
+
 def ball_is_enemy(ch):
     global survivor
     if ch.state == 'alive':
         play_mode.ball.shoot = False
-        if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
+        if ch.state_machine.cur_state != Defense:  # 방어에 실패했다면
             Redteam.out_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.x, ch.y, ch.state = 200, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
-        else:                                       # 방어에 성공했다면
+        else:  # 방어에 성공했다면
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y
             play_mode.ball.state = 'floor'
     pass
+
 
 def ball_is_floor(ch):
     ch.getball = True

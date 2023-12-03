@@ -24,6 +24,7 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 2
 
+
 class Skill:
     image = None
 
@@ -43,12 +44,13 @@ class Skill:
         self.frame = 0.0
         self.radian = 0.0
         self.state = state
+
     def get_bb(self):
         pass
 
     def draw(self):
-        self.image.clip_composite_draw(int(self.frame) * 48, 0, 48, 59, self.angle + math.radians(self.radian), ' ', self.x, self.y, 100, 100)
-
+        self.image.clip_composite_draw(int(self.frame) * 48, 0, 48, 59, self.angle + math.radians(self.radian), ' ',
+                                       self.x, self.y, 100, 100)
 
     def update(self):
         global lazer
@@ -63,7 +65,6 @@ class Skill:
             self.radian += 20
 
         pass
-
 
     def handle_collision(self, group, other):
         pass

@@ -12,6 +12,8 @@ root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 alpha = 0.0
 alpha_increase = 0.01
+
+
 def init():
     global title, word
     title = Title()
@@ -57,6 +59,7 @@ def draw():
 
     update_canvas()
     pass
+
 
 def pause():
     pass

@@ -34,9 +34,6 @@ def init():
     start_sound = load_music('./bgm/game_start.mp3')
 
 
-    pass
-
-
 def finish():
     game_world.clear()
     pass
@@ -88,18 +85,21 @@ def screen_event():
     sangle = sradian * PI / 180
     if size_W < 0 and size_H < 0:
         game_framework.change_mode(play_mode)
+
+
 def draw():
     global box_width, box_height
 
     clear_canvas()
-    background.draw(WIDTH//2, HEIGHT//2)
-    image.clip_draw(0, 0, 2702, 1542, WIDTH//2, HEIGHT//2, size_W, size_H)
+    background.draw(WIDTH // 2, HEIGHT // 2)
+    image.clip_draw(0, 0, 2702, 1542, WIDTH // 2, HEIGHT // 2, size_W, size_H)
     if wevent == True:
         word.clip_draw(0, 0, 835, 173, 950, 370, 1245, 200)
         # 3초 후 event = false 그리고 start = true로 만들기
 
     update_canvas()
     pass
+
 
 def pause():
     pass

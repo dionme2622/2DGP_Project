@@ -8,6 +8,8 @@ root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 alpha = 0.0
 alpha_increase = 0.005
+
+
 def init():
     global image, background
     global logo_start_time
@@ -15,7 +17,6 @@ def init():
     background = load_image('./object/logo_mode_background.png')
     image = load_image('./object/tuk_credit.png')
     logo_start_time = get_time()
-
 
     pass
 

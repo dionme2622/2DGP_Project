@@ -11,6 +11,7 @@ WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 import tkinter as tk
 from tkinter import ttk
 
+
 def init():
     global sound, image
     image = load_image('./object/option.png')
@@ -45,9 +46,10 @@ def update():
 
 def draw():
     clear_canvas()
-    image.clip_draw(0, 0, 1980, 1080, WIDTH//2, HEIGHT//2, WIDTH, HEIGHT)
+    image.clip_draw(0, 0, 1980, 1080, WIDTH // 2, HEIGHT // 2, WIDTH, HEIGHT)
     update_canvas()
     pass
+
 
 def pause():
     pass
