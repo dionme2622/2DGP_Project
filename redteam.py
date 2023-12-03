@@ -1,7 +1,7 @@
 import math
 import random
 
-from pico2d import load_image, get_time, load_font, clamp, draw_rectangle
+from pico2d import load_image, get_time, load_font, clamp, draw_rectangle, load_wav
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_UP, SDLK_DOWN, SDLK_PERIOD, SDLK_COMMA, SDLK_SLASH, \
     SDLK_SEMICOLON, SDLK_QUOTE
@@ -30,7 +30,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
 survivor = 5
-def_cooltime = 4.0
+def_cool_time = 4.0
 skill_cool_time = 1.0
 def Semi_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SEMICOLON
@@ -112,7 +112,7 @@ class Idle:
         ch.run_state = Idle
 
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -162,7 +162,7 @@ class RunRight:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRight
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -212,7 +212,7 @@ class RunRightUp:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightUp
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -263,7 +263,7 @@ class RunRightDown:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightDown
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -315,7 +315,7 @@ class RunLeft:
         print(ch.angle)
         ch.run_state = RunLeft
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -366,7 +366,7 @@ class RunLeftUp:
         ch.angle += 90
         ch.run_state = RunLeftUp
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -417,7 +417,7 @@ class RunLeftDown:
         ch.angle += 90
         ch.run_state = RunLeftDown
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -468,7 +468,7 @@ class RunUp:
         ch.angle += 45
         ch.run_state = RunUp
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -517,7 +517,7 @@ class RunDown:
         ch.angle += 135
         ch.run_state = RunDown
         if def_down(e):
-            if get_time() - ch.wait_time > def_cooltime:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if Semi_down(e):
             ch.angle -= radian
@@ -567,7 +567,7 @@ class Attack:
     def enter(ch, e):
         ch.action = 1
         ch.frame = 0
-
+        Redteam.atk_sound.play()
     @staticmethod
     def exit(ch, e):
         pass
@@ -591,8 +591,7 @@ class Defense:
     def enter(ch, e):
         ch.action = 1
         ch.frame = 0
-        print("Defense 입장")
-        print(ch.angle)
+        Redteam.def_sound.play()
 
     @staticmethod
     def exit(ch, e):
@@ -706,6 +705,11 @@ class StateMachine:
 class Redteam:
     image = None
     skill_wait_time = -30.0
+    atk_sound = None
+    def_sound = None
+    skill_sound = None
+    dead_sound = None
+    out_sound = None
     def __init__(self, x, y, num):
         if Redteam.image == None:
             Redteam.image = load_image("./character/sands_red.png")
@@ -724,7 +728,21 @@ class Redteam:
         self.build_behavior_tree()
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-
+        if not Redteam.atk_sound:
+            Redteam.atk_sound = load_wav('./bgm/attack.wav')
+            Redteam.atk_sound.set_volume(32)
+        if not Redteam.def_sound:
+            Redteam.def_sound = load_wav('./bgm/defense.wav')
+            Redteam.def_sound.set_volume(32)
+        if not Redteam.skill_sound:
+            Redteam.skill_sound = load_wav('./bgm/blaster.wav')
+            Redteam.skill_sound.set_volume(32)
+        if not Redteam.dead_sound:
+            Redteam.dead_sound = load_wav('./bgm/dead.wav')
+            Redteam.dead_sound.set_volume(32)
+        if not Redteam.out_sound:
+            Redteam.out_sound = load_wav('./bgm/out.wav')
+            Redteam.out_sound.set_volume(32)
     def shoot_ball(self):
         if self.getball == True:
             self.getball = False
@@ -732,6 +750,7 @@ class Redteam:
 
     def use_skill(self):
         if self.getball == True:
+            Redteam.skill_sound.play()
             Redteam.skill_wait_time = get_time()
             skill = Skill(self.x, self.y, self.action, "Redteam")
             lazer.state = "Redteam"
@@ -780,7 +799,8 @@ class Redteam:
 
     def hitted_from_lazor(self):
         global survivor
-        self.x, self.y, self.state =  200, 400, 'dead'
+        Redteam.out_sound.play()
+        self.x, self.y, self.state = 200, 400, 'dead'
         survivor -= 1
 
     def distance_less_than(self, x1, y1, x2, y2, r):
@@ -807,8 +827,12 @@ class Redteam:
         else:
             return BehaviorTree.RUNNING
 
-    def set_random_location(self):
+    def set_random_location(self, type):
         self.tx, self.ty = random.randint(WIDTH // 2 + 70, WIDTH - 270), random.randint(180, 700)
+        if type == 'Wide':
+            self.tx, self.ty = random.randint(WIDTH // 2 + 70, WIDTH - 270), random.randint(180, 700)
+        else:
+            self.tx, self.ty = random.randint(WIDTH // 2 + 350, WIDTH - 270), random.randint(180, 700)
         return BehaviorTree.SUCCESS
 
     def is_alive(self):
@@ -818,7 +842,19 @@ class Redteam:
             return BehaviorTree.FAIL
 
     def is_ball_nearby(self, distance):
-        if self.distance_less_than(play_mode.boy.x, play_mode.boy.y, self.x, self.y, distance):
+        if self.distance_less_than(play_mode.ball.x, play_mode.ball.y, self.x, self.y, distance):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def is_ball_team(self):
+        if play_mode.ball.state == 'Redteam_get':
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
+    def is_ball_enemy(self):
+        if play_mode.ball.state == 'Blueteam_get':
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -831,7 +867,7 @@ class Redteam:
         else:
             return BehaviorTree.RUNNING
 
-
+    
 
     def flee(self):
         self.state = 'Walk'
@@ -844,14 +880,36 @@ class Redteam:
         self.y += self.speed * math.sin(self.dir) * game_framework.frame_time
 
         return BehaviorTree.RUNNING
-
+    
+    
+    def defense(self):
+        if get_time() - self.wait_time > def_cool_time:
+            self.state_machine.handle_event(('LETS_DEFENSE', 0))
+        return BehaviorTree.FAIL
+    
+    
     def build_behavior_tree(self):
-        a1 = Action("랜덤위치지정", self.set_random_location)
-        a2 = Action("이동", self.move_to)
-        root = SEQ_wander = Sequence("Wander", a1, a2)
         c1 = Condition("살아있는가?", self.is_alive)
-        root = SEQ_wander = Sequence("살아있으면 배회", c1, SEQ_wander)
+        c2 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
+        c3 = Condition("공이 몸 근처까지 날아왔는가?", self.is_ball_nearby, 5)
+        c4 = Condition("아군이 공을 갖고 있는가?", self.is_ball_team)
+        a1 = Action("랜덤위치지정", self.set_random_location, 'Wide')
+        a2 = Action("이동", self.move_to)
+        a3 = Action("공 잡기", self.defense)
+        a4 = Action("랜덤위치좁게지정", self.set_random_location, 'Narrow')
+        root = SEQ_defense = Sequence("공이 범위내로 들어오며 잡는다", c3, a3)
 
+        root = SEQ_alive_and_defense = Sequence("살아있고 범위 내에 공이 날아오면 공 잡기", c1, SEQ_defense)
+        root = SEQ_enemy_ball_alive_and_defense = Sequence("적이 공 갖고있고 살아있고 범위 내에 공이 날아오면 공 잡기", c2,
+                                                           SEQ_alive_and_defense)
+
+        root = SEQ_wide_wander = Sequence("넓게배회", a1, a2)
+        root = SEQ_narrow_wander = Sequence("좁게배회", a4, a2)
+        root = SEQ_team_ball_and_narrow_wander = Sequence("팀이 공을 갖고 있다면 좁게 배회", c4, SEQ_narrow_wander)
+        root = SEL_wander_type = Selector("좁게 또는 넓게 배회", SEQ_team_ball_and_narrow_wander, SEQ_wide_wander)
+        root = SEQ_wander = Sequence("살아있으면 넓게배회", c1, SEL_wander_type)
+
+        root = SEL_defense_or_wander = Selector("배회 또는 도망", SEQ_enemy_ball_alive_and_defense, SEQ_wander)
         self.bt = BehaviorTree(root)
 
 def ball_is_team(ch):
@@ -865,8 +923,8 @@ def ball_is_enemy(ch):
     if ch.state == 'alive':
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
+            Redteam.out_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y  # 맞은 플레이어 앞에 떨어진다
-            #ch.state_machine.cur_state = Damage
             ch.x, ch.y, ch.state = 200, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'

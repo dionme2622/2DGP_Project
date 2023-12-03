@@ -583,6 +583,7 @@ class Defense:
     def enter(ch, e):
         ch.action = 1
         ch.frame = 0
+        Blueteam.def_sound.play()
 
     @staticmethod
     def exit(ch, e):
@@ -695,6 +696,7 @@ class Blueteam:
     def_sound = None
     skill_sound = None
     dead_sound = None
+    out_sound = None
     def __init__(self, x, y, num):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
@@ -725,6 +727,9 @@ class Blueteam:
         if not Blueteam.dead_sound:
             Blueteam.dead_sound = load_wav('./bgm/dead.wav')
             Blueteam.dead_sound.set_volume(32)
+        if not Blueteam.out_sound:
+            Blueteam.out_sound = load_wav('./bgm/out.wav')
+            Blueteam.out_sound.set_volume(32)
 
     def shoot_ball(self):
         if self.getball == True:
@@ -733,6 +738,7 @@ class Blueteam:
 
     def use_skill(self):
         if self.getball == True:
+            Blueteam.skill_sound.play()
             Blueteam.skill_wait_time = get_time()
             skill = Skill(self.x, self.y, self.action, "Blueteam")
             lazer.state = "Blueteam"
@@ -767,10 +773,7 @@ class Blueteam:
                 ball_is_team(self)
         if group == 'player:lazer':
             if self.state == 'alive':
-            # 만약 아군이 쐈으면 안전함
-                if lazer.state == "Blueteam":
-                    pass
-                elif lazer.state == "Redteam":
+                if lazer.state == "Redteam":
                     self.hitted_from_lazor()
             # 적이 쐈으면 아웃
                 pass
@@ -836,6 +839,7 @@ class Blueteam:
 
     def hitted_from_lazor(self):
         global survivor
+        Blueteam.out_sound.play()
         self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
         survivor -= 1
 
@@ -867,11 +871,11 @@ class Blueteam:
         if get_time() - self.wait_time > def_cool_time:
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.FAIL
-    def who_is_ball(self):
-        for i in range(5, 10):
-            if play_mode.player[i].getball == True:
-                return i
-            return 9
+    # def who_is_ball(self):
+    #     for i in range(5, 10):
+    #         if play_mode.player[i].getball == True:
+    #             return i
+    #         return 9
 
     def build_behavior_tree(self):
         c1 = Condition("살아있는가?", self.is_alive)
@@ -908,13 +912,12 @@ def ball_is_enemy(ch):
     if ch.state == 'alive':
         play_mode.ball.shoot = False
         if ch.state_machine.cur_state != Defense:   # 방어에 실패했다면
-            Blueteam.dead_sound.play()
+            Blueteam.out_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
         else:                                       # 방어에 성공했다면
-            Blueteam.def_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y
             play_mode.ball.state = 'floor'
     pass
