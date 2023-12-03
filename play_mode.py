@@ -81,12 +81,11 @@ def init():
     global background, heart
     global player
     global ball
-    global font
     global arrow
     global select
     select = [1, 1]
 
-    font = load_font('./object/ENCR10B.TTF', 50)
+
     background = Background()
     game_world.add_object(background, 0)
     heart = Heart()
@@ -151,10 +150,6 @@ def update():
 def draw():
     clear_canvas()
     game_world.render()
-    font.draw(730, 960, f'{float(Blueteam.skill_wait_time) + 30 - float(get_time()):.1f}',
-                   (255, 255, 255))
-    font.draw(1230, 960, f'{float(Redteam.skill_wait_time) + 30 - float(get_time()):.1f}',
-              (255, 255, 255))
     update_canvas()
 
 
