@@ -5,11 +5,15 @@ import game_framework, game_world, play_mode
 from tkinter import *
 
 import help_mode
+import option_mode
 
 root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 PI = 3.141592
 timer = 0.0
+volume = 40
+
+
 def init():
     global image, background, word, bgm
     global size_W, size_H, sradian, sangle
@@ -25,11 +29,10 @@ def init():
     word = load_image('./object/word.png')
 
     sound = load_music('./bgm/mus_boss1.mp3')
-    sound.set_volume(32)
     sound.repeat_play()
 
-    start_sound = load_wav('./bgm/game_start.wav')
-    start_sound.set_volume(32)
+    start_sound = load_music('./bgm/game_start.mp3')
+
 
     pass
 
@@ -58,6 +61,7 @@ def handle_events():
                 game_framework.push_mode(help_mode)
             elif event.x >= 1020 and event.x <= 1260 and event.y >= 980 and event.y <= 1060:
                 # 옵션 모드로 이동
+                game_framework.push_mode(option_mode)
                 pass
             elif event.x >= 1370 and event.x <= 1610 and event.y >= 980 and event.y <= 1060:
                 game_framework.quit()
@@ -65,6 +69,8 @@ def handle_events():
 
 def update():
     global start, wevent, timer, box_width, box_height
+    sound.set_volume(volume)
+    start_sound.set_volume(volume)
     if wevent and get_time() - timer > 2.0:
         start_sound.play()
         start = True
