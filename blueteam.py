@@ -10,7 +10,6 @@ from tkinter import *
 import game_world
 import lazer
 import play_mode
-import ball
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 from skill import Skill
@@ -560,7 +559,7 @@ class Attack:
     def enter(ch, e):
         ch.action = 1
         ch.frame = 0
-
+        Blueteam.atk_sound.play()
     @staticmethod
     def exit(ch, e):
         pass
@@ -716,16 +715,16 @@ class Blueteam:
         self.state_machine.start()
         if not Blueteam.atk_sound:
             Blueteam.atk_sound = load_wav('./bgm/attack.wav')
-            Blueteam.atk_sound.set_volume(option_mode.sound)
+            Blueteam.atk_sound.set_volume(32) # option_mode.sound
         if not Blueteam.def_sound:
             Blueteam.def_sound = load_wav('./bgm/defense.wav')
-            Blueteam.def_sound.set_volume(option_mode.sound)
+            Blueteam.def_sound.set_volume(32)
         if not Blueteam.skill_sound:
             Blueteam.skill_sound = load_wav('./bgm/blaster.wav')
-            Blueteam.skill_sound.set_volume(option_mode.sound)
+            Blueteam.skill_sound.set_volume(32)
         if not Blueteam.dead_sound:
             Blueteam.dead_sound = load_wav('./bgm/dead.wav')
-            Blueteam.dead_sound.set_volume(option_mode.sound)
+            Blueteam.dead_sound.set_volume(32)
 
     def shoot_ball(self):
         if self.getball == True:
