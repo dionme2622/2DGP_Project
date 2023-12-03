@@ -692,6 +692,10 @@ class StateMachine:
 class Blueteam:
     image = None
     skill_wait_time = -30.0
+    atk_sound = None
+    def_sound = None
+    skill_sound = None
+    dead_sound = None
     def __init__(self, x, y, num):
         if Blueteam.image == None:
             Blueteam.image = load_image("./character/sands_blue.png")
@@ -710,6 +714,18 @@ class Blueteam:
         self.build_behavior_tree()
         self.state_machine = StateMachine(self)
         self.state_machine.start()
+        if not Blueteam.atk_sound:
+            Blueteam.atk_sound = load_wav('./bgm/attack.wav')
+            Blueteam.atk_sound.set_volume(option_mode.sound)
+        if not Blueteam.def_sound:
+            Blueteam.def_sound = load_wav('./bgm/defense.wav')
+            Blueteam.def_sound.set_volume(option_mode.sound)
+        if not Blueteam.skill_sound:
+            Blueteam.skill_sound = load_wav('./bgm/blaster.wav')
+            Blueteam.skill_sound.set_volume(option_mode.sound)
+        if not Blueteam.dead_sound:
+            Blueteam.dead_sound = load_wav('./bgm/dead.wav')
+            Blueteam.dead_sound.set_volume(option_mode.sound)
 
     def shoot_ball(self):
         if self.getball == True:
