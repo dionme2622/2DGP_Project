@@ -44,7 +44,7 @@ class Lazer:
         else:
             return (self.x - 20, self.y, self.x + 20, self.y - 1000)
     def draw(self):
-        draw_rectangle(*self.get_bb())
+        #draw_rectangle(*self.get_bb())
         self.image.clip_composite_draw(0, 0, 100, 100, self.angle, ' ', self.x, self.y, 2000, 400)
 
 
