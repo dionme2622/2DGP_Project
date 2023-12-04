@@ -32,8 +32,8 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
 survivor = 5
-def_cool_time = 4.0
-skill_cool_time = 1.0
+def_cool_time = 5.0
+skill_cool_time = 30.0
 
 
 def Semi_down(e):
@@ -86,27 +86,6 @@ def def_down(e):
 
 def skill_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SLASH
-
-
-def return_run_state(ch):
-    if ch.run_state == Idle:
-        ch.state_machine.handle_event(('LETS_IDLE', 0))
-    elif ch.run_state == RunRight:
-        ch.state_machine.handle_event(('LETS_RIGHT', 0))
-    elif ch.run_state == RunRightUp:
-        ch.state_machine.handle_event(('LETS_RIGHT_UP', 0))
-    elif ch.run_state == RunRightDown:
-        ch.state_machine.handle_event(('LETS_RIGHT_DOWN', 0))
-    elif ch.run_state == RunLeft:
-        ch.state_machine.handle_event(('LETS_LEFT', 0))
-    elif ch.run_state == RunLeftUp:
-        ch.state_machine.handle_event(('LETS_LEFT_UP', 0))
-    elif ch.run_state == RunLeftDown:
-        ch.state_machine.handle_event(('LETS_LEFT_DOWN', 0))
-    elif ch.run_state == RunUp:
-        ch.state_machine.handle_event(('LETS_UP', 0))
-    elif ch.run_state == RunDown:
-        ch.state_machine.handle_event(('LETS_DOWN', 0))
 
 
 PI = 3.141592
@@ -626,26 +605,6 @@ class Defense:
             ch.image.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
 
-class Damage:
-
-    @staticmethod
-    def enter(ch, e):
-        ch.action = 0
-        ch.frame = 0
-
-    @staticmethod
-    def exit(ch, e):
-        pass
-
-    @staticmethod
-    def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
-        if ch.frame >= 2:
-            return_run_state(ch)
-
-    @staticmethod
-    def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 class Stop:
 
@@ -674,48 +633,37 @@ class StateMachine:
             Idle: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, up_down: RunUp,
                    down_down: RunDown, up_up: RunDown, down_up: RunUp, atk_down: Attack, def_down: Idle,
                    Semi_down: Idle,
-                   Quote_down: Idle, lets_defense: Defense, skill_down: Idle},
+                   Quote_down: Idle, lets_defense: Defense, skill_down: Idle, lets_stop: Stop},
             RunRight: {right_up: Idle, left_down: Idle, up_down: RunRightUp, up_up: RunRightDown,
                        down_down: RunRightDown, down_up: RunRightUp, atk_down: Attack, def_down: RunRight,
                        Semi_down: RunRight,
-                       Quote_down: RunRight, lets_defense: Defense, skill_down: RunRight},
+                       Quote_down: RunRight, lets_defense: Defense, skill_down: RunRight, lets_stop: Stop},
             RunRightUp: {up_up: RunRight, right_up: RunUp, left_down: RunUp, down_down: RunRight, atk_down: Attack,
                          def_down: RunRightUp, Semi_down: RunRightUp, Quote_down: RunRightUp,
-                         lets_defense: Defense, skill_down: RunRightUp},
+                         lets_defense: Defense, skill_down: RunRightUp, lets_stop: Stop},
             RunUp: {up_up: Idle, left_down: RunLeftUp, down_down: Idle, right_down: RunRightUp,
                     left_up: RunRightUp, right_up: RunLeftUp, atk_down: Attack, def_down: RunUp, Semi_down: RunUp,
-                    Quote_down: RunUp, lets_defense: Defense, skill_down: RunUp},
+                    Quote_down: RunUp, lets_defense: Defense, skill_down: RunUp, lets_stop: Stop},
             RunLeftUp: {right_down: RunUp, down_down: RunLeft, left_up: RunUp, up_up: RunLeft,
                         atk_down: Attack, def_down: RunLeftUp, Semi_down: RunLeftUp, Quote_down: RunLeftUp,
-                        lets_defense: Defense, skill_down: RunLeftUp},
+                        lets_defense: Defense, skill_down: RunLeftUp, lets_stop: Stop},
             RunLeft: {left_up: Idle, up_down: RunLeftUp, right_down: Idle, down_down: RunLeftDown,
                       up_up: RunLeftDown, down_up: RunLeftUp, atk_down: Attack, def_down: RunLeft, Semi_down: RunLeft,
-                      Quote_down: RunLeft, lets_defense: Defense, skill_down: RunLeft},
+                      Quote_down: RunLeft, lets_defense: Defense, skill_down: RunLeft, lets_stop: Stop},
             RunLeftDown: {left_up: RunDown, down_up: RunLeft, up_down: RunLeft, right_down: RunDown,
                           atk_down: Attack, def_down: RunLeftDown, Semi_down: RunLeftDown, Quote_down: RunLeftDown,
-                          lets_defense: Defense, skill_down: RunLeftDown},
+                          lets_defense: Defense, skill_down: RunLeftDown, lets_stop: Stop},
             RunDown: {down_up: Idle, left_down: RunLeftDown, up_down: Idle, right_down: RunRightDown,
                       left_up: RunRightDown, right_up: RunLeftDown,
                       atk_down: Attack, def_down: RunDown, Semi_down: RunDown, Quote_down: RunDown,
-                      lets_defense: Defense, skill_down: RunDown},
+                      lets_defense: Defense, skill_down: RunDown, lets_stop: Stop},
             RunRightDown: {right_up: RunDown, down_up: RunRight, left_down: RunDown, up_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, Semi_down: RunRightDown, Quote_down: RunRightDown,
-                           lets_defense: Defense, skill_down: RunRightDown},
-            Attack: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
-                     },
-            Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
-                      },
-            Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
-                     },
-            Stop: {right_down: RunRight, left_down: RunLeft, up_down: RunUp,
-                   down_down: RunDown, atk_down: Attack, def_down: Idle, Semi_down: Stop,
-                   Quote_down: Stop}
+                           lets_defense: Defense, skill_down: RunRightDown, lets_stop: Stop},
+            Attack: {lets_stop: Stop},
+            Defense: {lets_stop: Stop},
+            Stop: { right_down: RunRight, left_down: RunLeft, up_down: RunUp,
+                   down_down: RunDown }
         }
 
     def start(self):
@@ -740,7 +688,7 @@ class StateMachine:
 
 class Redteam:
     image = None
-    skill_wait_time = -30.0
+    skill_wait_time = 0.0
     atk_sound = None
     def_sound = None
     skill_sound = None
@@ -835,7 +783,7 @@ class Redteam:
     def hitted_from_lazor(self):
         global survivor
         Redteam.out_sound.play()
-        self.x, self.y, self.state = 200, 400, 'dead'
+        self.x, self.y, self.state = 200, random.randint(100, 900), 'dead'
         survivor -= 1
 
     def distance_less_than(self, x1, y1, x2, y2, r):
@@ -959,7 +907,7 @@ def ball_is_enemy(ch):
         if ch.state_machine.cur_state != Defense:  # 방어에 실패했다면
             Redteam.out_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y  # 맞은 플레이어 앞에 떨어진다
-            ch.x, ch.y, ch.state = 200, 400, 'dead'
+            ch.x, ch.y, ch.state = 200, random.randint(100, 900), 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
         else:  # 방어에 성공했다면

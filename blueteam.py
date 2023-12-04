@@ -29,7 +29,7 @@ FRAMES_PER_ACTION = 4
 PI = 3.141592
 radian = 10
 survivor = 5
-def_cool_time = 4.0
+def_cool_time = 5.0
 skill_cool_time = 30.0
 
 
@@ -83,27 +83,6 @@ def def_down(e):
 
 def skill_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_e
-
-
-def return_run_state(ch):
-    if ch.run_state == Idle:
-        ch.state_machine.handle_event(('LETS_IDLE', 0))
-    elif ch.run_state == RunRight:
-        ch.state_machine.handle_event(('LETS_RIGHT', 0))
-    elif ch.run_state == RunRightUp:
-        ch.state_machine.handle_event(('LETS_RIGHT_UP', 0))
-    elif ch.run_state == RunRightDown:
-        ch.state_machine.handle_event(('LETS_RIGHT_DOWN', 0))
-    elif ch.run_state == RunLeft:
-        ch.state_machine.handle_event(('LETS_LEFT', 0))
-    elif ch.run_state == RunLeftUp:
-        ch.state_machine.handle_event(('LETS_LEFT_UP', 0))
-    elif ch.run_state == RunLeftDown:
-        ch.state_machine.handle_event(('LETS_LEFT_DOWN', 0))
-    elif ch.run_state == RunUp:
-        ch.state_machine.handle_event(('LETS_UP', 0))
-    elif ch.run_state == RunDown:
-        ch.state_machine.handle_event(('LETS_DOWN', 0))
 
 
 class Idle:
@@ -577,7 +556,6 @@ class Attack:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             ch.state_machine.handle_event(('LETS_STOP', 0))
-            #return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -603,7 +581,6 @@ class Defense:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             ch.state_machine.handle_event(('LETS_STOP', 0))
-            #return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -612,27 +589,6 @@ class Defense:
         elif ch.frame >= 1:
             ch.image.clip_draw(int(ch.frame) * 32, ch.action * 52, 32, 52 - 14, ch.x, ch.y, 100, 100)
 
-
-class Damage:
-
-    @staticmethod
-    def enter(ch, e):
-        ch.action = 0
-        ch.frame = 0
-
-    @staticmethod
-    def exit(ch, e):
-        pass
-
-    @staticmethod
-    def do(ch):
-        ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
-        if ch.frame >= 2:
-            return_run_state(ch)
-
-    @staticmethod
-    def draw(ch):
-        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
 class Stop:
 
@@ -684,21 +640,10 @@ class StateMachine:
             RunRightDown: {g_up: RunDown, f_up: RunRight, d_down: RunDown, r_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, a_down: RunRightDown, s_down: RunRightDown,
                            lets_defense: Defense, skill_down: RunRightDown, lets_stop: Stop},
-            Attack: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
-                     },
-            Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
-                      },
-            Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
-                     },
+            Attack: { lets_stop: Stop },
+            Defense: { lets_stop: Stop },
             Stop: {g_down: RunRight, d_down: RunLeft, r_down: RunUp,
-                   f_down: RunDown, atk_down: Attack, def_down: Idle, a_down: Idle,
-                   s_down: Idle }
+                   f_down: RunDown}
             }
 
 
@@ -724,7 +669,7 @@ class StateMachine:
 
 class Blueteam:
     image = None
-    skill_wait_time = -30.0
+    skill_wait_time = 0.0
     atk_sound = None
     def_sound = None
     skill_sound = None
@@ -779,7 +724,6 @@ class Blueteam:
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
     def update(self):
-
         if play_mode.select[0] != self.num and self.getball != True:  # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
             pass
@@ -867,7 +811,7 @@ class Blueteam:
     def hitted_from_lazor(self):
         global survivor
         Blueteam.out_sound.play()
-        self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
+        self.x, self.y, self.state = WIDTH - 180, random.randint(100, 900), 'dead'
         survivor -= 1
 
     # def flee(self):
@@ -941,7 +885,7 @@ def ball_is_enemy(ch):
         if ch.state_machine.cur_state != Defense:  # 방어에 실패했다면
             Blueteam.out_sound.play()
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
-            ch.x, ch.y, ch.state = WIDTH - 180, 400, 'dead'
+            ch.x, ch.y, ch.state = WIDTH - 180, random.randint(100, 900), 'dead'
             survivor -= 1
             play_mode.ball.state = 'floor'
         else:  # 방어에 성공했다면
