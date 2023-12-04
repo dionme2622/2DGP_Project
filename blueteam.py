@@ -4,13 +4,11 @@ import random
 from pico2d import *
 import game_framework
 from sdl2 import SDL_KEYDOWN, SDL_KEYUP, SDLK_r, SDLK_d, SDLK_f, SDLK_g, SDLK_q, SDLK_w, SDLK_a, SDLK_s
-from tkinter import *
+from tkinter import Tk
 
 import game_world
 import lazer
-import option_mode
 import play_mode
-import select_mode
 from behavior_tree import BehaviorTree, Action, Sequence, Condition, Selector
 from function import *
 from skill import Skill
@@ -19,7 +17,7 @@ root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 25.0  # 시속
+RUN_SPEED_KMPH = 30.0  # 시속
 RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
@@ -603,6 +601,7 @@ class Defense:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
+            #ch.state_machine.handle_event(('LETS_IDLE', 0))
             return_run_state(ch)
 
     @staticmethod
@@ -673,8 +672,8 @@ class StateMachine:
                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
                      },
             Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
-                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                     lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
                       },
             Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
@@ -731,19 +730,16 @@ class Blueteam:
         self.state_machine.start()
         if not Blueteam.atk_sound:
             Blueteam.atk_sound = load_wav('./bgm/attack.wav')
-            Blueteam.atk_sound.set_volume(select_mode.volume)  # select_mode.volume
+            Blueteam.atk_sound.set_volume(40)  # select_mode.volume
         if not Blueteam.def_sound:
             Blueteam.def_sound = load_wav('./bgm/defense.wav')
-            Blueteam.def_sound.set_volume(select_mode.volume)
+            Blueteam.def_sound.set_volume(40)
         if not Blueteam.skill_sound:
             Blueteam.skill_sound = load_wav('./bgm/blaster.wav')
-            Blueteam.skill_sound.set_volume(select_mode.volume)
-        if not Blueteam.dead_sound:
-            Blueteam.dead_sound = load_wav('./bgm/dead.wav')
-            Blueteam.dead_sound.set_volume(select_mode.volume)
+            Blueteam.skill_sound.set_volume(40)
         if not Blueteam.out_sound:
             Blueteam.out_sound = load_wav('./bgm/out.wav')
-            Blueteam.out_sound.set_volume(select_mode.volume)
+            Blueteam.out_sound.set_volume(40)
 
     def shoot_ball(self):
         if self.getball == True:
@@ -762,7 +758,7 @@ class Blueteam:
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
     def update(self):
-        global get_ball_player
+
         if play_mode.select[0] != self.num and self.getball != True:  # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
             pass
@@ -853,17 +849,17 @@ class Blueteam:
         self.x, self.y, self.state = WIDTH - 180, 400, 'dead'
         survivor -= 1
 
-    def flee(self):
-        if math.cos(self.dir) < 0:
-            self.action = 4
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        else:
-            self.action = 3
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        # 소년으로부터 멀어지는 방향
-
-        self.dir = math.atan2(self.y - play_mode.player[get_ball_player].y,
-                              self.x - play_mode.player[get_ball_player].x)
+    # def flee(self):
+    #     if math.cos(self.dir) < 0:
+    #         self.action = 4
+    #         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+    #     else:
+    #         self.action = 3
+    #         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+    #     # 소년으로부터 멀어지는 방향
+    #
+    #     self.dir = math.atan2(self.y - play_mode.player[get_ball_player].y,
+    #                           self.x - play_mode.player[get_ball_player].x)
 
         # 살짝 이동
         self.speed = RUN_SPEED_PPS
@@ -917,6 +913,7 @@ class Blueteam:
 def ball_is_team(ch):
     play_mode.ball.shoot = False
     ch.getball = True
+    play_mode.select[0] = ch.num
     play_mode.ball.state = 'Blueteam_get'
     pass
 
@@ -939,5 +936,6 @@ def ball_is_enemy(ch):
 
 def ball_is_floor(ch):
     ch.getball = True
+    play_mode.select[0] = ch.num
     play_mode.ball.state = 'Blueteam_get'
     pass
