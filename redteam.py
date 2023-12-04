@@ -22,7 +22,7 @@ root = Tk()
 WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m
-RUN_SPEED_KMPH = 25.0  # 시속
+RUN_SPEED_KMPH = 30.0  # 시속
 RUN_SPEED_MPH = RUN_SPEED_KMPH * 1000.0 / 60.0
 RUN_SPEED_MPS = RUN_SPEED_MPH / 60.0
 RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
@@ -925,6 +925,7 @@ class Redteam:
 def ball_is_team(ch):
     play_mode.ball.shoot = False
     ch.getball = True
+    play_mode.select[1] = ch.num
     play_mode.ball.state = 'Redteam_get'
     pass
 
@@ -947,5 +948,6 @@ def ball_is_enemy(ch):
 
 def ball_is_floor(ch):
     ch.getball = True
+    play_mode.select[1] = ch.num
     play_mode.ball.state = 'Redteam_get'
     pass
