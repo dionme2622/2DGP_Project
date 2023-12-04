@@ -576,7 +576,8 @@ class Attack:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            return_run_state(ch)
+            ch.state_machine.handle_event(('LETS_STOP', 0))
+            #return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -601,8 +602,8 @@ class Defense:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            #ch.state_machine.handle_event(('LETS_IDLE', 0))
-            return_run_state(ch)
+            ch.state_machine.handle_event(('LETS_STOP', 0))
+            #return_run_state(ch)
 
     @staticmethod
     def draw(ch):
@@ -695,8 +696,8 @@ class StateMachine:
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
                      },
-            Stop: {g_down: RunRight, d_down: RunLeft, d_up: RunRight, g_up: RunLeft, r_down: RunUp,
-                   f_down: RunDown, r_up: RunDown, f_up: RunUp, atk_down: Attack, def_down: Idle, a_down: Idle,
+            Stop: {g_down: RunRight, d_down: RunLeft, r_down: RunUp,
+                   f_down: RunDown, atk_down: Attack, def_down: Idle, a_down: Idle,
                    s_down: Idle }
             }
 
@@ -899,12 +900,6 @@ class Blueteam:
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.FAIL
 
-    # def who_is_ball(self):
-    #     for i in range(5, 10):
-    #         if play_mode.player[i].getball == True:
-    #             return i
-    #         return 9
-
     def build_behavior_tree(self):
         c1 = Condition("살아있는가?", self.is_alive)
         c2 = Condition("적이 공을 갖고있는가?", self.is_ball_enemy)
@@ -933,6 +928,7 @@ class Blueteam:
 def ball_is_team(ch):
     play_mode.ball.shoot = False
     ch.getball = True
+    ch.state_machine.handle_event(('LETS_STOP', 0))
     play_mode.select[0] = ch.num
     play_mode.ball.state = 'Blueteam_get'
     pass
