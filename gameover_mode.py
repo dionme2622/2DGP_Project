@@ -1,19 +1,12 @@
-import time
-
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_font, load_music
-from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDLK_z, SDLK_RETURN, SDL_MOUSEBUTTONDOWN, \
-    SDL_BUTTON_LEFT
+from pico2d import load_image, get_events, clear_canvas, update_canvas, load_font, load_music
+from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
 
 import blueteam
 import game_framework
 import game_world
-import play_mode
-from tkinter import *
-from title import Title
 import select_mode
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 FRAMES_PER_ACTION = 1
 TIME_PER_ACTION = 1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -22,15 +15,17 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 class BackGround:
     image = None
     sound = None
-
+    dead_sound = None
     def __init__(self):
         if BackGround.image == None:
             BackGround.image = load_image('./object/select_box.png')
         if BackGround.sound == None:
             BackGround.sound = load_music('./bgm/mus_gameover.ogg')
+        if BackGround.dead_sound == None:
+            BackGround.dead_sound = load_music('./bgm/dead.mp3')
         BackGround.sound.set_volume(40)
-        BackGround.sound.play()
-
+        BackGround.dead_sound.set_volume(40)
+        BackGround.sound.repeat_play()
     def draw(self):
         self.image.clip_draw(0, 0, WIDTH, HEIGHT, WIDTH // 2, HEIGHT // 2, WIDTH, HEIGHT)
 
@@ -78,7 +73,8 @@ class Heart:
             Heart.image.opacify(self.alpha)
             if self.alpha > 0:
                 self.alpha -= 0.01
-        pass
+        if self.time > 3.0:
+            pass
 
     pass
 

@@ -1,13 +1,8 @@
 from pico2d import load_image, get_events, clear_canvas, update_canvas
-from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
-import game_framework, game_world, play_mode
+from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
+import game_framework, game_world
 
-from tkinter import *
-
-import select_mode
-
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 
 
 def init():

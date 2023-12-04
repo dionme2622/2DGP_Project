@@ -1,8 +1,6 @@
 from pico2d import *
-from tkinter import *
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 alpha = 0.0
 
 

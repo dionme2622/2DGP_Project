@@ -44,7 +44,7 @@ class Node:
     def show_result(f):
         def inner(self):
             result = f(self)
-            # end = '....' if result == BehaviorTree.RUNNING else '\n'
+            end = '....' if result == BehaviorTree.RUNNING else '\n'
             end = '\n'
             color = '\033[2;31;43m' if BehaviorTree.run_mode == 'MONITOR' else '\033[0;37;40m'
             print(color + f'[{self.__class__.__name__:10s}] {self.name:40s} ==> ({result})', end = end)

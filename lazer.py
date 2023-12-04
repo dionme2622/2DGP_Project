@@ -1,15 +1,10 @@
 from pico2d import load_image, draw_rectangle
 
-from tkinter import *
-
 import game_framework
 import game_world
-import math
-import select_mode
-import play_mode
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+
+WIDTH, HEIGHT = 1920, 1080
 PI = 3.141592
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 당 30cm   100 pixel에 3m

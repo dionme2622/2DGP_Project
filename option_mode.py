@@ -1,21 +1,33 @@
 from pico2d import *
-from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
-import game_framework, game_world, play_mode
+from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
+import game_framework, game_world
 
 from tkinter import *
 
 import select_mode
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
-import tkinter as tk
-from tkinter import ttk
+WIDTH, HEIGHT = 1920, 1080
 
+
+class Image:
+    image = None
+    def __init__(self):
+        if Image.image == None:
+            Image.image = load_image('./object/option.png')
+
+    def update(self):
+        pass
+
+    def draw(self):
+        Image.image.clip_draw(0, 0, 1980, 1080, WIDTH // 2, HEIGHT // 2, WIDTH, HEIGHT)
+        pass
 
 def init():
     global sound, image
-    image = load_image('./object/option.png')
+    image = Image()
     sound = 40
+
+    game_world.add_object(image, 0)
     pass
 
 
@@ -46,7 +58,7 @@ def update():
 
 def draw():
     clear_canvas()
-    image.clip_draw(0, 0, 1980, 1080, WIDTH // 2, HEIGHT // 2, WIDTH, HEIGHT)
+    game_world.render()
     update_canvas()
     pass
 

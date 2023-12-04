@@ -1,6 +1,9 @@
 # fill here
 import time
 
+from pico2d import load_font
+
+
 def change_mode(mode):
     global stack
     if (len(stack) > 0):
@@ -57,7 +60,6 @@ def run(start_mode):
         frame_rate = 1.0 / frame_time
         current_time += frame_time
         #print(f'frame time = {frame_time} : frame rate = {frame_rate}')
-
     # repeatedly delete the top of the stack
     while (len(stack) > 0):
         stack[-1].finish()

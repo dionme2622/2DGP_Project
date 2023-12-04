@@ -1,26 +1,20 @@
 import math
-from math import tan
 import random
-
 from pico2d import load_image, draw_rectangle
-
-from tkinter import *
-
 import blueteam
 import play_mode, game_framework
 import redteam
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 
 
 class Ball:
     image = None
 
-    def __init__(self, velocity=7):
+    def __init__(self, velocity=5):
         if Ball.image == None:
             Ball.image = load_image('./object/ball.png')
-        self.spawn = random.randint(0, 1)
+        self.spawn = 0 #random.randint(0, 1)
         if self.spawn == 0:
             self.x = WIDTH // 2 - 100
         else:

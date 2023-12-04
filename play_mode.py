@@ -8,14 +8,12 @@ import select_mode
 from arrow import Arrow
 
 from background import Background, Heart, Icon
-from tkinter import *
 
 from ball import Ball
 from blueteam import Blueteam
 from redteam import Redteam
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 player = [[], [], [], [], [], [], [], [], [], []]
 
 

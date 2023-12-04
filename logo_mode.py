@@ -1,11 +1,8 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time
 from pico2d import *
 import game_framework
 import title_mode
-from tkinter import *
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 alpha = 0.0
 alpha_increase = 0.005
 

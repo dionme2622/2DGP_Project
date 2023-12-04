@@ -1,15 +1,12 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time
-from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDLK_z, SDLK_RETURN
+from pico2d import load_image, get_events, clear_canvas, update_canvas
+from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_z, SDLK_RETURN
 
 import game_framework
 import game_world
-import play_mode
-from tkinter import *
 from title import Title
 import select_mode
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 alpha = 0.0
 alpha_increase = 0.01
 
@@ -56,7 +53,6 @@ def draw():
     clear_canvas()
     game_world.render()
     word.clip_draw(0, 0, 402, 38, 702 + 220, 260)
-
     update_canvas()
     pass
 

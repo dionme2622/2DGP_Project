@@ -1,14 +1,10 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_music, load_wav
-from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE, SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
+from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time, load_music
+from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE,  SDL_MOUSEBUTTONDOWN, SDL_BUTTON_LEFT
 import game_framework, game_world, play_mode
-
-from tkinter import *
-
 import help_mode
 import option_mode
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 PI = 3.141592
 timer = 0.0
 volume = 40
@@ -32,6 +28,7 @@ def init():
     sound.repeat_play()
 
     start_sound = load_music('./bgm/game_start.mp3')
+    start_sound.set_volume(40)
 
 
 def finish():
@@ -67,7 +64,6 @@ def handle_events():
 def update():
     global start, wevent, timer, box_width, box_height
     sound.set_volume(volume)
-    start_sound.set_volume(volume)
     if wevent and get_time() - timer > 2.0:
         start_sound.play()
         start = True
@@ -92,7 +88,7 @@ def draw():
 
     clear_canvas()
     background.draw(WIDTH // 2, HEIGHT // 2)
-    image.clip_draw(0, 0, 2702, 1542, WIDTH // 2, HEIGHT // 2, size_W, size_H)
+    image.clip_draw(0, 0, 1920, 1080, WIDTH // 2, HEIGHT // 2, size_W + 18, size_H + 10)
     if wevent == True:
         word.clip_draw(0, 0, 835, 173, 950, 370, 1245, 200)
         # 3초 후 event = false 그리고 start = true로 만들기

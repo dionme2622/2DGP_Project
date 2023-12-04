@@ -1,11 +1,7 @@
 from pico2d import load_image
-
-from tkinter import *
-import select_mode
 import play_mode
 
-root = Tk()
-WIDTH, HEIGHT = root.winfo_screenwidth(), root.winfo_screenheight()
+WIDTH, HEIGHT = 1920, 1080
 PI = 3.141592
 
 
