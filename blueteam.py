@@ -633,7 +633,23 @@ class Damage:
     def draw(ch):
         ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 
+class Stop:
 
+    @staticmethod
+    def enter(ch, e):
+        ch.frame = 0
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        pass
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
 class StateMachine:
     def __init__(self, ch):
         self.ch = ch
@@ -641,45 +657,49 @@ class StateMachine:
         self.transitions = {
             Idle: {g_down: RunRight, d_down: RunLeft, d_up: RunRight, g_up: RunLeft, r_down: RunUp,
                    f_down: RunDown, r_up: RunDown, f_up: RunUp, atk_down: Attack, def_down: Idle, a_down: Idle,
-                   s_down: Idle, lets_defense: Defense, skill_down: Idle},
+                   s_down: Idle, lets_defense: Defense, skill_down: Idle, lets_stop: Stop},
             RunRight: {g_up: Idle, d_down: Idle, r_down: RunRightUp, r_up: RunRightDown,
                        f_down: RunRightDown, f_up: RunRightUp, atk_down: Attack, def_down: RunRight, a_down: RunRight,
-                       s_down: RunRight, lets_defense: Defense, skill_down: RunRight},
+                       s_down: RunRight, lets_defense: Defense, skill_down: RunRight, lets_stop: Stop},
             RunRightUp: {r_up: RunRight, g_up: RunUp, d_down: RunUp, f_down: RunRight, atk_down: Attack,
                          def_down: RunRightUp, a_down: RunRightUp, s_down: RunRightUp, lets_defense: Defense,
-                         skill_down: RunRightUp},
+                         skill_down: RunRightUp, lets_stop: Stop},
             RunUp: {r_up: Idle, d_down: RunLeftUp, f_down: Idle, g_down: RunRightUp,
                     d_up: RunRightUp, g_up: RunLeftUp, atk_down: Attack, def_down: RunUp, a_down: RunUp, s_down: RunUp,
-                    lets_defense: Defense, skill_down: RunUp},
+                    lets_defense: Defense, skill_down: RunUp, lets_stop: Stop},
             RunLeftUp: {g_down: RunUp, f_down: RunLeft, d_up: RunUp, r_up: RunLeft,
                         atk_down: Attack, def_down: RunLeftUp, a_down: RunLeftUp, s_down: RunLeftUp,
-                        lets_defense: Defense, skill_down: RunLeftUp},
+                        lets_defense: Defense, skill_down: RunLeftUp, lets_stop: Stop},
             RunLeft: {d_up: Idle, r_down: RunLeftUp, g_down: Idle, f_down: RunLeftDown,
                       r_up: RunLeftDown, f_up: RunLeftUp, atk_down: Attack, def_down: RunLeft, a_down: RunLeft,
-                      s_down: RunLeft, lets_defense: Defense, skill_down: RunLeft},
+                      s_down: RunLeft, lets_defense: Defense, skill_down: RunLeft, lets_stop: Stop},
             RunLeftDown: {d_up: RunDown, f_up: RunLeft, r_down: RunLeft, g_down: RunDown,
                           atk_down: Attack, def_down: RunLeftDown, a_down: RunLeftDown, s_down: RunLeftDown,
-                          lets_defense: Defense, skill_down: RunLeftDown},
+                          lets_defense: Defense, skill_down: RunLeftDown, lets_stop: Stop},
             RunDown: {f_up: Idle, d_down: RunLeftDown, r_down: Idle, g_down: RunRightDown,
                       d_up: RunRightDown, g_up: RunLeftDown,
                       atk_down: Attack, def_down: RunDown, a_down: RunDown, s_down: RunDown, lets_defense: Defense,
-                      skill_down: RunDown},
+                      skill_down: RunDown, lets_stop: Stop},
             RunRightDown: {g_up: RunDown, f_up: RunRight, d_down: RunDown, r_down: RunRight,
                            atk_down: Attack, def_down: RunRightDown, a_down: RunRightDown, s_down: RunRightDown,
-                           lets_defense: Defense, skill_down: RunRightDown},
+                           lets_defense: Defense, skill_down: RunRightDown, lets_stop: Stop},
             Attack: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
                      },
             Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
                       },
             Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
-                     }
-        }
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
+                     },
+            Stop: {g_down: RunRight, d_down: RunLeft, d_up: RunRight, g_up: RunLeft, r_down: RunUp,
+                   f_down: RunDown, r_up: RunDown, f_up: RunUp, atk_down: Attack, def_down: Idle, a_down: Idle,
+                   s_down: Idle }
+            }
+
 
     def start(self):
         self.cur_state.enter(self.ch, ('NONE', 0))
