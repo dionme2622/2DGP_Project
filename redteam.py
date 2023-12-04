@@ -591,7 +591,7 @@ class Attack:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            return_run_state(ch)
+            ch.state_machine.handle_event(('LETS_STOP', 0))
 
     @staticmethod
     def draw(ch):
@@ -616,7 +616,7 @@ class Defense:
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
-            return_run_state(ch)
+            ch.state_machine.handle_event(('LETS_STOP', 0))
 
     @staticmethod
     def draw(ch):
@@ -642,6 +642,24 @@ class Damage:
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
         if ch.frame >= 2:
             return_run_state(ch)
+
+    @staticmethod
+    def draw(ch):
+        ch.image.clip_draw(int(ch.frame) * 29, ch.action * 52, 29, 52 - 14, ch.x, ch.y, 100, 100)
+
+class Stop:
+
+    @staticmethod
+    def enter(ch, e):
+        ch.frame = 0
+
+    @staticmethod
+    def exit(ch, e):
+        pass
+
+    @staticmethod
+    def do(ch):
+        pass
 
     @staticmethod
     def draw(ch):
@@ -685,16 +703,19 @@ class StateMachine:
                            lets_defense: Defense, skill_down: RunRightDown},
             Attack: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
                      },
             Defense: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                       lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
+                      lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
                       },
             Damage: {lets_run_right: RunRight, lets_run_right_up: RunRightUp, lets_run_right_down: RunRightDown,
                      lets_run_left: RunLeft, lets_run_left_up: RunLeftUp, lets_run_left_down: RunLeftDown,
-                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle
-                     }
+                     lets_run_up: RunUp, lets_run_down: RunDown, lets_idle: Idle, lets_stop: Stop
+                     },
+            Stop: {right_down: RunRight, left_down: RunLeft, up_down: RunUp,
+                   down_down: RunDown, atk_down: Attack, def_down: Idle, Semi_down: Stop,
+                   Quote_down: Stop}
         }
 
     def start(self):
@@ -925,6 +946,7 @@ class Redteam:
 def ball_is_team(ch):
     play_mode.ball.shoot = False
     ch.getball = True
+    ch.state_machine.handle_event(('LETS_STOP', 0))
     play_mode.select[1] = ch.num
     play_mode.ball.state = 'Redteam_get'
     pass
