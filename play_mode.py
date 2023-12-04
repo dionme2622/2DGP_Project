@@ -52,14 +52,24 @@ def handle_events():
                 player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[0] = 5
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_1:
+            for i in range(5, 10):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[1] = 1
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_2:
+            for i in range(5, 10):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[1] = 2
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_3:
+            for i in range(5, 10):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[1] = 3
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_4:
+            for i in range(5, 10):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[1] = 4
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_5:
+            for i in range(5, 10):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[1] = 5
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             if event.x >= 1680 and event.x <= 1920 and event.y >= 25 and event.y <= 115:
