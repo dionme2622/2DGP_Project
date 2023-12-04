@@ -32,14 +32,24 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
+            for i in range(0, 5):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[0] = 1
         elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
+            for i in range(0, 5):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[0] = 2
         elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
+            for i in range(0, 5):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[0] = 3
         elif event.type == SDL_KEYDOWN and event.key == SDLK_4:
+            for i in range(0, 5):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[0] = 4
         elif event.type == SDL_KEYDOWN and event.key == SDLK_5:
+            for i in range(0, 5):
+                player[i].state_machine.handle_event(('LETS_STOP', 0))
             select[0] = 5
         elif event.type == SDL_KEYDOWN and event.key == SDLK_KP_1:
             select[1] = 1
