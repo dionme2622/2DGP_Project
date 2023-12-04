@@ -813,19 +813,6 @@ class Blueteam:
         Blueteam.out_sound.play()
         self.x, self.y, self.state = WIDTH - 180, random.randint(100, 900), 'dead'
         survivor -= 1
-
-    # def flee(self):
-    #     if math.cos(self.dir) < 0:
-    #         self.action = 4
-    #         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-    #     else:
-    #         self.action = 3
-    #         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-    #     # 소년으로부터 멀어지는 방향
-    #
-    #     self.dir = math.atan2(self.y - play_mode.player[get_ball_player].y,
-    #                           self.x - play_mode.player[get_ball_player].x)
-
         # 살짝 이동
         self.speed = RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
@@ -872,7 +859,8 @@ class Blueteam:
 def ball_is_team(ch):
     play_mode.ball.shoot = False
     ch.getball = True
-    ch.state_machine.handle_event(('LETS_STOP', 0))
+    for i in range(0, 5):
+        play_mode.player[i].state_machine.handle_event(('LETS_STOP', 0))
     play_mode.select[0] = ch.num
     play_mode.ball.state = 'Blueteam_get'
     pass
@@ -896,6 +884,8 @@ def ball_is_enemy(ch):
 
 def ball_is_floor(ch):
     ch.getball = True
+    for i in range(0, 5):
+        play_mode.player[i].state_machine.handle_event(('LETS_STOP', 0))
     play_mode.select[0] = ch.num
     play_mode.ball.state = 'Blueteam_get'
     pass
