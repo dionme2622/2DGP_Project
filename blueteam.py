@@ -26,7 +26,6 @@ FRAMES_PER_ACTION = 4
 
 PI = 3.141592
 radian = 10
-survivor = 5
 def_cool_time = 5.0
 skill_cool_time = 30.0
 
@@ -89,7 +88,7 @@ class Idle:
         ch.frame = 0
         ch.run_state = Idle
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -110,7 +109,7 @@ class Idle:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         if ch.run == 2:
             ch.angle -= 45
@@ -137,7 +136,7 @@ class RunRight:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRight
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() >
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() >
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -151,7 +150,7 @@ class RunRight:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -189,7 +188,7 @@ class RunRightUp:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightUp
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time()  - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -203,7 +202,7 @@ class RunRightUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -240,7 +239,7 @@ class RunRightDown:
         ch.action, ch.run = 3, 3
         ch.run_state = RunRightDown
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time()  - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -254,7 +253,7 @@ class RunRightDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -292,7 +291,7 @@ class RunLeft:
         ch.angle += 90
         ch.run_state = RunLeft
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time() - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -307,7 +306,7 @@ class RunLeft:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -344,7 +343,7 @@ class RunLeftUp:
         ch.angle += 90
         ch.run_state = RunLeftUp
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time()  - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -359,7 +358,7 @@ class RunLeftUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -397,7 +396,7 @@ class RunLeftDown:
         ch.angle += 90
         ch.run_state = RunLeftDown
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time()  - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -412,7 +411,7 @@ class RunLeftDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -450,7 +449,7 @@ class RunUp:
         ch.angle += 45
         ch.run_state = RunUp
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time()  - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -465,7 +464,7 @@ class RunUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -502,7 +501,7 @@ class RunDown:
         ch.angle += 135
         ch.run_state = RunDown
         if def_down(e):
-            if get_time() - ch.wait_time > def_cool_time:  # get_time() - ch.time() > 5
+            if get_time()  - ch.wait_time > def_cool_time:  # get_time() - play_mode.time() > 5
                 ch.auto_guard = False
                 ch.state_machine.handle_event(('LETS_DEFENSE', 0))
         if a_down(e):
@@ -517,7 +516,7 @@ class RunDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Blueteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Blueteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
 
     @staticmethod
@@ -702,6 +701,7 @@ class Blueteam:
         self.dir = 0.0
         self.run_state = Idle
         self.auto_guard = False
+        self.time = 0.0
         self.build_behavior_tree()
         self.RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
         self.state_machine = StateMachine(self)
@@ -727,7 +727,7 @@ class Blueteam:
     def use_skill(self):
         if self.getball == True:
             Blueteam.skill_sound.play()
-            Blueteam.skill_wait_time = get_time()
+            Blueteam.skill_wait_time = self.time
             skill = Skill(self.x, self.y, self.action, "Blueteam")
             lazer.state = "Blueteam"
             game_world.add_object(skill, 1)
@@ -739,6 +739,7 @@ class Blueteam:
         if play_mode.select[0] != self.num and self.getball != True:  # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
             pass
+        self.time = self.time + game_framework.frame_time
         self.state_machine.update()
 
     def handle_event(self, event):
@@ -823,11 +824,11 @@ class Blueteam:
             return BehaviorTree.FAIL
 
     def hitted_from_lazor(self):
-        global survivor, RUN_SPEED_KMPH
+        global RUN_SPEED_KMPH
         Blueteam.out_sound.play()
         self.RUN_SPEED_PPS *= 2
         self.x, self.y, self.state = WIDTH - 180, random.randint(100, 700), 'dead'
-        survivor -= 1
+        play_mode.blueteam_survivor -= 1
         # 살짝 이동
         self.speed = self.RUN_SPEED_PPS
         self.x += self.speed * math.cos(self.dir) * game_framework.frame_time
@@ -843,7 +844,7 @@ class Blueteam:
 
     def defense(self):
         if get_time() - self.wait_time > def_cool_time + 10:
-            self.auto_guard = True
+            self.auto_guard = True;
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.SUCCESS
 
@@ -891,7 +892,7 @@ def ball_is_enemy(ch):
             ch.RUN_SPEED_PPS *= 2
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.x, ch.y, ch.state = WIDTH - 180, random.randint(100, 700), 'dead'
-            survivor -= 1
+            play_mode.blueteam_survivor -= 1
             play_mode.ball.state = 'floor'
         else:  # 방어에 성공했다면
             play_mode.ball.x, play_mode.ball.y = ch.x + 80, ch.y

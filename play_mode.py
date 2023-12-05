@@ -102,8 +102,11 @@ def init():
     global ball
     global arrow
     global select
+    global time
+    global blueteam_survivor, redteam_survivor
     select = [1, 1]
-
+    blueteam_survivor, redteam_survivor = 5, 5
+    time = get_time()
     background = Background()
     game_world.add_object(background, 0)
     heart = Heart()
@@ -161,9 +164,9 @@ def update():
     global getball_player
     game_world.update()
     game_world.handle_collisions()
-    if blueteam.survivor == 0:
+    if blueteam_survivor == 0:
         game_framework.change_mode(gameover_mode)
-    elif redteam.survivor == 0:
+    elif redteam_survivor == 0:
         game_framework.change_mode(gameover_mode)
 
 

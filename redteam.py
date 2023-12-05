@@ -26,7 +26,6 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 4
 
-survivor = 5
 def_cool_time = 5.0
 skill_cool_time = 30.0
 
@@ -116,7 +115,7 @@ class Idle:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         if ch.run == 2:
             ch.angle -= 45
@@ -156,7 +155,7 @@ class RunRight:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -208,7 +207,7 @@ class RunRightUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -260,7 +259,7 @@ class RunRightDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -313,7 +312,7 @@ class RunLeft:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -365,7 +364,7 @@ class RunLeftUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -418,7 +417,7 @@ class RunLeftDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -470,7 +469,7 @@ class RunUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -522,7 +521,7 @@ class RunDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - Redteam.skill_wait_time > skill_cool_time:
+            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -710,6 +709,7 @@ class Redteam:
         self.tx, self.ty = 0, 0
         self.dir = 0.0
         self.auto_guard = False
+        self.time = 0.0
         self.build_behavior_tree()
         self.RUN_SPEED_PPS = RUN_SPEED_MPS * PIXEL_PER_METER
         self.state_machine = StateMachine(self)
@@ -738,7 +738,7 @@ class Redteam:
     def use_skill(self):
         if self.getball == True:
             Redteam.skill_sound.play()
-            Redteam.skill_wait_time = get_time()
+            Redteam.skill_wait_time = self.time
             skill = Skill(self.x, self.y, self.action, "Redteam")
             lazer.state = "Redteam"
             game_world.add_object(skill, 1)
@@ -747,9 +747,10 @@ class Redteam:
         return self.x - 40, self.y - 50, self.x + 50, self.y + 50
 
     def update(self):
-        self.state_machine.update()
+        self.time += game_framework.frame_time
         if play_mode.select[1] != self.num and self.getball != True:  # 선택되지 않았다면 AI가 조작한다
             self.bt.run()
+        self.state_machine.update()
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
@@ -787,7 +788,7 @@ class Redteam:
         Redteam.out_sound.play()
         self.RUN_SPEED_PPS *= 2
         self.x, self.y, self.state = 200, random.randint(100, 700), 'dead'
-        survivor -= 1
+        play_mode.redteam_survivor -= 1
 
     def distance_less_than(self, x1, y1, x2, y2, r):
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
@@ -902,7 +903,7 @@ def ball_is_enemy(ch):
             ch.RUN_SPEED_PPS *= 2
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y  # 맞은 플레이어 앞에 떨어진다
             ch.x, ch.y, ch.state = 200, random.randint(100, 700), 'dead'
-            survivor -= 1
+            play_mode.redteam_survivor -= 1
             play_mode.ball.state = 'floor'
         else:  # 방어에 성공했다면
             play_mode.ball.x, play_mode.ball.y = ch.x - 80, ch.y
