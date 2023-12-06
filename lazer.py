@@ -48,7 +48,7 @@ class Lazer:
 
     def update(self):
         self.frame = self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time
-        if self.frame > 5:
+        if self.frame > 5.0:
             game_world.remove_object(self)
         pass
 
