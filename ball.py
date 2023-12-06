@@ -14,7 +14,7 @@ class Ball:
     def __init__(self, velocity=5):
         if Ball.image == None:
             Ball.image = load_image('./object/ball.png')
-        self.spawn = 0 #random.randint(0, 1)
+        self.spawn = random.randint(0, 1)
         if self.spawn == 0:
             self.x = WIDTH // 2 - 100
         else:
@@ -24,12 +24,13 @@ class Ball:
         self.shoot = False
         self.angle1, self.angle2 = 0, 0
 
+
     def get_bb(self):
         return self.x - 20, self.y - 20, self.x + 20, self.y + 20
 
     def draw(self):
         self.image.draw(self.x, self.y)
-        # draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_bb())
 
     def update(self):
         self.player_getball()
@@ -57,7 +58,7 @@ class Ball:
                     self.y = play_mode.player[i].y - 80
 
     def ball_out(self):
-        if blueteam.survivor == 5:
+        if play_mode.blueteam_survivor == 5:
             if self.x > WIDTH + 50 or (self.x > WIDTH // 2 and (self.y > HEIGHT + 150 or self.y < -150)):
                 self.state = 'floor'
                 self.x = WIDTH * 3 // 4
@@ -83,7 +84,7 @@ class Ball:
                 self.y = 70
                 for i in range(0, 5):
                     play_mode.player[i].shoot = False
-        if redteam.survivor == 5:
+        if play_mode.redteam_survivor == 5:
             if self.x < -50 or (self.x < WIDTH // 2 and (self.y > HEIGHT + 150 or self.y < -150)):
                 self.state = 'floor'
                 self.x = WIDTH * 1 // 4

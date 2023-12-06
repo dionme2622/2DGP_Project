@@ -1,10 +1,10 @@
 from pico2d import *
-import play_mode as start_mode
+import play_mode
 import game_framework
 import select_mode
 import help_mode
 import logo_mode
-import title_mode
+import title_mode as start_mode
 import gameover_mode
 
 WIDTH, HEIGHT = 1920, 1080

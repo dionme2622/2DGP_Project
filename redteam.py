@@ -115,7 +115,7 @@ class Idle:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         if ch.run == 2:
             ch.angle -= 45
@@ -155,7 +155,7 @@ class RunRight:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -207,7 +207,7 @@ class RunRightUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -259,7 +259,7 @@ class RunRightDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -312,7 +312,7 @@ class RunLeft:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -364,7 +364,7 @@ class RunLeftUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -417,7 +417,7 @@ class RunLeftDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -469,7 +469,7 @@ class RunUp:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -521,7 +521,7 @@ class RunDown:
         if atk_down(e):
             ch.shoot_ball()
         if skill_down(e):
-            if get_time() - play_mode.time - Redteam.skill_wait_time > skill_cool_time:
+            if ch.time - Redteam.skill_wait_time > skill_cool_time:
                 ch.use_skill()
         pass
 
@@ -587,9 +587,9 @@ class Defense:
     @staticmethod
     def exit(ch, e):
         if not ch.auto_guard:
-            ch.wait_time = get_time()
+            ch.wait_time = ch.time
         else:
-            ch.auto_wait_time = get_time()
+            ch.auto_wait_time = ch.time
     @staticmethod
     def do(ch):
         ch.frame = (ch.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
@@ -757,9 +757,9 @@ class Redteam:
 
     def draw(self):
         self.state_machine.draw()
-        self.font.draw(self.x, self.y + 70, f'{self.num}', (255, 255, 255))
-        if float(self.auto_wait_time) + 15 - float(get_time()) > 0:
-            self.font.draw(self.x, self.y + 100, f'{float(self.auto_wait_time) + 15 - float(get_time()):.1f}', (255, 255, 0))
+        self.font.draw(self.x, self.y + 60, f'{self.num}', (255, 255, 255))
+        if float(self.auto_wait_time) + 15 - self.time > 0:
+            self.font.draw(self.x - 10, self.y + 80, f'{float(self.auto_wait_time) + 15 - self.time:.1f}', (255, 255, 0))
         # draw_rectangle(*self.get_bb())
 
     def handle_collision(self, group, other):
@@ -854,7 +854,7 @@ class Redteam:
 
 
     def defense(self):
-        if get_time() - self.auto_wait_time > def_cool_time + 10:
+        if self.time - self.auto_wait_time > def_cool_time + 10:
             self.auto_guard = True
             self.state_machine.handle_event(('LETS_DEFENSE', 0))
         return BehaviorTree.SUCCESS

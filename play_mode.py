@@ -161,7 +161,7 @@ def finish():
 
 
 def update():
-    global getball_player
+    global getball_player, blueteam_survivor, redteam_survivor
     game_world.update()
     game_world.handle_collisions()
     if blueteam_survivor == 0:

@@ -67,7 +67,7 @@ def remove_collision_object(o):
 def clear():
     for layer in objects:
         layer.clear()
-
+        remove_collision_object(layer)
 
 def handle_collisions():
     for group, pairs in collision_pairs.items():
